@@ -1,0 +1,128 @@
+<resources>
+    <string name="app_name">AInterview</string>
+    <string name="app_title">AInterview</string>
+    <string name="app_tagline">Smart Job Interview Practice Platform</string>
+    <string name="app_welcome_desc">Persiapkan diri Anda menghadapi wawancara kerja profesional dengan bank pertanyaan terarah dan review terstruktur.</string>
+    <string name="app_subtitle">Smart Job Interview Practice Platform</string>
+    <string name="candidate_name_label">Nama Kandidat</string>
+    <string name="candidate_name_hint">Masukkan nama Anda</string>
+    <string name="role_selection_title">Pilih Kategori Role</string>
+    <string name="btn_start">Mulai Interview</string>
+    <string name="btn_view_history">Lihat Riwayat Sesi</string>
+    <string name="result_feedback_title">Ulasan Jawaban &amp; Feedback</string>
+    <string name="toast_empty_answer">Jawaban belum diisi. Silakan ketik jawaban Anda terlebih dahulu.</string>
+    <string name="btn_submit_answer">Kirim Jawaban</string>
+    <string name="confirm_exit_interview">Kemajuan Anda pada sesi ini belum disimpan. Yakin ingin keluar dari sesi interview?</string>
+
+    <!-- Welcome Screen -->
+    <string name="btn_get_started">Mulai Sekarang</string>
+    <string name="btn_login_welcome">Sudah Punya Akun? Masuk</string>
+
+    <!-- Auth Screens -->
+    <string name="title_login">Masuk ke Akun Anda</string>
+    <string name="desc_login">Lanjutkan sesi latihan dan pantau riwayat persiapan karir Anda.</string>
+    <string name="label_email">Alamat Email</string>
+    <string name="hint_email">nama@email.com</string>
+    <string name="label_password">Kata Sandi</string>
+    <string name="hint_password">Minimal 6 karakter</string>
+    <string name="label_confirm_password">Konfirmasi Kata Sandi</string>
+    <string name="hint_confirm_password">Ketik ulang kata sandi</string>
+    <string name="label_full_name">Nama Lengkap</string>
+    <string name="hint_full_name">Masukkan nama lengkap Anda</string>
+    <string name="btn_sign_in">Masuk</string>
+    <string name="btn_register">Daftar Akun Baru</string>
+    <string name="prompt_have_account">Sudah punya akun? Masuk di sini</string>
+    <string name="prompt_no_account">Belum punya akun? Daftar sekarang</string>
+    <string name="error_invalid_email">Format alamat email tidak valid</string>
+    <string name="error_empty_password">Kata sandi tidak boleh kosong</string>
+    <string name="error_short_password">Kata sandi minimal harus 6 karakter</string>
+    <string name="error_empty_name">Nama lengkap tidak boleh kosong</string>
+    <string name="error_password_mismatch">Konfirmasi kata sandi tidak cocok</string>
+    <string name="error_auth_failed">Email atau kata sandi tidak sesuai</string>
+    <string name="success_registered">Pendaftaran berhasil! Selamat datang.</string>
+
+    <!-- Home Screen -->
+    <string name="greeting_format">Halo, %1$s!</string>
+    <string name="home_hero_title">Siap Hadapi Wawancara Kerja?</string>
+    <string name="home_hero_desc">Pilih kategori yang Anda minati dan mulai latihan simulasi tanya-jawab terstruktur.</string>
+    <string name="btn_start_interview">Mulai Interview Baru</string>
+    <string name="section_categories">Pilihan Kategori Wawancara</string>
+    <string name="section_quick_nav">Menu Cepat</string>
+    <string name="menu_history">Riwayat Sesi</string>
+    <string name="menu_profile">Profil &amp; Pengaturan</string>
+    <string name="stats_completed_format">%1$d Sesi Selesai</string>
+
+    <!-- Categories -->
+    <string name="cat_general">General Interview</string>
+    <string name="cat_general_desc">Pertanyaan pengenalan diri, kelebihan, dan motivasi kerja.</string>
+    <string name="cat_software">Software Engineering</string>
+    <string name="cat_software_desc">Prinsip OOP, arsitektur sistem, lifecycle, dan debugging.</string>
+    <string name="cat_web">Web Development</string>
+    <string name="cat_web_desc">Frontend, Backend, REST API, responsive design, dan performa.</string>
+    <string name="cat_database">Database &amp; SQL</string>
+    <string name="cat_database_desc">Query optimization, indexing, normalisasi data, dan ACID.</string>
+    <string name="cat_behavioral">Behavioral (STAR)</string>
+    <string name="cat_behavioral_desc">Kerjasama tim, resolusi konflik, dan manajemen tekanan.</string>
+
+    <!-- Setup Screen -->
+    <string name="title_setup">Konfigurasi Interview</string>
+    <string name="label_select_category">Kategori Pertanyaan</string>
+    <string name="label_select_difficulty">Tingkat Kesulitan</string>
+    <string name="diff_beginner">Beginner (Dasar)</string>
+    <string name="diff_intermediate">Intermediate (Menengah)</string>
+    <string name="diff_advanced">Advanced (Tingkat Lanjut)</string>
+    <string name="label_question_count">Jumlah Pertanyaan</string>
+    <string name="label_select_language">Bahasa Wawancara</string>
+    <string name="lang_indonesian">Bahasa Indonesia</string>
+    <string name="lang_english">English</string>
+    <string name="btn_start_session">Mulai Sesi Sekarang</string>
+    <string name="setup_tip_note">Tips: Jawaban yang Anda ketik akan tersimpan otomatis saat Anda berpindah antar pertanyaan.</string>
+
+    <!-- Interview Screen -->
+    <string name="interview_title">Simulasi Wawancara</string>
+    <string name="question_number_format">Pertanyaan %1$d dari %2$d</string>
+    <string name="answer_input_hint">Ketik jawaban Anda secara jelas dan terperinci di sini...</string>
+    <string name="btn_previous">Sebelumnya</string>
+    <string name="btn_next">Berikutnya</string>
+    <string name="btn_finish_interview">Selesaikan Interview</string>
+    <string name="toast_empty_answer_warn">Anda dapat melanjutkan, namun jangan lupa mengisi jawaban ini sebelum menyelesaikan sesi.</string>
+    <string name="confirm_finish_title">Selesaikan Interview?</string>
+    <string name="confirm_finish_all_answered">Semua pertanyaan telah dijawab. Apakah Anda siap mengirim dan melihat rangkuman hasil?</string>
+    <string name="confirm_finish_partial">Perhatian: Ada %1$d pertanyaan yang belum dijawab. Apakah Anda yakin ingin menyelesaikan sesi sekarang?</string>
+    <string name="confirm_exit_title">Batalkan Sesi Interview?</string>
+    <string name="confirm_exit_message">Kemajuan Anda pada sesi ini belum disimpan. Yakin ingin keluar?</string>
+    <string name="btn_confirm_finish">Ya, Selesaikan</string>
+    <string name="btn_cancel">Batal</string>
+    <string name="btn_exit">Keluar</string>
+
+    <!-- Result Screen -->
+    <string name="result_title">Ringkasan Hasil Interview</string>
+    <string name="result_session_completed">Sesi Wawancara Selesai</string>
+    <string name="result_answered_stat">Pertanyaan Terjawab: %1$d dari %2$d</string>
+    <string name="result_ai_placeholder_title">Evaluasi Cerdas AI (Fitur Mendatang)</string>
+    <string name="result_ai_placeholder_desc">Integrasi analitik AI untuk penilaian semantik, evaluasi struktur metode STAR, dan rekomendasi perbaikan instan sedang dipersiapkan. Di bawah ini adalah catatan jawaban yang Anda berikan untuk ditinjau secara mandiri.</string>
+    <string name="review_answers_section">Tinjauan Jawaban yang Anda Berikan</string>
+    <string name="not_answered_placeholder">(Pertanyaan ini tidak dijawab)</string>
+    <string name="btn_retake">Latihan Ulang</string>
+    <string name="btn_back_home">Kembali ke Beranda</string>
+    <string name="btn_view_history_from_result">Lihat Semua Riwayat</string>
+
+    <!-- History Screen -->
+    <string name="history_title">Riwayat Sesi Interview</string>
+    <string name="history_empty_title">Belum Ada Sesi Tersimpan</string>
+    <string name="history_empty_desc">Anda belum menyelesaikan sesi latihan. Mulai interview baru sekarang untuk memantau kemajuan latihan Anda!</string>
+    <string name="btn_clear_history">Hapus Riwayat</string>
+    <string name="btn_start_first_interview">Mulai Sesi Pertama</string>
+
+    <!-- Profile and Settings Screen -->
+    <string name="profile_title">Profil &amp; Pengaturan</string>
+    <string name="section_user_info">Informasi Pengguna</string>
+    <string name="section_stats">Statistik Latihan</string>
+    <string name="section_preferences">Pengaturan Preferensi</string>
+    <string name="pref_default_language">Bahasa Standar Interview</string>
+    <string name="section_about">Tentang Proyek</string>
+    <string name="about_project_desc">AInterview adalah aplikasi simulasi wawancara kerja berbasis Android (Java + XML) yang dirancang untuk membantu mahasiswa dan calon profesional mengasah keterampilan komunikasi teknis dan non-teknis.</string>
+    <string name="btn_logout">Keluar dari Akun</string>
+    <string name="confirm_logout_title">Konfirmasi Keluar</string>
+    <string name="confirm_logout_message">Apakah Anda yakin ingin keluar dari akun Anda?</string>
+</resources>
