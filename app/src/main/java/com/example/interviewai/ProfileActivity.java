@@ -3,23 +3,18 @@ package com.example.interviewai;
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
-import android.widget.AdapterView;
-import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.ImageView;
-import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.appcompat.widget.SwitchCompat;
 import androidx.core.graphics.Insets;
 import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowInsetsCompat;
 
 import com.example.interviewai.data.InterviewStorage;
-import com.example.interviewai.data.QuestionBank;
 import com.example.interviewai.data.UserSessionManager;
 import com.example.interviewai.model.InterviewSession;
 import com.example.interviewai.model.User;
@@ -34,10 +29,12 @@ public class ProfileActivity extends AppCompatActivity {
     private TextView txtProfileName;
     private TextView txtProfileEmail;
     private TextView txtMemberSince;
+    private TextView txtProfileField;
     private TextView txtStatSessions;
     private TextView txtStatAverageScore;
-    private Spinner spnDefaultLanguage;
-    private SwitchCompat switchTips;
+    private TextView txtCurrentFieldHint;
+    private View btnDataDiri;
+    private View btnGantiBidang;
     private Button btnLogout;
     private ImageView btnBack;
 
@@ -64,10 +61,12 @@ public class ProfileActivity extends AppCompatActivity {
         txtProfileName = findViewById(R.id.txtProfileName);
         txtProfileEmail = findViewById(R.id.txtProfileEmail);
         txtMemberSince = findViewById(R.id.txtMemberSince);
+        txtProfileField = findViewById(R.id.txtProfileField);
         txtStatSessions = findViewById(R.id.txtStatSessions);
         txtStatAverageScore = findViewById(R.id.txtStatAverageScore);
-        spnDefaultLanguage = findViewById(R.id.spnDefaultLanguage);
-        switchTips = findViewById(R.id.switchTips);
+        txtCurrentFieldHint = findViewById(R.id.txtCurrentFieldHint);
+        btnDataDiri = findViewById(R.id.btnDataDiri);
+        btnGantiBidang = findViewById(R.id.btnGantiBidang);
         btnLogout = findViewById(R.id.btnLogout);
         btnBack = findViewById(R.id.btnBack);
 
@@ -75,20 +74,32 @@ public class ProfileActivity extends AppCompatActivity {
             btnBack.setOnClickListener(v -> finish());
         }
 
-        populateUserData();
-        populateStats();
-        setupLanguageSpinner();
-
-        if (switchTips != null) {
-            switchTips.setOnCheckedChangeListener((buttonView, isChecked) -> {
-                String status = isChecked ? "diaktifkan" : "dinonaktifkan";
-                Toast.makeText(this, "Tips interview " + status, Toast.LENGTH_SHORT).show();
+        // Data Diri -> opens DataDiriActivity
+        if (btnDataDiri != null) {
+            btnDataDiri.setOnClickListener(v -> {
+                Intent intent = new Intent(ProfileActivity.this, DataDiriActivity.class);
+                startActivity(intent);
             });
+        }
+
+        // Ganti Bidang -> shows single-choice dialog
+        if (btnGantiBidang != null) {
+            btnGantiBidang.setOnClickListener(v -> showGantiBidangDialog());
         }
 
         if (btnLogout != null) {
             btnLogout.setOnClickListener(v -> showLogoutConfirmationDialog());
         }
+
+        populateUserData();
+        populateStats();
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        populateUserData();
+        populateStats();
     }
 
     private void populateUserData() {
@@ -98,6 +109,12 @@ public class ProfileActivity extends AppCompatActivity {
             txtProfileEmail.setText(user.getEmail());
             String dateFormatted = dateFormat.format(new Date(user.getRegisteredDate()));
             txtMemberSince.setText("Bergabung: " + dateFormatted);
+            if (txtProfileField != null) {
+                txtProfileField.setText("Bidang: " + user.getField());
+            }
+            if (txtCurrentFieldHint != null) {
+                txtCurrentFieldHint.setText("Bidang saat ini: " + user.getField());
+            }
         }
     }
 
@@ -119,32 +136,34 @@ public class ProfileActivity extends AppCompatActivity {
         }
     }
 
-    private void setupLanguageSpinner() {
-        List<String> languages = QuestionBank.getAvailableLanguages();
-        ArrayAdapter<String> adapter = new ArrayAdapter<>(
-                this,
-                android.R.layout.simple_spinner_item,
-                languages
-        );
-        adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
-        spnDefaultLanguage.setAdapter(adapter);
+    private void showGantiBidangDialog() {
+        String[] fields = User.AVAILABLE_FIELDS;
+        String currentField = sessionManager.getUserField();
 
-        String currentDefault = sessionManager.getDefaultLanguage();
-        int index = languages.indexOf(currentDefault);
-        if (index >= 0) {
-            spnDefaultLanguage.setSelection(index);
+        // Find the currently selected index
+        int selectedIndex = 0;
+        for (int i = 0; i < fields.length; i++) {
+            if (fields[i].equalsIgnoreCase(currentField)) {
+                selectedIndex = i;
+                break;
+            }
         }
 
-        spnDefaultLanguage.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
-            @Override
-            public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
-                String selected = languages.get(position);
-                sessionManager.setDefaultLanguage(selected);
-            }
+        final int[] chosenIndex = { selectedIndex };
 
-            @Override
-            public void onNothingSelected(AdapterView<?> parent) {}
-        });
+        new AlertDialog.Builder(this)
+                .setTitle("Ganti Bidang Keahlian")
+                .setSingleChoiceItems(fields, selectedIndex, (dialog, which) -> {
+                    chosenIndex[0] = which;
+                })
+                .setPositiveButton("Simpan", (dialog, which) -> {
+                    String selectedField = fields[chosenIndex[0]];
+                    sessionManager.setUserField(selectedField);
+                    populateUserData();
+                    Toast.makeText(this, "Bidang diubah ke: " + selectedField, Toast.LENGTH_SHORT).show();
+                })
+                .setNegativeButton("Batal", null)
+                .show();
     }
 
     private void showLogoutConfirmationDialog() {

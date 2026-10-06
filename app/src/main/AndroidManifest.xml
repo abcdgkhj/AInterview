@@ -36,6 +36,11 @@
             android:windowSoftInputMode="adjustResize" />
 
         <activity
+            android:name=".ForgotPasswordActivity"
+            android:exported="false"
+            android:windowSoftInputMode="adjustResize" />
+
+        <activity
             android:name=".RegisterActivity"
             android:exported="false"
             android:windowSoftInputMode="adjustResize" />
@@ -43,6 +48,12 @@
         <!-- 3. Home Screen -->
         <activity
             android:name=".HomeActivity"
+            android:exported="false"
+            android:windowSoftInputMode="adjustResize" />
+
+        <!-- 3b. Technical Field Selection Screen -->
+        <activity
+            android:name=".TechnicalFieldSelectionActivity"
             android:exported="false"
             android:windowSoftInputMode="adjustResize" />
 
@@ -73,6 +84,12 @@
         <!-- 8. Profile and Settings Screen -->
         <activity
             android:name=".ProfileActivity"
+            android:exported="false"
+            android:windowSoftInputMode="adjustResize" />
+
+        <!-- 8b. Data Diri Screen -->
+        <activity
+            android:name=".DataDiriActivity"
             android:exported="false"
             android:windowSoftInputMode="adjustResize" />
 

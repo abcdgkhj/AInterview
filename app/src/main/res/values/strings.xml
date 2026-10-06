@@ -34,6 +34,7 @@
     <string name="prompt_have_account">Sudah punya akun? Masuk di sini</string>
     <string name="prompt_no_account">Belum punya akun? Daftar sekarang</string>
     <string name="error_invalid_email">Format alamat email tidak valid</string>
+    <string name="error_empty_email">Alamat email tidak boleh kosong</string>
     <string name="error_empty_password">Kata sandi tidak boleh kosong</string>
     <string name="error_short_password">Kata sandi minimal harus 6 karakter</string>
     <string name="error_empty_name">Nama lengkap tidak boleh kosong</string>
@@ -41,16 +42,54 @@
     <string name="error_auth_failed">Email atau kata sandi tidak sesuai</string>
     <string name="success_registered">Pendaftaran berhasil! Selamat datang.</string>
 
+    <!-- Forgot Password Screen -->
+    <string name="btn_forgot_password">Forgot Password?</string>
+    <string name="title_forgot_password">Forgot Password</string>
+    <string name="desc_forgot_password">Masukkan email akun Anda untuk mendapatkan instruksi reset kata sandi akun latihan Anda.</string>
+    <string name="btn_reset_password">Reset Password</string>
+    <string name="btn_back_to_login">Back to Login</string>
+    <string name="msg_reset_success_title">Instruksi Reset Terkirim</string>
+    <string name="msg_reset_success_desc">Tautan pemulihan kata sandi telah dikirim ke %1$s. (Mode Simulasi: Kata sandi Anda telah diatur ulang menjadi \'%2$s\').</string>
+    <string name="toast_reset_success">Kata sandi berhasil direset ke \'%1$s\'. Silakan masuk kembali.</string>
+
+    <!-- User Field Selection -->
+    <string name="label_field_interest">Bidang Keahlian / Interview Field</string>
+    <string name="label_user_field">Bidang Karir Default</string>
+    <string name="pref_user_field">Bidang Karir Wawancara</string>
+    <string name="pref_user_field_desc">Bidang keahlian default untuk Technical Interview</string>
+    <string name="field_it">IT</string>
+    <string name="field_marketing">Marketing</string>
+    <string name="field_accounting">Accounting</string>
+
     <!-- Home Screen -->
     <string name="greeting_format">Halo, %1$s!</string>
     <string name="home_hero_title">Siap Hadapi Wawancara Kerja?</string>
-    <string name="home_hero_desc">Pilih kategori yang Anda minati dan mulai latihan simulasi tanya-jawab terstruktur.</string>
-    <string name="btn_start_interview">Mulai Interview Baru</string>
-    <string name="section_categories">Pilihan Kategori Wawancara</string>
+    <string name="home_hero_desc">Pilih jenis wawancara yang Anda butuhkan dan mulai latihan simulasi tanya-jawab sekarang.</string>
+    <string name="btn_start_interview">Mulai Interview Umum</string>
+    <string name="section_categories">Pilihan Jenis Wawancara</string>
     <string name="section_quick_nav">Menu Cepat</string>
     <string name="menu_history">Riwayat Sesi</string>
     <string name="menu_profile">Profil &amp; Pengaturan</string>
     <string name="stats_completed_format">%1$d Sesi Selesai</string>
+
+    <!-- 2 Pilihan Utama Wawancara -->
+    <string name="title_interview_umum">Interview Umum</string>
+    <string name="desc_interview_umum">Pertanyaan pengenalan diri, kelebihan &amp; kelemahan, serta simulasi situasional/STAR. Langsung mulai latihan tanpa memilih bidang.</string>
+    <string name="badge_interview_umum">Langsung Mulai • Umum &amp; Behavioral</string>
+
+    <string name="title_interview_teknis">Interview Teknis</string>
+    <string name="desc_interview_teknis">Pertanyaan teknis mendalam sesuai bidang keahlian (IT, Marketing, Accounting). Disesuaikan dengan bidang pilihan Anda.</string>
+    <string name="badge_interview_teknis">Pilih Bidang • IT, Marketing, Accounting</string>
+
+    <!-- Technical Field Selection Screen -->
+    <string name="title_technical_field_selection">Interview Teknis</string>
+    <string name="subtitle_technical_field_selection">Pilih Bidang Keahlian</string>
+    <string name="desc_technical_field_selection">Pilih bidang wawancara teknis Anda. Bidang akun Anda otomatis dipilih secara default.</string>
+    <string name="label_default_saved_field">Bidang Profil Tersimpan:</string>
+    <string name="field_it_desc">Programming, Database, Networking, Software Development, Web Development</string>
+    <string name="field_marketing_desc">Marketing Strategy, Digital Marketing, Branding, Market Analysis</string>
+    <string name="field_accounting_desc">Accounting Principles, Financial Statements, Bookkeeping, Financial Analysis</string>
+    <string name="btn_start_technical_interview">Mulai Interview Teknis</string>
 
     <!-- Categories -->
     <string name="cat_general">General Interview</string>

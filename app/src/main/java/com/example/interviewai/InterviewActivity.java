@@ -8,6 +8,7 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -20,6 +21,7 @@ import androidx.core.view.WindowInsetsCompat;
 
 import com.example.interviewai.data.InterviewStorage;
 import com.example.interviewai.data.QuestionBank;
+import com.example.interviewai.model.InterviewItem;
 import com.example.interviewai.model.InterviewQuestion;
 import com.example.interviewai.model.InterviewSession;
 import com.example.interviewai.workflow.InterviewWorkflowManager;
@@ -40,8 +42,17 @@ public class InterviewActivity extends AppCompatActivity {
     private TextView txtWordCount;
     private ProgressBar progressIndicator;
     private EditText edtAnswer;
-    private Button btnPrevious;
-    private Button btnNext;
+
+    // Immediate Feedback Views
+    private LinearLayout layoutImmediateFeedback;
+    private TextView txtImmediateScore;
+    private TextView txtImmediateStrength;
+    private TextView txtImmediateImprovement;
+    private TextView txtImmediateSuggestion;
+
+    // Buttons
+    private Button btnSubmitAnswer;
+    private Button btnNextQuestion;
     private Button btnFinishEarly;
     private ImageView btnBack;
 
@@ -129,8 +140,15 @@ public class InterviewActivity extends AppCompatActivity {
         txtWordCount = findViewById(R.id.txtWordCount);
         progressIndicator = findViewById(R.id.progressIndicator);
         edtAnswer = findViewById(R.id.edtAnswer);
-        btnPrevious = findViewById(R.id.btnPrevious);
-        btnNext = findViewById(R.id.btnNext);
+
+        layoutImmediateFeedback = findViewById(R.id.layoutImmediateFeedback);
+        txtImmediateScore = findViewById(R.id.txtImmediateScore);
+        txtImmediateStrength = findViewById(R.id.txtImmediateStrength);
+        txtImmediateImprovement = findViewById(R.id.txtImmediateImprovement);
+        txtImmediateSuggestion = findViewById(R.id.txtImmediateSuggestion);
+
+        btnSubmitAnswer = findViewById(R.id.btnSubmitAnswer);
+        btnNextQuestion = findViewById(R.id.btnNextQuestion);
         btnFinishEarly = findViewById(R.id.btnFinishEarly);
         btnBack = findViewById(R.id.btnBack);
 
@@ -145,8 +163,8 @@ public class InterviewActivity extends AppCompatActivity {
             txtLangBadge.setText(isEn ? "EN" : "ID");
         }
 
-        btnPrevious.setOnClickListener(v -> handlePreviousAction());
-        btnNext.setOnClickListener(v -> handleNextOrFinishAction());
+        btnSubmitAnswer.setOnClickListener(v -> handleSubmitAnswerAction());
+        btnNextQuestion.setOnClickListener(v -> handleNextOrFinishAction());
 
         if (btnFinishEarly != null) {
             btnFinishEarly.setOnClickListener(v -> {
@@ -165,26 +183,57 @@ public class InterviewActivity extends AppCompatActivity {
         workflowManager.saveCurrentAnswer(answer);
     }
 
-    private void handlePreviousAction() {
+    /**
+     * Alur: User Answer -> Submit -> Show Immediate Feedback -> Show Next Question button
+     */
+    private void handleSubmitAnswerAction() {
+        String answerText = edtAnswer.getText() != null ? edtAnswer.getText().toString().trim() : "";
+        if (answerText.isEmpty()) {
+            Toast.makeText(this, R.string.toast_empty_answer, Toast.LENGTH_SHORT).show();
+            return;
+        }
+
         saveInputToManager();
-        if (workflowManager.goToPrevious()) {
-            renderCurrentQuestion();
+
+        // Evaluasi jawaban menggunakan template heuristic
+        InterviewItem feedbackItem = workflowManager.evaluateCurrentAnswer();
+        if (feedbackItem != null) {
+            displayFeedback(feedbackItem);
+        }
+    }
+
+    private void displayFeedback(InterviewItem feedbackItem) {
+        if (layoutImmediateFeedback != null) {
+            layoutImmediateFeedback.setVisibility(View.VISIBLE);
+        }
+        if (txtImmediateScore != null) {
+            txtImmediateScore.setText("Skor: " + feedbackItem.getScore());
+        }
+        if (txtImmediateStrength != null) {
+            txtImmediateStrength.setText(feedbackItem.getStrength());
+        }
+        if (txtImmediateImprovement != null) {
+            txtImmediateImprovement.setText(feedbackItem.getImprovement());
+        }
+        if (txtImmediateSuggestion != null) {
+            txtImmediateSuggestion.setText(feedbackItem.getSampleAnswer());
+        }
+
+        // Lock answer field after submitting
+        edtAnswer.setEnabled(false);
+
+        // Hide submit button, show next/finish button
+        btnSubmitAnswer.setVisibility(View.GONE);
+        btnNextQuestion.setVisibility(View.VISIBLE);
+
+        if (workflowManager.isLastQuestion()) {
+            btnNextQuestion.setText(getString(R.string.btn_finish_interview));
+        } else {
+            btnNextQuestion.setText(getString(R.string.btn_next));
         }
     }
 
     private void handleNextOrFinishAction() {
-        saveInputToManager();
-        String currentAnswer = workflowManager.getCurrentAnswer();
-
-        // Validasi jawaban kosong tanpa memblokir pengguna
-        if (currentAnswer.isEmpty()) {
-            Toast.makeText(
-                    this,
-                    R.string.toast_empty_answer_warn,
-                    Toast.LENGTH_SHORT
-            ).show();
-        }
-
         if (workflowManager.isLastQuestion()) {
             promptFinishConfirmation();
         } else {
@@ -217,26 +266,27 @@ public class InterviewActivity extends AppCompatActivity {
             txtProgressPercent.setText(progress + "%");
         }
 
-        // Tombol Sebelumnya: dinonaktifkan di soal pertama
-        if (workflowManager.hasPrevious()) {
-            btnPrevious.setEnabled(true);
-            btnPrevious.setAlpha(1.0f);
+        // Check if current question has already been evaluated
+        if (workflowManager.isCurrentQuestionEvaluated()) {
+            InterviewItem evaluatedItem = workflowManager.getCurrentEvaluatedItem();
+            edtAnswer.setText(workflowManager.getCurrentAnswer());
+            edtAnswer.setEnabled(false);
+            if (evaluatedItem != null) {
+                displayFeedback(evaluatedItem);
+            }
         } else {
-            btnPrevious.setEnabled(false);
-            btnPrevious.setAlpha(0.4f);
-        }
+            // New unanswered question state: Question -> User Answer -> Submit
+            edtAnswer.setEnabled(true);
+            String savedAnswer = workflowManager.getCurrentAnswer();
+            edtAnswer.setText(savedAnswer);
+            edtAnswer.setSelection(edtAnswer.getText().length());
 
-        // Tombol Berikutnya vs Selesaikan
-        if (workflowManager.isLastQuestion()) {
-            btnNext.setText(getString(R.string.btn_finish_interview));
-        } else {
-            btnNext.setText(getString(R.string.btn_next));
+            if (layoutImmediateFeedback != null) {
+                layoutImmediateFeedback.setVisibility(View.GONE);
+            }
+            btnSubmitAnswer.setVisibility(View.VISIBLE);
+            btnNextQuestion.setVisibility(View.GONE);
         }
-
-        // Mengembalikan jawaban yang tersimpan untuk nomor ini
-        String savedAnswer = workflowManager.getCurrentAnswer();
-        edtAnswer.setText(savedAnswer);
-        edtAnswer.setSelection(edtAnswer.getText().length());
     }
 
     private void setupWordCounter() {

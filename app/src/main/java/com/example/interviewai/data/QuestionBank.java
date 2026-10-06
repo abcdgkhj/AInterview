@@ -12,7 +12,14 @@ import java.util.List;
  */
 public class QuestionBank {
 
-    // 5 Kategori Resmi
+    // 2 Kategori Wawancara Utama
+    public static final String CATEGORY_UMUM = "Interview Umum";
+    public static final String CATEGORY_TEKNIS = "Interview Teknis";
+    public static final String CATEGORY_TEKNIS_IT = "Interview Teknis - IT";
+    public static final String CATEGORY_TEKNIS_MARKETING = "Interview Teknis - Marketing";
+    public static final String CATEGORY_TEKNIS_ACCOUNTING = "Interview Teknis - Accounting";
+
+    // Legacy Kategori untuk backward compatibility
     public static final String CATEGORY_GENERAL = "General Interview";
     public static final String CATEGORY_SOFTWARE = "Software Engineering";
     public static final String CATEGORY_WEB = "Web Development";
@@ -35,8 +42,22 @@ public class QuestionBank {
     public static final String LANG_ID = "Indonesian";
     public static final String LANG_EN = "English";
 
+    public static String getTechnicalCategoryForField(String field) {
+        if ("Marketing".equalsIgnoreCase(field)) {
+            return CATEGORY_TEKNIS_MARKETING;
+        } else if ("Accounting".equalsIgnoreCase(field)) {
+            return CATEGORY_TEKNIS_ACCOUNTING;
+        } else {
+            return CATEGORY_TEKNIS_IT;
+        }
+    }
+
     public static List<String> getAvailableCategories() {
         return Arrays.asList(
+                CATEGORY_UMUM,
+                CATEGORY_TEKNIS_IT,
+                CATEGORY_TEKNIS_MARKETING,
+                CATEGORY_TEKNIS_ACCOUNTING,
                 CATEGORY_GENERAL,
                 CATEGORY_SOFTWARE,
                 CATEGORY_WEB,
@@ -149,6 +170,39 @@ public class QuestionBank {
 
     private static boolean matchesCategory(String qCategory, String targetCategory) {
         if (qCategory.equalsIgnoreCase(targetCategory)) return true;
+
+        // Interview Umum: General Interview + Behavioral (STAR)
+        if (targetCategory.equalsIgnoreCase(CATEGORY_UMUM) || targetCategory.contains("Umum")) {
+            return qCategory.equalsIgnoreCase(CATEGORY_UMUM)
+                    || qCategory.contains("General")
+                    || qCategory.contains("Behavioral");
+        }
+
+        // Interview Teknis - IT: Software Engineering, Web Development, Database & SQL, IT
+        if (targetCategory.equalsIgnoreCase(CATEGORY_TEKNIS_IT)
+                || targetCategory.contains("- IT")
+                || targetCategory.equals("IT")) {
+            return qCategory.equalsIgnoreCase(CATEGORY_TEKNIS_IT)
+                    || qCategory.contains("Software")
+                    || qCategory.contains("Web")
+                    || qCategory.contains("Database")
+                    || qCategory.contains("IT");
+        }
+
+        // Interview Teknis - Marketing
+        if (targetCategory.equalsIgnoreCase(CATEGORY_TEKNIS_MARKETING)
+                || targetCategory.contains("Marketing")) {
+            return qCategory.equalsIgnoreCase(CATEGORY_TEKNIS_MARKETING)
+                    || qCategory.contains("Marketing");
+        }
+
+        // Interview Teknis - Accounting
+        if (targetCategory.equalsIgnoreCase(CATEGORY_TEKNIS_ACCOUNTING)
+                || targetCategory.contains("Accounting")) {
+            return qCategory.equalsIgnoreCase(CATEGORY_TEKNIS_ACCOUNTING)
+                    || qCategory.contains("Accounting");
+        }
+
         if (targetCategory.contains("General") && qCategory.contains("General")) return true;
         if (targetCategory.contains("Software") && (qCategory.contains("Software") || qCategory.contains("Android"))) return true;
         if (targetCategory.contains("Web") && (qCategory.contains("Web") || qCategory.contains("Frontend"))) return true;
@@ -422,6 +476,85 @@ public class QuestionBank {
         list.add(new InterviewQuestion(556, CATEGORY_BEHAVIORAL, DIFFICULTY_ADVANCED, LANG_EN,
                 "Describe how you mentored or supported a peer who was struggling to hit a critical milestone.",
                 "Highlight collaborative guidance, pair-programming or coaching, empathy, and positive team delivery impact."));
+
+        // ================= 6. TECHNICAL INTERVIEW - MARKETING (INDONESIAN) =================
+        list.add(new InterviewQuestion(601, CATEGORY_TEKNIS_MARKETING, DIFFICULTY_BEGINNER, LANG_ID,
+                "Bagaimana pendekatan Anda dalam merancang strategi pemasaran (Marketing Mix 4P/7P) untuk meluncurkan produk baru?",
+                "Jelaskan analisis Product, Price, Place, Promotion serta penentuan target audiens yang spesifik."));
+        list.add(new InterviewQuestion(602, CATEGORY_TEKNIS_MARKETING, DIFFICULTY_INTERMEDIATE, LANG_ID,
+                "Jelaskan strategi Digital Marketing yang efektif menggunakan kombinasi SEO, Social Media Ads, dan Content Marketing.",
+                "Ulas funnel pemasaran (Awareness, Consideration, Conversion), optimasi kata kunci, dan targeting audiens."));
+        list.add(new InterviewQuestion(603, CATEGORY_TEKNIS_MARKETING, DIFFICULTY_INTERMEDIATE, LANG_ID,
+                "Bagaimana strategi Anda dalam membangun dan menjaga Brand Awareness agar produk memiliki daya saing yang unik di pasar?",
+                "Fokus pada Unique Selling Proposition (USP), identitas visual, tone of voice, dan konsistensi pesan brand."));
+        list.add(new InterviewQuestion(604, CATEGORY_TEKNIS_MARKETING, DIFFICULTY_INTERMEDIATE, LANG_ID,
+                "Bagaimana metode Anda dalam melakukan analisis pasar dan riset kompetitor untuk memetakan target audiens secara tepat?",
+                "Ulas riset data demografis, analisis SWOT kompetitor, pain points konsumen, dan pembentukan buyer persona."));
+        list.add(new InterviewQuestion(605, CATEGORY_TEKNIS_MARKETING, DIFFICULTY_ADVANCED, LANG_ID,
+                "Metrik utama apa saja (seperti CAC, LTV, ROAS, dan Conversion Rate) yang Anda gunakan untuk mengukur efektivitas kampanye pemasaran?",
+                "Jelaskan rumus perhitungan Customer Acquisition Cost, Lifetime Value, dan optimasi alokasi anggaran iklan."));
+
+        // ================= 6. TECHNICAL INTERVIEW - MARKETING (ENGLISH) =================
+        list.add(new InterviewQuestion(651, CATEGORY_TEKNIS_MARKETING, DIFFICULTY_BEGINNER, LANG_EN,
+                "How do you design an end-to-end marketing strategy (using the 4P/7P framework) when launching a new product?",
+                "Detail product positioning, pricing models, distribution channels, and targeted promotional strategies."));
+        list.add(new InterviewQuestion(652, CATEGORY_TEKNIS_MARKETING, DIFFICULTY_INTERMEDIATE, LANG_EN,
+                "Describe your approach to digital marketing campaigns across paid media, SEO, and social engagement.",
+                "Explain top-to-bottom funnel tactics, keyword targeting, content calendars, and attribution modeling."));
+        list.add(new InterviewQuestion(653, CATEGORY_TEKNIS_MARKETING, DIFFICULTY_INTERMEDIATE, LANG_EN,
+                "How do you define and strengthen brand positioning to differentiate a brand from fierce competitors?",
+                "Highlight Brand Identity, Unique Selling Proposition (USP), messaging consistency, and customer loyalty."));
+        list.add(new InterviewQuestion(654, CATEGORY_TEKNIS_MARKETING, DIFFICULTY_ADVANCED, LANG_EN,
+                "Explain your methodology for market analysis, competitor benchmarking, and customer persona segmentation.",
+                "Discuss TAM/SAM/SOM sizing, qualitative customer interviews, competitor matrix, and user behavior analytics."));
+        list.add(new InterviewQuestion(655, CATEGORY_TEKNIS_MARKETING, DIFFICULTY_ADVANCED, LANG_EN,
+                "Which quantitative growth metrics (CAC, LTV, ROAS, Retention) do you monitor to evaluate marketing efficiency?",
+                "Break down unit economics, customer acquisition payback periods, and data-driven budget optimization."));
+
+        // ================= 7. TECHNICAL INTERVIEW - ACCOUNTING (INDONESIAN) =================
+        list.add(new InterviewQuestion(701, CATEGORY_TEKNIS_ACCOUNTING, DIFFICULTY_BEGINNER, LANG_ID,
+                "Jelaskan prinsip-prinsip dasar akuntansi (GAAP / PSAK) dan bagaimana persamaan dasar akuntansi (Aset = Liabilitas + Ekuitas) diterapkan.",
+                "Ulas prinsip akrual, konservatisme, penandingan beban (matching principle), dan keseimbangan neraca."));
+        list.add(new InterviewQuestion(702, CATEGORY_TEKNIS_ACCOUNTING, DIFFICULTY_INTERMEDIATE, LANG_ID,
+                "Jelaskan tiga laporan keuangan utama (Laba Rugi, Neraca, dan Arus Kas) serta keterkaitan timbal balik antar ketiganya.",
+                "Jelaskan bagaimana laba bersih mengalir ke ekuitas (laba ditahan) dan rekonsiliasi arus kas operasional."));
+        list.add(new InterviewQuestion(703, CATEGORY_TEKNIS_ACCOUNTING, DIFFICULTY_INTERMEDIATE, LANG_ID,
+                "Bagaimana tahapan alur pembukuan (bookkeeping) dari pencatatan jurnal umum, posting ke buku besar, hingga neraca saldo?",
+                "Ulas double-entry bookkeeping, debit/kredit, verifikasi saldo akun, dan penyusunan adjusted trial balance."));
+        list.add(new InterviewQuestion(704, CATEGORY_TEKNIS_ACCOUNTING, DIFFICULTY_INTERMEDIATE, LANG_ID,
+                "Bagaimana prosedur Anda dalam melakukan rekonsiliasi bank dan membuat jurnal penyesuaian (adjusting entries) di akhir periode?",
+                "Bahas penanganan setoran dalam perjalanan (deposit in transit), cek beredar (outstanding checks), dan biaya administrasi."));
+        list.add(new InterviewQuestion(705, CATEGORY_TEKNIS_ACCOUNTING, DIFFICULTY_ADVANCED, LANG_ID,
+                "Bagaimana Anda melakukan analisis rasio keuangan (rasio likuiditas, solvabilitas, dan profitabilitas) untuk menilai kesehatan finansial perusahaan?",
+                "Bahas Current Ratio, Debt-to-Equity, Net Profit Margin, serta interpretasi tren kinerja keuangan tahunan."));
+
+        // ================= 7. TECHNICAL INTERVIEW - ACCOUNTING (ENGLISH) =================
+        list.add(new InterviewQuestion(751, CATEGORY_TEKNIS_ACCOUNTING, DIFFICULTY_BEGINNER, LANG_EN,
+                "Explain foundational accounting principles (GAAP/IFRS) and the core equation: Assets = Liabilities + Equity.",
+                "Discuss accrual basis, matching principle, double-entry mechanism, and dual balance verification."));
+        list.add(new InterviewQuestion(752, CATEGORY_TEKNIS_ACCOUNTING, DIFFICULTY_INTERMEDIATE, LANG_EN,
+                "How do the three core financial statements (Income Statement, Balance Sheet, Cash Flow) interconnect?",
+                "Detail net income transfer to retained earnings, depreciation impact, and working capital adjustments."));
+        list.add(new InterviewQuestion(753, CATEGORY_TEKNIS_ACCOUNTING, DIFFICULTY_INTERMEDIATE, LANG_EN,
+                "Describe the entire bookkeeping cycle from source transactions and general journals to the trial balance.",
+                "Detail posting to ledgers, journalizing debit and credits, closing temporary accounts, and audit checks."));
+        list.add(new InterviewQuestion(754, CATEGORY_TEKNIS_ACCOUNTING, DIFFICULTY_ADVANCED, LANG_EN,
+                "What is your approach to performing bank reconciliations and month-end adjusting journal entries?",
+                "Address deposits in transit, outstanding checks, bank service fees, interest income, and ledger adjustments."));
+        list.add(new InterviewQuestion(755, CATEGORY_TEKNIS_ACCOUNTING, DIFFICULTY_ADVANCED, LANG_EN,
+                "Which financial ratios (liquidity, debt-to-equity, profit margins) do you evaluate to determine company health?",
+                "Examine current and quick ratios, solvency leverage, operating margins, and return on equity (ROE)."));
+
+        // ================= 8. TECHNICAL INTERVIEW - IT & NETWORKING (INDONESIAN & ENGLISH) =================
+        list.add(new InterviewQuestion(801, CATEGORY_TEKNIS_IT, DIFFICULTY_BEGINNER, LANG_ID,
+                "Jelaskan perbedaan mendasar antara protokol TCP dan UDP serta contoh skenario penggunaan masing-masing dalam aplikasi modern.",
+                "Ulas 3-way handshake, reliabilitas transmisi data vs latency rendah pada video streaming atau gaming."));
+        list.add(new InterviewQuestion(802, CATEGORY_TEKNIS_IT, DIFFICULTY_INTERMEDIATE, LANG_ID,
+                "Bagaimana arsitektur jaringan komputer dan proses DNS lookup bekerja saat pengguna mengakses URL sebuah aplikasi?",
+                "Ulas recursive resolver, root server, TLD server, authoritative name server, dan IP routing."));
+        list.add(new InterviewQuestion(851, CATEGORY_TEKNIS_IT, DIFFICULTY_BEGINNER, LANG_EN,
+                "Explain the networking differences between TCP and UDP protocols and when to utilize each in production systems.",
+                "Discuss packet ordering, flow control, handshake overhead, and latency vs reliability trade-offs."));
 
         return list;
     }

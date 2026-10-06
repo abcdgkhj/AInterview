@@ -27,6 +27,7 @@ public class LoginActivity extends AppCompatActivity {
     private TextInputEditText edtPassword;
     private Button btnSignIn;
     private TextView btnGoToRegister;
+    private TextView btnForgotPassword;
     private ImageView btnBack;
     private View cardDemoAccount;
 
@@ -55,6 +56,7 @@ public class LoginActivity extends AppCompatActivity {
         edtPassword = findViewById(R.id.edtPassword);
         btnSignIn = findViewById(R.id.btnSignIn);
         btnGoToRegister = findViewById(R.id.btnGoToRegister);
+        btnForgotPassword = findViewById(R.id.btnForgotPassword);
         btnBack = findViewById(R.id.btnBack);
         cardDemoAccount = findViewById(R.id.cardDemoAccount);
 
@@ -72,6 +74,17 @@ public class LoginActivity extends AppCompatActivity {
             });
         }
 
+        if (btnForgotPassword != null) {
+            btnForgotPassword.setOnClickListener(v -> {
+                Intent intent = new Intent(LoginActivity.this, ForgotPasswordActivity.class);
+                String currentEmail = edtEmail.getText() != null ? edtEmail.getText().toString().trim() : "";
+                if (!currentEmail.isEmpty()) {
+                    intent.putExtra("extra_email", currentEmail);
+                }
+                startActivity(intent);
+            });
+        }
+
         btnSignIn.setOnClickListener(v -> attemptLogin());
 
         btnGoToRegister.setOnClickListener(v -> {
@@ -79,6 +92,27 @@ public class LoginActivity extends AppCompatActivity {
             startActivity(intent);
             finish();
         });
+
+        handleIncomingIntent(getIntent());
+    }
+
+    @Override
+    protected void onNewIntent(Intent intent) {
+        super.onNewIntent(intent);
+        setIntent(intent);
+        handleIncomingIntent(intent);
+    }
+
+    private void handleIncomingIntent(Intent intent) {
+        if (intent != null && intent.hasExtra("extra_email")) {
+            String email = intent.getStringExtra("extra_email");
+            if (email != null && !email.isEmpty() && edtEmail != null) {
+                edtEmail.setText(email);
+                if (edtPassword != null) {
+                    edtPassword.requestFocus();
+                }
+            }
+        }
     }
 
     private void attemptLogin() {

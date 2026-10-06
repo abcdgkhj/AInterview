@@ -10,6 +10,7 @@ import android.widget.ImageView;
 import android.widget.RadioButton;
 import android.widget.RadioGroup;
 import android.widget.Spinner;
+import android.widget.TextView;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.graphics.Insets;
@@ -29,6 +30,7 @@ public class InterviewSetupActivity extends AppCompatActivity {
     public static final String EXTRA_LANGUAGE = "extra_language";
 
     private EditText edtCandidateName;
+    private TextView txtUserFieldBadge;
     private Spinner spnCategory;
     private RadioGroup rgDifficulty;
     private RadioButton rbBeginner;
@@ -75,6 +77,7 @@ public class InterviewSetupActivity extends AppCompatActivity {
         }
 
         edtCandidateName = findViewById(R.id.edtCandidateName);
+        txtUserFieldBadge = findViewById(R.id.txtUserFieldBadge);
         spnCategory = findViewById(R.id.spnCategory);
         rgDifficulty = findViewById(R.id.rgDifficulty);
         rbBeginner = findViewById(R.id.rbBeginner);
@@ -109,6 +112,11 @@ public class InterviewSetupActivity extends AppCompatActivity {
             edtCandidateName.setText(user.getName().trim());
         } else {
             edtCandidateName.setText("Kandidat");
+        }
+
+        if (txtUserFieldBadge != null) {
+            String field = (user != null) ? user.getField() : sessionManager.getUserField();
+            txtUserFieldBadge.setText("Bidang Utama: " + field);
         }
 
         String defaultLang = sessionManager.getDefaultLanguage();

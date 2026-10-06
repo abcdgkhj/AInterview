@@ -35,11 +35,8 @@ public class HomeActivity extends AppCompatActivity {
     private View cardQuickResult;
     private View cardQuickProfile;
 
-    private View cardCatGeneral;
-    private View cardCatSoftware;
-    private View cardCatWeb;
-    private View cardCatDatabase;
-    private View cardCatBehavioral;
+    private View cardInterviewUmum;
+    private View cardInterviewTeknis;
 
     private UserSessionManager sessionManager;
     private List<InterviewSession> sessions;
@@ -71,11 +68,8 @@ public class HomeActivity extends AppCompatActivity {
         cardQuickResult = findViewById(R.id.cardQuickResult);
         cardQuickProfile = findViewById(R.id.cardQuickProfile);
 
-        cardCatGeneral = findViewById(R.id.cardCatGeneral);
-        cardCatSoftware = findViewById(R.id.cardCatSoftware);
-        cardCatWeb = findViewById(R.id.cardCatWeb);
-        cardCatDatabase = findViewById(R.id.cardCatDatabase);
-        cardCatBehavioral = findViewById(R.id.cardCatBehavioral);
+        cardInterviewUmum = findViewById(R.id.cardInterviewUmum);
+        cardInterviewTeknis = findViewById(R.id.cardInterviewTeknis);
 
         setupEventHandlers();
     }
@@ -107,7 +101,7 @@ public class HomeActivity extends AppCompatActivity {
     }
 
     private void setupEventHandlers() {
-        btnMainStartInterview.setOnClickListener(v -> openSetup(QuestionBank.CATEGORY_GENERAL));
+        btnMainStartInterview.setOnClickListener(v -> startInterviewUmum());
 
         View.OnClickListener profileListener = v -> {
             Intent intent = new Intent(HomeActivity.this, ProfileActivity.class);
@@ -135,27 +129,33 @@ public class HomeActivity extends AppCompatActivity {
             });
         }
 
-        // Category Cards
-        if (cardCatGeneral != null) {
-            cardCatGeneral.setOnClickListener(v -> openSetup(QuestionBank.CATEGORY_GENERAL));
+        // 1. Interview Umum -> langsung mulai sesi latihan tanpa memilih bidang
+        if (cardInterviewUmum != null) {
+            cardInterviewUmum.setOnClickListener(v -> startInterviewUmum());
         }
-        if (cardCatSoftware != null) {
-            cardCatSoftware.setOnClickListener(v -> openSetup(QuestionBank.CATEGORY_SOFTWARE));
-        }
-        if (cardCatWeb != null) {
-            cardCatWeb.setOnClickListener(v -> openSetup(QuestionBank.CATEGORY_WEB));
-        }
-        if (cardCatDatabase != null) {
-            cardCatDatabase.setOnClickListener(v -> openSetup(QuestionBank.CATEGORY_DATABASE));
-        }
-        if (cardCatBehavioral != null) {
-            cardCatBehavioral.setOnClickListener(v -> openSetup(QuestionBank.CATEGORY_BEHAVIORAL));
+
+        // 2. Interview Teknis -> buka layar pemilihan bidang (IT, Marketing, Accounting)
+        if (cardInterviewTeknis != null) {
+            cardInterviewTeknis.setOnClickListener(v -> openTechnicalFieldSelection());
         }
     }
 
-    private void openSetup(String category) {
-        Intent intent = new Intent(HomeActivity.this, InterviewSetupActivity.class);
-        intent.putExtra(EXTRA_INITIAL_CATEGORY, category);
+    private void startInterviewUmum() {
+        User user = sessionManager.getCurrentUser();
+        String candidateName = (user != null && user.getName() != null && !user.getName().trim().isEmpty())
+                ? user.getName().trim() : "Kandidat";
+
+        Intent intent = new Intent(HomeActivity.this, InterviewActivity.class);
+        intent.putExtra(MainActivity.EXTRA_CANDIDATE_NAME, candidateName);
+        intent.putExtra(MainActivity.EXTRA_ROLE_CATEGORY, QuestionBank.CATEGORY_UMUM);
+        intent.putExtra(InterviewActivity.EXTRA_DIFFICULTY, QuestionBank.DIFFICULTY_INTERMEDIATE);
+        intent.putExtra(InterviewActivity.EXTRA_QUESTION_COUNT, 5);
+        intent.putExtra(InterviewActivity.EXTRA_LANGUAGE, sessionManager.getDefaultLanguage());
+        startActivity(intent);
+    }
+
+    private void openTechnicalFieldSelection() {
+        Intent intent = new Intent(HomeActivity.this, TechnicalFieldSelectionActivity.class);
         startActivity(intent);
     }
 }

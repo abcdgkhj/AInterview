@@ -5,8 +5,10 @@ import android.os.Bundle;
 import android.text.TextUtils;
 import android.util.Patterns;
 import android.view.View;
+import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.ImageView;
+import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -34,6 +36,7 @@ public class RegisterActivity extends AppCompatActivity {
     private Button btnRegister;
     private TextView btnGoToLogin;
     private ImageView btnBack;
+    private Spinner spnField;
 
     private UserSessionManager sessionManager;
 
@@ -63,6 +66,17 @@ public class RegisterActivity extends AppCompatActivity {
         edtEmail = findViewById(R.id.edtEmail);
         edtPassword = findViewById(R.id.edtPassword);
         edtConfirmPassword = findViewById(R.id.edtConfirmPassword);
+
+        spnField = findViewById(R.id.spnField);
+        if (spnField != null) {
+            ArrayAdapter<String> fieldAdapter = new ArrayAdapter<>(
+                    this,
+                    android.R.layout.simple_spinner_item,
+                    com.example.interviewai.model.User.AVAILABLE_FIELDS
+            );
+            fieldAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+            spnField.setAdapter(fieldAdapter);
+        }
 
         btnRegister = findViewById(R.id.btnRegister);
         btnGoToLogin = findViewById(R.id.btnGoToLogin);
@@ -142,7 +156,12 @@ public class RegisterActivity extends AppCompatActivity {
             return;
         }
 
-        boolean registered = sessionManager.register(fullName, email, password);
+        String selectedField = com.example.interviewai.model.User.DEFAULT_FIELD;
+        if (spnField != null && spnField.getSelectedItem() != null) {
+            selectedField = spnField.getSelectedItem().toString();
+        }
+
+        boolean registered = sessionManager.register(fullName, email, password, selectedField);
         if (registered) {
             Toast.makeText(this, getString(R.string.success_registered), Toast.LENGTH_SHORT).show();
             Intent intent = new Intent(RegisterActivity.this, HomeActivity.class);
