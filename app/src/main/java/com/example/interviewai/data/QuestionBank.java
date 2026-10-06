@@ -178,6 +178,15 @@ public class QuestionBank {
                     || qCategory.contains("Behavioral");
         }
 
+        // Interview Teknis - Umum / IT
+        if (targetCategory.equalsIgnoreCase(CATEGORY_TEKNIS)) {
+            return qCategory.equalsIgnoreCase(CATEGORY_TEKNIS_IT)
+                    || qCategory.contains("Software")
+                    || qCategory.contains("Web")
+                    || qCategory.contains("Database")
+                    || qCategory.contains("IT");
+        }
+
         // Interview Teknis - IT: Software Engineering, Web Development, Database & SQL, IT
         if (targetCategory.equalsIgnoreCase(CATEGORY_TEKNIS_IT)
                 || targetCategory.contains("- IT")

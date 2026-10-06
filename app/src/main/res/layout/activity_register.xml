@@ -140,6 +140,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="52dp"
                 android:background="@drawable/bg_input_box"
+                android:backgroundTint="@null"
                 android:orientation="horizontal"
                 android:gravity="center_vertical"
                 android:paddingHorizontal="14dp"
@@ -157,7 +158,9 @@
                     android:id="@+id/spnField"
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
-                    android:background="@android:color/transparent" />
+                    android:background="@android:color/transparent"
+                    android:backgroundTint="@null"
+                    android:popupBackground="@color/white" />
             </LinearLayout>
 
             <!-- Password Field -->
@@ -183,6 +186,7 @@
                 app:boxStrokeColor="@color/primary"
                 app:endIconMode="password_toggle"
                 app:endIconTint="@color/text_muted"
+                app:errorIconDrawable="@null"
                 app:startIconDrawable="@drawable/ic_lock"
                 app:startIconTint="@color/text_muted">
 
@@ -219,6 +223,7 @@
                 app:boxStrokeColor="@color/primary"
                 app:endIconMode="password_toggle"
                 app:endIconTint="@color/text_muted"
+                app:errorIconDrawable="@null"
                 app:startIconDrawable="@drawable/ic_lock"
                 app:startIconTint="@color/text_muted">
 

@@ -220,7 +220,7 @@ public class InterviewWorkflowManager implements Serializable {
      * Produces realistic score, strengths, weaknesses, and suggestions.
      * Ready to be replaced with real AI evaluation in the future.
      */
-    private static InterviewItem evaluateAnswer(InterviewQuestion question, String answer, String language) {
+    public static InterviewItem evaluateAnswer(InterviewQuestion question, String answer, String language) {
         String trimmed = answer != null ? answer.trim() : "";
         int wordCount = trimmed.isEmpty() ? 0 : trimmed.split("\\s+").length;
         boolean isEnglish = "English".equalsIgnoreCase(language);
@@ -300,12 +300,19 @@ public class InterviewWorkflowManager implements Serializable {
     /**
      * Menyelesaikan sesi latihan dan membentuk model InterviewSession resmi.
      * Uses the evaluated items stored during the interview for proper feedback scores.
+     * Guarantees all 5 questions are preserved with their own question, answer, and feedback.
      */
     public InterviewSession createCompletedSession() {
         List<InterviewItem> items = new ArrayList<>();
         int totalScore = 0;
 
-        for (int i = 0; i < questions.size(); i++) {
+        int totalCount = Math.max(5, questions != null ? questions.size() : 0);
+        List<InterviewQuestion> fallbackQuestions = null;
+        if (questions == null || questions.size() < totalCount) {
+            fallbackQuestions = QuestionBank.getFilteredQuestions(category, difficulty, language, totalCount);
+        }
+
+        for (int i = 0; i < totalCount; i++) {
             InterviewItem evaluated = (evaluatedItems != null && i < evaluatedItems.size())
                     ? evaluatedItems.get(i) : null;
 
@@ -313,12 +320,16 @@ public class InterviewWorkflowManager implements Serializable {
                 items.add(evaluated);
                 totalScore += evaluated.getScore();
             } else {
-                // Question was not submitted/evaluated — create a placeholder item
-                InterviewQuestion q = questions.get(i);
-                String ans = (i < answers.size()) ? answers.get(i) : "";
-                InterviewItem placeholder = evaluateAnswer(q, ans, language);
-                items.add(placeholder);
-                totalScore += placeholder.getScore();
+                InterviewQuestion q = (questions != null && i < questions.size()) ? questions.get(i) : null;
+                if (q == null && fallbackQuestions != null && i < fallbackQuestions.size()) {
+                    q = fallbackQuestions.get(i);
+                }
+                if (q != null) {
+                    String ans = (answers != null && i < answers.size()) ? answers.get(i) : "";
+                    InterviewItem placeholder = evaluateAnswer(q, ans, language);
+                    items.add(placeholder);
+                    totalScore += placeholder.getScore();
+                }
             }
         }
 

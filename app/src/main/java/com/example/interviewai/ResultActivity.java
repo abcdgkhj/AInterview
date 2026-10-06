@@ -69,6 +69,17 @@ public class ResultActivity extends AppCompatActivity {
             session = (InterviewSession) getIntent().getSerializableExtra(EXTRA_SESSION);
         }
 
+        String sessionIdExtra = getIntent() != null ? getIntent().getStringExtra("extra_session_id") : null;
+        if (sessionIdExtra != null && (session == null || session.getItems() == null || session.getItems().isEmpty())) {
+            List<InterviewSession> storedSessions = InterviewStorage.getSessions(this);
+            for (InterviewSession s : storedSessions) {
+                if (sessionIdExtra.equals(s.getSessionId())) {
+                    session = s;
+                    break;
+                }
+            }
+        }
+
         // Fallback jika session tidak ada dari intent: ambil sesi terbaru dari storage
         if (session == null) {
             List<InterviewSession> storedSessions = InterviewStorage.getSessions(this);
@@ -81,12 +92,39 @@ public class ResultActivity extends AppCompatActivity {
         setupActions();
     }
 
+    private void ensureCompleteSessionItems(InterviewSession session) {
+        if (session == null || session.getItems() == null) return;
+        List<com.example.interviewai.model.InterviewItem> items = session.getItems();
+        int targetCount = Math.max(5, session.getTotalQuestions());
+        if (items.size() < targetCount) {
+            List<com.example.interviewai.model.InterviewQuestion> fallbackQuestions =
+                    com.example.interviewai.data.QuestionBank.getFilteredQuestions(
+                            session.getRoleCategory(),
+                            session.getDifficulty(),
+                            session.getLanguage(),
+                            targetCount
+                    );
+            for (int i = items.size(); i < targetCount; i++) {
+                if (i < fallbackQuestions.size()) {
+                    com.example.interviewai.model.InterviewQuestion q = fallbackQuestions.get(i);
+                    items.add(com.example.interviewai.workflow.InterviewWorkflowManager.evaluateAnswer(
+                            q,
+                            "",
+                            session.getLanguage()
+                    ));
+                }
+            }
+        }
+    }
+
     private void displaySessionData() {
         if (session == null) {
             Toast.makeText(this, "Tidak ada data sesi untuk ditampilkan.", Toast.LENGTH_SHORT).show();
             navigateToHome();
             return;
         }
+
+        ensureCompleteSessionItems(session);
 
         String diff = session.getDifficulty() != null ? session.getDifficulty() : "Intermediate";
         String meta = session.getCandidateName() + " • " + session.getRoleCategory() + " (" + diff + ")";
@@ -105,6 +143,7 @@ public class ResultActivity extends AppCompatActivity {
 
         // Setup RecyclerView daftar tinjauan jawaban
         rvFeedback.setLayoutManager(new LinearLayoutManager(this));
+        rvFeedback.setNestedScrollingEnabled(false);
         FeedbackAdapter adapter = new FeedbackAdapter(session.getItems());
         rvFeedback.setAdapter(adapter);
     }

@@ -57,6 +57,7 @@ public class HistoryAdapter extends RecyclerView.Adapter<HistoryAdapter.HistoryV
         holder.itemView.setOnClickListener(v -> {
             Intent intent = new Intent(context, ResultActivity.class);
             intent.putExtra(ResultActivity.EXTRA_SESSION, session);
+            intent.putExtra("extra_session_id", session.getSessionId());
             context.startActivity(intent);
         });
 

@@ -54,6 +54,15 @@ public class DataDiriActivity extends AppCompatActivity {
         btnSave = findViewById(R.id.btnSaveDataDiri);
         btnBack = findViewById(R.id.btnBack);
 
+        // Pastikan field email bersifat read-only dan tidak dapat diedit
+        if (edtEmail != null) {
+            edtEmail.setFocusable(false);
+            edtEmail.setFocusableInTouchMode(false);
+            edtEmail.setClickable(false);
+            edtEmail.setCursorVisible(false);
+            edtEmail.setKeyListener(null);
+        }
+
         if (btnBack != null) {
             btnBack.setOnClickListener(v -> finish());
         }
@@ -76,7 +85,6 @@ public class DataDiriActivity extends AppCompatActivity {
 
     private void saveChanges() {
         String name = edtName.getText() != null ? edtName.getText().toString().trim() : "";
-        String email = edtEmail.getText() != null ? edtEmail.getText().toString().trim() : "";
 
         // Validate name
         if (name.isEmpty()) {
@@ -85,25 +93,11 @@ public class DataDiriActivity extends AppCompatActivity {
             return;
         }
 
-        // Validate email
-        if (email.isEmpty()) {
-            edtEmail.setError(getString(R.string.error_empty_email));
-            edtEmail.requestFocus();
-            return;
-        }
-
-        if (!Patterns.EMAIL_ADDRESS.matcher(email).matches()) {
-            edtEmail.setError(getString(R.string.error_invalid_email));
-            edtEmail.requestFocus();
-            return;
-        }
-
-        // Update user data
+        // Update user data: email bersifat read-only sehingga alamat email akun tetap dipertahankan
         User user = sessionManager.getCurrentUser();
         if (user != null) {
             user.setName(name);
-            // Email update: create a new User object since there's no setEmail
-            User updatedUser = new User(name, email, user.getPassword(), user.getRegisteredDate(), user.getField());
+            User updatedUser = new User(name, user.getEmail(), user.getPassword(), user.getRegisteredDate(), user.getField());
             sessionManager.saveUser(updatedUser);
 
             Toast.makeText(this, "Data diri berhasil diperbarui!", Toast.LENGTH_SHORT).show();

@@ -62,20 +62,44 @@ public class RegisterActivity extends AppCompatActivity {
         tilPassword = findViewById(R.id.tilPassword);
         tilConfirmPassword = findViewById(R.id.tilConfirmPassword);
 
+        // Pastikan errorIconDrawable null agar icon toggle password (mata) tidak tertimpa icon error
+        if (tilPassword != null) {
+            tilPassword.setErrorIconDrawable(null);
+        }
+        if (tilConfirmPassword != null) {
+            tilConfirmPassword.setErrorIconDrawable(null);
+        }
+
         edtFullName = findViewById(R.id.edtFullName);
         edtEmail = findViewById(R.id.edtEmail);
         edtPassword = findViewById(R.id.edtPassword);
         edtConfirmPassword = findViewById(R.id.edtConfirmPassword);
 
+        setupClearErrorOnType();
+
         spnField = findViewById(R.id.spnField);
         if (spnField != null) {
             ArrayAdapter<String> fieldAdapter = new ArrayAdapter<>(
                     this,
-                    android.R.layout.simple_spinner_item,
+                    R.layout.spinner_item_field,
                     com.example.interviewai.model.User.AVAILABLE_FIELDS
             );
-            fieldAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+            fieldAdapter.setDropDownViewResource(R.layout.spinner_dropdown_item_field);
             spnField.setAdapter(fieldAdapter);
+            // Remove any Material3 theme tint from the Spinner
+            spnField.setBackgroundTintList(null);
+            if (spnField.getBackground() != null) {
+                spnField.getBackground().setTintList(null);
+            }
+            spnField.setPopupBackgroundResource(R.color.white);
+            // Also clear tint on the parent container (LinearLayout with bg_input_box)
+            View spinnerContainer = (View) spnField.getParent();
+            if (spinnerContainer != null) {
+                spinnerContainer.setBackgroundTintList(null);
+                if (spinnerContainer.getBackground() != null) {
+                    spinnerContainer.getBackground().setTintList(null);
+                }
+            }
         }
 
         btnRegister = findViewById(R.id.btnRegister);
@@ -171,5 +195,30 @@ public class RegisterActivity extends AppCompatActivity {
         } else {
             Toast.makeText(this, "Gagal mendaftarkan akun. Silakan coba lagi.", Toast.LENGTH_SHORT).show();
         }
+    }
+
+    private void setupClearErrorOnType() {
+        attachClearErrorTextWatcher(tilFullName, edtFullName);
+        attachClearErrorTextWatcher(tilEmail, edtEmail);
+        attachClearErrorTextWatcher(tilPassword, edtPassword);
+        attachClearErrorTextWatcher(tilConfirmPassword, edtConfirmPassword);
+    }
+
+    private void attachClearErrorTextWatcher(TextInputLayout til, TextInputEditText edt) {
+        if (til == null || edt == null) return;
+        edt.addTextChangedListener(new android.text.TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) {}
+
+            @Override
+            public void onTextChanged(CharSequence s, int start, int before, int count) {
+                if (til.getError() != null) {
+                    til.setError(null);
+                }
+            }
+
+            @Override
+            public void afterTextChanged(android.text.Editable s) {}
+        });
     }
 }

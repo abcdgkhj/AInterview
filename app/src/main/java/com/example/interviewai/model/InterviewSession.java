@@ -1,5 +1,8 @@
 package com.example.interviewai.model;
 
+import com.example.interviewai.data.QuestionBank;
+import com.example.interviewai.workflow.InterviewWorkflowManager;
+
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -66,16 +69,34 @@ public class InterviewSession implements Serializable {
         JSONArray arr = obj.optJSONArray("items");
         if (arr != null) {
             for (int i = 0; i < arr.length(); i++) {
-                list.add(InterviewItem.fromJsonObject(arr.getJSONObject(i)));
+                JSONObject itemObj = arr.optJSONObject(i);
+                if (itemObj != null) {
+                    list.add(InterviewItem.fromJsonObject(itemObj));
+                }
+            }
+        }
+
+        String role = obj.optString("roleCategory", "Umum");
+        String diff = obj.optString("difficulty", "Intermediate");
+        String lang = obj.optString("language", "Indonesian");
+
+        // Menjamin sesi lama yang tersimpan tetap menyediakan 5 pertanyaan lengkap saat dibuka kembali
+        if (list.size() < 5) {
+            List<InterviewQuestion> fallbackQuestions = QuestionBank.getFilteredQuestions(role, diff, lang, 5);
+            for (int i = list.size(); i < 5; i++) {
+                if (i < fallbackQuestions.size()) {
+                    InterviewQuestion q = fallbackQuestions.get(i);
+                    list.add(InterviewWorkflowManager.evaluateAnswer(q, "", lang));
+                }
             }
         }
 
         return new InterviewSession(
                 obj.optString("sessionId", ""),
                 obj.optString("candidateName", "Kandidat"),
-                obj.optString("roleCategory", "Umum"),
-                obj.optString("difficulty", "Intermediate"),
-                obj.optString("language", "Indonesian"),
+                role,
+                diff,
+                lang,
                 obj.optLong("timestamp", System.currentTimeMillis()),
                 obj.optInt("overallScore", 75),
                 obj.optString("summaryStatus", "Baik"),

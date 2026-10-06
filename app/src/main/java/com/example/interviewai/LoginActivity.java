@@ -54,11 +54,19 @@ public class LoginActivity extends AppCompatActivity {
         tilPassword = findViewById(R.id.tilPassword);
         edtEmail = findViewById(R.id.edtEmail);
         edtPassword = findViewById(R.id.edtPassword);
+
+        // Pastikan errorIconDrawable null agar icon toggle password (mata) tidak tertimpa icon error
+        if (tilPassword != null) {
+            tilPassword.setErrorIconDrawable(null);
+        }
+
         btnSignIn = findViewById(R.id.btnSignIn);
         btnGoToRegister = findViewById(R.id.btnGoToRegister);
         btnForgotPassword = findViewById(R.id.btnForgotPassword);
         btnBack = findViewById(R.id.btnBack);
         cardDemoAccount = findViewById(R.id.cardDemoAccount);
+
+        setupClearErrorOnType();
 
         if (btnBack != null) {
             btnBack.setOnClickListener(v -> finish());
@@ -164,5 +172,28 @@ public class LoginActivity extends AppCompatActivity {
             edtPassword.requestFocus();
             Toast.makeText(this, getString(R.string.error_auth_failed), Toast.LENGTH_LONG).show();
         }
+    }
+
+    private void setupClearErrorOnType() {
+        attachClearErrorTextWatcher(tilEmail, edtEmail);
+        attachClearErrorTextWatcher(tilPassword, edtPassword);
+    }
+
+    private void attachClearErrorTextWatcher(TextInputLayout til, TextInputEditText edt) {
+        if (til == null || edt == null) return;
+        edt.addTextChangedListener(new android.text.TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) {}
+
+            @Override
+            public void onTextChanged(CharSequence s, int start, int before, int count) {
+                if (til.getError() != null) {
+                    til.setError(null);
+                }
+            }
+
+            @Override
+            public void afterTextChanged(android.text.Editable s) {}
+        });
     }
 }

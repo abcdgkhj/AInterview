@@ -116,6 +116,7 @@
                 app:boxStrokeColor="@color/primary"
                 app:endIconMode="password_toggle"
                 app:endIconTint="@color/text_muted"
+                app:errorIconDrawable="@null"
                 app:startIconDrawable="@drawable/ic_lock"
                 app:startIconTint="@color/text_muted">
 

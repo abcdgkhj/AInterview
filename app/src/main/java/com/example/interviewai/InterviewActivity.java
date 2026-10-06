@@ -345,6 +345,7 @@ public class InterviewActivity extends AppCompatActivity {
         // Buka ResultActivity
         Intent intent = new Intent(InterviewActivity.this, ResultActivity.class);
         intent.putExtra(ResultActivity.EXTRA_SESSION, session);
+        intent.putExtra("extra_session_id", session.getSessionId());
         startActivity(intent);
         finish();
     }

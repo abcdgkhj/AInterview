@@ -121,7 +121,9 @@ public class HomeActivity extends AppCompatActivity {
             cardQuickResult.setOnClickListener(v -> {
                 if (sessions != null && !sessions.isEmpty()) {
                     Intent intent = new Intent(HomeActivity.this, ResultActivity.class);
-                    intent.putExtra(ResultActivity.EXTRA_SESSION, sessions.get(0));
+                    InterviewSession latest = sessions.get(0);
+                    intent.putExtra(ResultActivity.EXTRA_SESSION, latest);
+                    intent.putExtra("extra_session_id", latest.getSessionId());
                     startActivity(intent);
                 } else {
                     Toast.makeText(this, "Belum ada sesi yang selesai. Selesaikan interview pertama Anda!", Toast.LENGTH_SHORT).show();

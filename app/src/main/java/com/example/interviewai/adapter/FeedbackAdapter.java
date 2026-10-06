@@ -43,25 +43,40 @@ public class FeedbackAdapter extends RecyclerView.Adapter<FeedbackAdapter.Feedba
 
     static class FeedbackViewHolder extends RecyclerView.ViewHolder {
         private final TextView txtItemNumber;
+        private final TextView txtItemScore;
         private final TextView txtItemStatusBadge;
         private final TextView txtItemQuestion;
         private final TextView txtItemAnswer;
+        private final View layoutItemStrength;
+        private final TextView txtItemStrength;
+        private final View layoutItemImprovement;
         private final TextView txtItemGuideline;
+        private final View layoutItemAiNotice;
         private final TextView txtItemAiNotice;
 
         public FeedbackViewHolder(@NonNull View itemView) {
             super(itemView);
             txtItemNumber = itemView.findViewById(R.id.txtItemNumber);
+            txtItemScore = itemView.findViewById(R.id.txtItemScore);
             txtItemStatusBadge = itemView.findViewById(R.id.txtItemStatusBadge);
             txtItemQuestion = itemView.findViewById(R.id.txtItemQuestion);
             txtItemAnswer = itemView.findViewById(R.id.txtItemAnswer);
+            layoutItemStrength = itemView.findViewById(R.id.layoutItemStrength);
+            txtItemStrength = itemView.findViewById(R.id.txtItemStrength);
+            layoutItemImprovement = itemView.findViewById(R.id.layoutItemImprovement);
             txtItemGuideline = itemView.findViewById(R.id.txtItemGuideline);
+            layoutItemAiNotice = itemView.findViewById(R.id.layoutItemAiNotice);
             txtItemAiNotice = itemView.findViewById(R.id.txtItemAiNotice);
         }
 
         public void bind(InterviewItem item, int index) {
             txtItemNumber.setText("Pertanyaan " + index);
             txtItemQuestion.setText(item.getQuestion());
+
+            // Score badge for this specific question
+            if (txtItemScore != null) {
+                txtItemScore.setText("Skor: " + item.getScore());
+            }
 
             // Answer status badge
             String answer = item.getUserAnswer();
@@ -81,38 +96,38 @@ public class FeedbackAdapter extends RecyclerView.Adapter<FeedbackAdapter.Feedba
                 txtItemAnswer.setAlpha(0.6f);
             }
 
-            // Reference guideline (from question tip stored in improvement field)
-            txtItemGuideline.setText(item.getImprovement());
-
-            // AI evaluation status notice
-            // Reads the actual EvaluationStatus enum value from the item.
-            // When a real AI service sets COMPLETED status in the future,
-            // replace this switch to display actual AI feedback fields instead.
-            EvaluationStatus evalStatus = item.getEvaluationStatus();
-            String aiNoticeText;
-
-            switch (evalStatus) {
-                case COMPLETED:
-                    // Future: display real AI feedback from EvaluationResponse here
-                    aiNoticeText = item.getSampleAnswer();
-                    break;
-                case PENDING:
-                    aiNoticeText = "Evaluasi AI: Sedang diproses...";
-                    break;
-                case FAILED:
-                    aiNoticeText = "Evaluasi AI: Gagal. Coba lagi nanti.";
-                    break;
-                case NOT_AVAILABLE:
-                case NOT_REQUESTED:
-                default:
-                    // Use the placeholder text stored by InterviewWorkflowManager
-                    aiNoticeText = item.getSampleAnswer();
-                    if (aiNoticeText == null || aiNoticeText.trim().isEmpty()) {
-                        aiNoticeText = "Evaluasi AI: Belum tersedia (menunggu integrasi layanan AI).";
-                    }
-                    break;
+            // Strengths / Analysis feedback
+            if (txtItemStrength != null) {
+                String strength = item.getStrength();
+                if (strength != null && !strength.trim().isEmpty()) {
+                    txtItemStrength.setText(strength);
+                    if (layoutItemStrength != null) layoutItemStrength.setVisibility(View.VISIBLE);
+                } else {
+                    if (layoutItemStrength != null) layoutItemStrength.setVisibility(View.GONE);
+                }
             }
-            txtItemAiNotice.setText(aiNoticeText);
+
+            // Improvement / Guideline feedback
+            if (txtItemGuideline != null) {
+                String improvement = item.getImprovement();
+                if (improvement != null && !improvement.trim().isEmpty()) {
+                    txtItemGuideline.setText(improvement);
+                    if (layoutItemImprovement != null) layoutItemImprovement.setVisibility(View.VISIBLE);
+                } else {
+                    if (layoutItemImprovement != null) layoutItemImprovement.setVisibility(View.GONE);
+                }
+            }
+
+            // Ideal sample answer / recommendation
+            if (txtItemAiNotice != null) {
+                String sampleAnswer = item.getSampleAnswer();
+                if (sampleAnswer != null && !sampleAnswer.trim().isEmpty()) {
+                    txtItemAiNotice.setText(sampleAnswer);
+                    if (layoutItemAiNotice != null) layoutItemAiNotice.setVisibility(View.VISIBLE);
+                } else {
+                    if (layoutItemAiNotice != null) layoutItemAiNotice.setVisibility(View.GONE);
+                }
+            }
         }
     }
 }

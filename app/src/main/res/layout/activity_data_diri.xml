@@ -122,6 +122,18 @@
                 android:textColor="@color/text_primary"
                 android:textColorHint="@color/text_muted"
                 android:textSize="14sp"
+                android:focusable="false"
+                android:focusableInTouchMode="false"
+                android:cursorVisible="false"
+                android:clickable="false"
+                android:layout_marginBottom="4dp" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Alamat email akun bersifat permanen dan tidak dapat diubah."
+                android:textColor="@color/text_muted"
+                android:textSize="11sp"
                 android:layout_marginBottom="16dp" />
 
             <View
