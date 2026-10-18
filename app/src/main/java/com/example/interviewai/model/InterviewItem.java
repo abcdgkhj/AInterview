@@ -12,6 +12,7 @@ public class InterviewItem implements Serializable {
     private String userAnswer;
     private int score;
     private String strength;
+    private String weakness;
     private String improvement;
     private String sampleAnswer;
     /**
@@ -22,18 +23,35 @@ public class InterviewItem implements Serializable {
     private EvaluationStatus evaluationStatus;
 
     /**
-     * Full constructor including evaluation status.
+     * Full constructor including weakness and evaluation status.
      * Use when creating items with a known AI evaluation state.
      */
     public InterviewItem(String question, String userAnswer, int score, String strength,
-                         String improvement, String sampleAnswer, EvaluationStatus evaluationStatus) {
+                         String weakness, String improvement, String sampleAnswer, EvaluationStatus evaluationStatus) {
         this.question = question;
         this.userAnswer = userAnswer;
         this.score = score;
         this.strength = strength;
+        this.weakness = weakness != null ? weakness : "";
         this.improvement = improvement;
         this.sampleAnswer = sampleAnswer;
         this.evaluationStatus = evaluationStatus != null ? evaluationStatus : EvaluationStatus.NOT_AVAILABLE;
+    }
+
+    /**
+     * Constructor with weakness, defaulting evaluation status to COMPLETED if score > 0.
+     */
+    public InterviewItem(String question, String userAnswer, int score, String strength,
+                         String weakness, String improvement, String sampleAnswer) {
+        this(question, userAnswer, score, strength, weakness, improvement, sampleAnswer, EvaluationStatus.COMPLETED);
+    }
+
+    /**
+     * Backward-compatible constructor without weakness.
+     */
+    public InterviewItem(String question, String userAnswer, int score, String strength,
+                         String improvement, String sampleAnswer, EvaluationStatus evaluationStatus) {
+        this(question, userAnswer, score, strength, "", improvement, sampleAnswer, evaluationStatus);
     }
 
     /**
@@ -41,7 +59,7 @@ public class InterviewItem implements Serializable {
      * All existing callers use this constructor and remain compatible.
      */
     public InterviewItem(String question, String userAnswer, int score, String strength, String improvement, String sampleAnswer) {
-        this(question, userAnswer, score, strength, improvement, sampleAnswer, EvaluationStatus.NOT_AVAILABLE);
+        this(question, userAnswer, score, strength, "", improvement, sampleAnswer, EvaluationStatus.NOT_AVAILABLE);
     }
 
     public JSONObject toJsonObject() throws JSONException {
@@ -50,6 +68,7 @@ public class InterviewItem implements Serializable {
         obj.put("userAnswer", userAnswer);
         obj.put("score", score);
         obj.put("strength", strength);
+        obj.put("weakness", weakness != null ? weakness : "");
         obj.put("improvement", improvement);
         obj.put("sampleAnswer", sampleAnswer);
         obj.put("evaluationStatus", evaluationStatus != null ? evaluationStatus.getKey() : EvaluationStatus.NOT_AVAILABLE.getKey());
@@ -63,6 +82,7 @@ public class InterviewItem implements Serializable {
                 obj.optString("userAnswer", ""),
                 obj.optInt("score", 70),
                 obj.optString("strength", ""),
+                obj.optString("weakness", ""),
                 obj.optString("improvement", ""),
                 obj.optString("sampleAnswer", ""),
                 status
@@ -83,6 +103,10 @@ public class InterviewItem implements Serializable {
 
     public String getStrength() {
         return strength;
+    }
+
+    public String getWeakness() {
+        return weakness != null ? weakness : "";
     }
 
     public String getImprovement() {

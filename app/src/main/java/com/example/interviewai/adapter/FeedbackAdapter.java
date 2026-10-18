@@ -49,6 +49,8 @@ public class FeedbackAdapter extends RecyclerView.Adapter<FeedbackAdapter.Feedba
         private final TextView txtItemAnswer;
         private final View layoutItemStrength;
         private final TextView txtItemStrength;
+        private final View layoutItemWeakness;
+        private final TextView txtItemWeakness;
         private final View layoutItemImprovement;
         private final TextView txtItemGuideline;
         private final View layoutItemAiNotice;
@@ -63,6 +65,8 @@ public class FeedbackAdapter extends RecyclerView.Adapter<FeedbackAdapter.Feedba
             txtItemAnswer = itemView.findViewById(R.id.txtItemAnswer);
             layoutItemStrength = itemView.findViewById(R.id.layoutItemStrength);
             txtItemStrength = itemView.findViewById(R.id.txtItemStrength);
+            layoutItemWeakness = itemView.findViewById(R.id.layoutItemWeakness);
+            txtItemWeakness = itemView.findViewById(R.id.txtItemWeakness);
             layoutItemImprovement = itemView.findViewById(R.id.layoutItemImprovement);
             txtItemGuideline = itemView.findViewById(R.id.txtItemGuideline);
             layoutItemAiNotice = itemView.findViewById(R.id.layoutItemAiNotice);
@@ -104,6 +108,17 @@ public class FeedbackAdapter extends RecyclerView.Adapter<FeedbackAdapter.Feedba
                     if (layoutItemStrength != null) layoutItemStrength.setVisibility(View.VISIBLE);
                 } else {
                     if (layoutItemStrength != null) layoutItemStrength.setVisibility(View.GONE);
+                }
+            }
+
+            // Weaknesses feedback
+            if (txtItemWeakness != null) {
+                String weakness = item.getWeakness();
+                if (weakness != null && !weakness.trim().isEmpty()) {
+                    txtItemWeakness.setText(weakness);
+                    if (layoutItemWeakness != null) layoutItemWeakness.setVisibility(View.VISIBLE);
+                } else {
+                    if (layoutItemWeakness != null) layoutItemWeakness.setVisibility(View.GONE);
                 }
             }
 

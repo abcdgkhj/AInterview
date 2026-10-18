@@ -37,6 +37,12 @@ public class EvaluationResponse implements Serializable {
     private final String strengths;
 
     /**
+     * What the candidate was missing or did poorly in this answer.
+     * Only meaningful when {@code status == COMPLETED}.
+     */
+    private final String weaknesses;
+
+    /**
      * Specific, actionable suggestions to improve the answer.
      * Only meaningful when {@code status == COMPLETED}.
      */
@@ -65,6 +71,7 @@ public class EvaluationResponse implements Serializable {
         this.status = builder.status;
         this.overallScore = builder.overallScore;
         this.strengths = builder.strengths;
+        this.weaknesses = builder.weaknesses;
         this.improvements = builder.improvements;
         this.modelAnswer = builder.modelAnswer;
         this.criterionScores = builder.criterionScores;
@@ -104,6 +111,7 @@ public class EvaluationResponse implements Serializable {
     public EvaluationStatus getStatus()                { return status; }
     public int getOverallScore()                       { return overallScore; }
     public String getStrengths()                       { return strengths; }
+    public String getWeaknesses()                      { return weaknesses; }
     public String getImprovements()                    { return improvements; }
     public String getModelAnswer()                     { return modelAnswer; }
     public Map<String, Integer> getCriterionScores()   { return criterionScores; }
@@ -117,23 +125,12 @@ public class EvaluationResponse implements Serializable {
 
     /**
      * Builder for constructing a complete EvaluationResponse from an AI API response.
-     *
-     * <h3>Future integration point:</h3>
-     * <pre>
-     *   // Parse API JSON and build:
-     *   EvaluationResponse response = new EvaluationResponse.Builder(EvaluationStatus.COMPLETED)
-     *       .overallScore(apiJson.getInt("score"))
-     *       .strengths(apiJson.getString("strengths"))
-     *       .improvements(apiJson.getString("improvements"))
-     *       .modelAnswer(apiJson.getString("model_answer"))
-     *       .scoreRationale(apiJson.getString("rationale"))
-     *       .build();
-     * </pre>
      */
     public static class Builder {
         private final EvaluationStatus status;
         private int overallScore = 0;
         private String strengths = "";
+        private String weaknesses = "";
         private String improvements = "";
         private String modelAnswer = "";
         private Map<String, Integer> criterionScores = null;
@@ -145,6 +142,7 @@ public class EvaluationResponse implements Serializable {
 
         public Builder overallScore(int score)                          { this.overallScore = score; return this; }
         public Builder strengths(String s)                              { this.strengths = s != null ? s : ""; return this; }
+        public Builder weaknesses(String s)                             { this.weaknesses = s != null ? s : ""; return this; }
         public Builder improvements(String s)                           { this.improvements = s != null ? s : ""; return this; }
         public Builder modelAnswer(String s)                            { this.modelAnswer = s != null ? s : ""; return this; }
         public Builder criterionScores(Map<String, Integer> scores)     { this.criterionScores = scores; return this; }

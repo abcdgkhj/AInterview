@@ -86,7 +86,7 @@
         android:lineSpacingExtra="2dp"
         android:layout_marginBottom="12dp" />
 
-    <!-- Feedback Section: Strengths / Analysis -->
+    <!-- Feedback Section: Kelebihan (Strengths) -->
     <LinearLayout
         android:id="@+id/layoutItemStrength"
         android:layout_width="match_parent"
@@ -113,8 +113,8 @@
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="Analisis &amp; Kelebihan:"
-                android:textColor="@color/text_primary"
+                android:text="Kelebihan:"
+                android:textColor="@color/success"
                 android:textSize="12sp"
                 android:textStyle="bold"
                 android:layout_marginBottom="2dp" />
@@ -130,9 +130,9 @@
         </LinearLayout>
     </LinearLayout>
 
-    <!-- Feedback Section: Improvement / Guideline -->
+    <!-- Feedback Section: Kekurangan (Weaknesses) -->
     <LinearLayout
-        android:id="@+id/layoutItemImprovement"
+        android:id="@+id/layoutItemWeakness"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="horizontal"
@@ -144,6 +144,50 @@
             android:layout_height="18dp"
             android:src="@drawable/ic_lightbulb"
             app:tint="@color/warning"
+            android:contentDescription="Kekurangan"
+            android:layout_marginEnd="8dp"
+            android:layout_marginTop="2dp" />
+
+        <LinearLayout
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:orientation="vertical">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Kekurangan:"
+                android:textColor="@color/warning"
+                android:textSize="12sp"
+                android:textStyle="bold"
+                android:layout_marginBottom="2dp" />
+
+            <TextView
+                android:id="@+id/txtItemWeakness"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Penjelasan masih terlalu singkat."
+                android:textColor="@color/text_secondary"
+                android:textSize="12sp"
+                android:lineSpacingExtra="2dp" />
+        </LinearLayout>
+    </LinearLayout>
+
+    <!-- Feedback Section: Saran Perbaikan (Improvement) -->
+    <LinearLayout
+        android:id="@+id/layoutItemImprovement"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:gravity="top"
+        android:layout_marginBottom="8dp">
+
+        <ImageView
+            android:layout_width="18dp"
+            android:layout_height="18dp"
+            android:src="@drawable/ic_chat"
+            app:tint="@color/primary"
             android:contentDescription="Saran Perbaikan"
             android:layout_marginEnd="8dp"
             android:layout_marginTop="2dp" />
@@ -158,7 +202,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="Saran Perbaikan:"
-                android:textColor="@color/text_primary"
+                android:textColor="@color/primary"
                 android:textSize="12sp"
                 android:textStyle="bold"
                 android:layout_marginBottom="2dp" />
@@ -167,7 +211,7 @@
                 android:id="@+id/txtItemGuideline"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="Panduan Jawaban: Fokus pada pengalaman relevan."
+                android:text="Gunakan metode STAR dan berikan contoh konkret."
                 android:textColor="@color/text_secondary"
                 android:textSize="12sp"
                 android:lineSpacingExtra="2dp" />

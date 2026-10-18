@@ -200,6 +200,29 @@ public class InterviewWorkflowManager implements Serializable {
      *
      * @return the evaluated InterviewItem with score, strength, improvement, and suggestion
      */
+    public void setQuestions(List<InterviewQuestion> newQuestions) {
+        if (newQuestions != null && !newQuestions.isEmpty()) {
+            this.questions = new ArrayList<>(newQuestions);
+            this.answers = new ArrayList<>();
+            this.evaluatedItems = new ArrayList<>();
+            for (int i = 0; i < this.questions.size(); i++) {
+                this.answers.add("");
+                this.evaluatedItems.add(null);
+            }
+            this.currentIndex = 0;
+        }
+    }
+
+    public void setEvaluatedItem(int index, InterviewItem item) {
+        if (evaluatedItems != null && index >= 0 && index < evaluatedItems.size()) {
+            evaluatedItems.set(index, item);
+        }
+    }
+
+    public void setEvaluatedItemForCurrent(InterviewItem item) {
+        setEvaluatedItem(currentIndex, item);
+    }
+
     public InterviewItem evaluateCurrentAnswer() {
         InterviewQuestion question = getCurrentQuestion();
         String answer = getCurrentAnswer();
@@ -227,6 +250,7 @@ public class InterviewWorkflowManager implements Serializable {
 
         int score;
         String strength;
+        String weakness;
         String improvement;
         String sampleAnswer;
 
@@ -234,10 +258,12 @@ public class InterviewWorkflowManager implements Serializable {
             score = 30;
             if (isEnglish) {
                 strength = "Question skipped or left unanswered.";
+                weakness = "No content was provided.";
                 improvement = "Practice tackling unfamiliar questions by breaking them down systematically rather than leaving them blank.";
                 sampleAnswer = "Introduce context, outline your key methodology, and illustrate with an actionable past experience.";
             } else {
                 strength = "Pertanyaan ini dilewati / belum dijawab.";
+                weakness = "Tidak ada jawaban yang dikirimkan.";
                 improvement = "Berlatihlah mengutarakan kerangka pemikiran awal meskipun belum menguasai topik sepenuhnya, hindari mengosongkan jawaban.";
                 sampleAnswer = "Mulai dengan konteks peran, jelaskan tantangan yang dihadapi, langkah sistematis yang Anda ambil, dan sebutkan hasil positif yang terukur.";
             }
@@ -245,21 +271,25 @@ public class InterviewWorkflowManager implements Serializable {
             score = 55 + (wordCount * 2);
             if (isEnglish) {
                 strength = "Direct answer addressing the core question prompt.";
-                improvement = "The explanation is brief. Expand with context, actions taken, and final outcomes.";
+                weakness = "The explanation is very brief and lacks elaboration.";
+                improvement = "Expand with context, actions taken, and final outcomes.";
                 sampleAnswer = "Start with the problem definition, describe your hands-on intervention, and highlight key results.";
             } else {
                 strength = "Anda telah menjawab pertanyaan secara langsung.";
-                improvement = "Jawaban terlalu singkat. Jelaskan konteks, aksi yang diambil, dan hasil yang diperoleh agar pewawancara memperoleh gambaran utuh.";
+                weakness = "Jawaban terlalu singkat sehingga belum menggambarkan konteks utuh.";
+                improvement = "Jelaskan konteks, aksi yang diambil, dan hasil yang diperoleh agar pewawancara memperoleh gambaran utuh.";
                 sampleAnswer = "Mulai dengan konteks peran, jelaskan tantangan yang dihadapi, langkah sistematis yang Anda ambil, dan sebutkan hasil positif yang terukur.";
             }
         } else if (wordCount < 30) {
             score = 72 + Math.min(10, (wordCount - 10) / 2);
             if (isEnglish) {
                 strength = "Core principles were communicated clearly and concisely.";
+                weakness = "Missing quantifiable metrics or specific technical decisions.";
                 improvement = "Include real-world metrics or specific technical decisions to enhance persuasiveness.";
                 sampleAnswer = "Detail your specific role, technical tools utilized, and metrics achieved (e.g. reduced latency by 30%).";
             } else {
                 strength = "Poin utama sudah tersampaikan dengan bahasa yang jelas.";
+                weakness = "Belum menyertakan metrik konkret atau bukti pencapaian nyata.";
                 improvement = "Tambahkan contoh kasus nyata atau metrik konkret dari pengalaman Anda sebelumnya untuk memperkuat kredibilitas.";
                 sampleAnswer = "Berikan ilustrasi kasus nyata dari proyek sebelumnya, peran spesifik Anda, dan metrik dampak yang dicapai.";
             }
@@ -267,10 +297,12 @@ public class InterviewWorkflowManager implements Serializable {
             score = 84 + Math.min(8, (wordCount - 30) / 5);
             if (isEnglish) {
                 strength = "Well-structured answer demonstrating solid technical depth.";
+                weakness = "Could emphasize business impact and high-level strategy more directly.";
                 improvement = "Tie the learning back to how it provides immediate business or organizational value.";
                 sampleAnswer = "Highlight strategic trade-offs considered and post-implementation reflections.";
             } else {
                 strength = "Jawaban terstruktur baik dengan kedalaman penjelasan yang memadai.";
+                weakness = "Dampak terhadap bisnis atau nilai tambah perusahaan masih dapat dieksplorasi lebih jauh.";
                 improvement = "Pertajam bagian kesimpulan atau bagaimana pengalaman tersebut dapat memberikan nilai tambah langsung bagi perusahaan.";
                 sampleAnswer = "Perjelas analisis trade-off yang Anda pertimbangkan dan dampak berkelanjutan yang dirasakan tim.";
             }
@@ -278,10 +310,12 @@ public class InterviewWorkflowManager implements Serializable {
             score = 92 + Math.min(6, (wordCount - 60) / 10);
             if (isEnglish) {
                 strength = "Exceptional depth, structured articulation, and comprehensive coverage.";
+                weakness = "Ensure pacing remains concise so the interviewer stays engaged.";
                 improvement = "Keep up this high standard of communication and ensure pacing remains crisp.";
                 sampleAnswer = "Your articulated response matches industry best practices.";
             } else {
                 strength = "Pemaparan sangat detail, matang, dan mencerminkan penguasaan topik yang mendalam.";
+                weakness = "Pastikan durasi penjelasan tetap padat dan langsung fokus pada inti permasalahan.";
                 improvement = "Pertahankan gaya penyampaian ini dan pastikan ritme berbicara tetap fokus pada inti terpenting.";
                 sampleAnswer = "Respon yang Anda susun telah memenuhi standar profesional industri.";
             }
@@ -292,6 +326,7 @@ public class InterviewWorkflowManager implements Serializable {
                 trimmed,
                 score,
                 strength,
+                weakness,
                 improvement,
                 sampleAnswer
         );
