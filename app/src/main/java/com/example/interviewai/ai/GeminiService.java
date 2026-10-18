@@ -35,10 +35,7 @@ import java.util.concurrent.Executors;
 public class GeminiService {
 
     private static final String TAG = "GeminiService";
-    public static final String API_KEY = GeminiApiKey.API_KEY;
     public static final String MODEL_NAME = "gemini-flash-lite-latest";
-    private static final String ENDPOINT_URL = "https://generativelanguage.googleapis.com/v1beta/models/"
-            + MODEL_NAME + ":generateContent?key=" + API_KEY;
 
     private static final ExecutorService executor = Executors.newCachedThreadPool();
     private static final Handler mainHandler = new Handler(Looper.getMainLooper());
@@ -242,72 +239,110 @@ public class GeminiService {
     }
 
     /**
-     * Memanggil REST API Gemini via HttpURLConnection
+     * Memanggil REST API Gemini via HttpURLConnection dengan auto-failover / key rotation
      */
     private static String callGeminiApi(String promptText, boolean jsonMimeType) throws Exception {
-        URL url = new URL(ENDPOINT_URL);
-        HttpURLConnection conn = (HttpURLConnection) url.openConnection();
-        conn.setRequestMethod("POST");
-        conn.setRequestProperty("Content-Type", "application/json; charset=UTF-8");
-        conn.setConnectTimeout(25000);
-        conn.setReadTimeout(35000);
-        conn.setDoOutput(true);
+        int maxAttempts = Math.max(1, GeminiApiKey.getKeyCount());
+        Exception lastException = null;
 
-        JSONObject root = new JSONObject();
-        JSONArray contents = new JSONArray();
-        JSONObject content = new JSONObject();
-        JSONArray parts = new JSONArray();
-        JSONObject part = new JSONObject();
-        part.put("text", promptText);
-        parts.put(part);
-        content.put("parts", parts);
-        contents.put(content);
-        root.put("contents", contents);
+        for (int attempt = 1; attempt <= maxAttempts; attempt++) {
+            String activeKey = GeminiApiKey.getActiveKey();
+            int keyIndex = GeminiApiKey.getCurrentKeyIndex();
+            String endpointUrl = "https://generativelanguage.googleapis.com/v1beta/models/"
+                    + MODEL_NAME + ":generateContent?key=" + activeKey;
 
-        if (jsonMimeType) {
-            JSONObject genConfig = new JSONObject();
-            genConfig.put("responseMimeType", "application/json");
-            root.put("generationConfig", genConfig);
-        }
+            HttpURLConnection conn = null;
+            try {
+                URL url = new URL(endpointUrl);
+                conn = (HttpURLConnection) url.openConnection();
+                conn.setRequestMethod("POST");
+                conn.setRequestProperty("Content-Type", "application/json; charset=UTF-8");
+                conn.setConnectTimeout(25000);
+                conn.setReadTimeout(35000);
+                conn.setDoOutput(true);
 
-        String payload = root.toString();
-        try (OutputStream os = conn.getOutputStream()) {
-            byte[] input = payload.getBytes(StandardCharsets.UTF_8);
-            os.write(input, 0, input.length);
-            os.flush();
-        }
+                JSONObject root = new JSONObject();
+                JSONArray contents = new JSONArray();
+                JSONObject content = new JSONObject();
+                JSONArray parts = new JSONArray();
+                JSONObject part = new JSONObject();
+                part.put("text", promptText);
+                parts.put(part);
+                content.put("parts", parts);
+                contents.put(content);
+                root.put("contents", contents);
 
-        int responseCode = conn.getResponseCode();
-        InputStream is = (responseCode >= 200 && responseCode < 300)
-                ? conn.getInputStream()
-                : conn.getErrorStream();
+                if (jsonMimeType) {
+                    JSONObject genConfig = new JSONObject();
+                    genConfig.put("responseMimeType", "application/json");
+                    root.put("generationConfig", genConfig);
+                }
 
-        BufferedReader reader = new BufferedReader(new InputStreamReader(is, StandardCharsets.UTF_8));
-        StringBuilder sb = new StringBuilder();
-        String line;
-        while ((line = reader.readLine()) != null) {
-            sb.append(line).append("\n");
-        }
-        reader.close();
+                String payload = root.toString();
+                try (OutputStream os = conn.getOutputStream()) {
+                    byte[] input = payload.getBytes(StandardCharsets.UTF_8);
+                    os.write(input, 0, input.length);
+                    os.flush();
+                }
 
-        if (responseCode < 200 || responseCode >= 300) {
-            throw new Exception("HTTP error code " + responseCode + ": " + sb.toString());
-        }
+                int responseCode = conn.getResponseCode();
+                InputStream is = (responseCode >= 200 && responseCode < 300)
+                        ? conn.getInputStream()
+                        : conn.getErrorStream();
 
-        JSONObject resObj = new JSONObject(sb.toString());
-        JSONArray candidates = resObj.optJSONArray("candidates");
-        if (candidates != null && candidates.length() > 0) {
-            JSONObject candidate = candidates.getJSONObject(0);
-            JSONObject candContent = candidate.optJSONObject("content");
-            if (candContent != null) {
-                JSONArray candParts = candContent.optJSONArray("parts");
-                if (candParts != null && candParts.length() > 0) {
-                    return candParts.getJSONObject(0).optString("text", "");
+                BufferedReader reader = new BufferedReader(new InputStreamReader(is, StandardCharsets.UTF_8));
+                StringBuilder sb = new StringBuilder();
+                String line;
+                while ((line = reader.readLine()) != null) {
+                    sb.append(line).append("\n");
+                }
+                reader.close();
+
+                // Deteksi Rate Limit (HTTP 429) atau Quota Exceeded (HTTP 403)
+                if (responseCode == 429 || (responseCode == 403 && sb.toString().contains("RESOURCE_EXHAUSTED"))) {
+                    Log.w(TAG, "API Key #" + keyIndex + " terkena kuota limit (HTTP " + responseCode + "). Merotasi ke API key berikutnya...");
+                    GeminiApiKey.rotateToNextKey();
+                    lastException = new Exception("API Key #" + keyIndex + " habis kuota: " + sb.toString());
+                    continue; // Coba lagi dengan key berikutnya
+                }
+
+                if (responseCode < 200 || responseCode >= 300) {
+                    throw new Exception("HTTP error code " + responseCode + ": " + sb.toString());
+                }
+
+                JSONObject resObj = new JSONObject(sb.toString());
+                JSONArray candidates = resObj.optJSONArray("candidates");
+                if (candidates != null && candidates.length() > 0) {
+                    JSONObject candidate = candidates.getJSONObject(0);
+                    JSONObject candContent = candidate.optJSONObject("content");
+                    if (candContent != null) {
+                        JSONArray candParts = candContent.optJSONArray("parts");
+                        if (candParts != null && candParts.length() > 0) {
+                            return candParts.getJSONObject(0).optString("text", "");
+                        }
+                    }
+                }
+
+                throw new Exception("Format respons Gemini tidak memiliki teks candidate: " + sb.toString());
+            } catch (Exception e) {
+                lastException = e;
+                if (e.getMessage() != null && e.getMessage().contains("429")) {
+                    Log.w(TAG, "Mendeteksi error 429 pada key #" + keyIndex + ". Merotasi key...");
+                    GeminiApiKey.rotateToNextKey();
+                } else if (attempt < maxAttempts && (e instanceof java.io.IOException)) {
+                    Log.w(TAG, "Koneksi gagal pada key #" + keyIndex + ". Mencoba key lain...");
+                    GeminiApiKey.rotateToNextKey();
+                } else {
+                    throw e;
+                }
+            } finally {
+                if (conn != null) {
+                    conn.disconnect();
                 }
             }
         }
 
-        throw new Exception("Format respons Gemini tidak memiliki teks candidate: " + sb.toString());
+        throw (lastException != null) ? lastException : new Exception("Semua API key telah mencapai kuota atau gagal dihubungi.");
     }
 
     private static List<InterviewQuestion> parseQuestionsFromJson(String rawJson, String category, String difficulty, String language) {
@@ -374,7 +409,7 @@ public class GeminiService {
                     .weaknesses(weaknesses)
                     .improvements(improvement)
                     .modelAnswer(idealAnswer)
-                    .scoreRationale("Skor dievaluasi berdasarkan relevansi, panjang jawaban, dan kedalaman materi oleh Gemini AI.")
+                    .scoreRationale("Skor dievaluasi berdasarkan relevansi, panjang jawaban, dan kedalaman materi oleh AInterview.")
                     .build();
         } catch (Exception e) {
             Log.e(TAG, "Gagal mengurai JSON evaluasi: " + e.getMessage(), e);
