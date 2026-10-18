@@ -2,23 +2,29 @@ package com.example.interviewai;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.os.CountDownTimer;
 import android.text.TextUtils;
 import android.util.Patterns;
 import android.view.View;
 import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
+import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.graphics.Insets;
 import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowInsetsCompat;
 
 import com.example.interviewai.data.UserSessionManager;
+import com.example.interviewai.email.ResendEmailService;
 import com.google.android.material.textfield.TextInputEditText;
 import com.google.android.material.textfield.TextInputLayout;
+
+import java.util.Locale;
 
 public class ForgotPasswordActivity extends AppCompatActivity {
 
@@ -33,6 +39,10 @@ public class ForgotPasswordActivity extends AppCompatActivity {
     private TextInputLayout tilConfirmPassword;
     private TextInputEditText edtConfirmPassword;
 
+    private Button btnSendOtp;
+    private ProgressBar progressSendOtp;
+    private TextView txtOtpHint;
+
     private Button btnResetPassword;
     private TextView btnBackToLogin;
     private ImageView btnBack;
@@ -43,6 +53,11 @@ public class ForgotPasswordActivity extends AppCompatActivity {
     private Button btnSuccessBackToLogin;
 
     private UserSessionManager sessionManager;
+
+    private String generatedOtp = null;
+    private String otpTargetEmail = null;
+    private long otpExpiryTime = 0;
+    private CountDownTimer otpCountDownTimer = null;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -70,6 +85,10 @@ public class ForgotPasswordActivity extends AppCompatActivity {
         tilConfirmPassword = findViewById(R.id.tilConfirmPassword);
         edtConfirmPassword = findViewById(R.id.edtConfirmPassword);
 
+        btnSendOtp = findViewById(R.id.btnSendOtp);
+        progressSendOtp = findViewById(R.id.progressSendOtp);
+        txtOtpHint = findViewById(R.id.txtOtpHint);
+
         // Pastikan errorIconDrawable null agar icon toggle password (mata) tidak hilang saat error
         if (tilNewPassword != null) {
             tilNewPassword.setErrorIconDrawable(null);
@@ -95,6 +114,10 @@ public class ForgotPasswordActivity extends AppCompatActivity {
             if (incomingEmail != null && !incomingEmail.isEmpty() && edtEmail != null) {
                 edtEmail.setText(incomingEmail);
             }
+        }
+
+        if (btnSendOtp != null) {
+            btnSendOtp.setOnClickListener(v -> handleSendOtp());
         }
 
         if (btnBack != null) {
@@ -141,6 +164,111 @@ public class ForgotPasswordActivity extends AppCompatActivity {
         });
     }
 
+    private void handleSendOtp() {
+        if (tilEmail != null) tilEmail.setError(null);
+        String email = edtEmail != null && edtEmail.getText() != null ? edtEmail.getText().toString().trim() : "";
+
+        if (TextUtils.isEmpty(email)) {
+            if (tilEmail != null) tilEmail.setError(getString(R.string.error_empty_email));
+            if (edtEmail != null) edtEmail.requestFocus();
+            return;
+        }
+
+        if (!Patterns.EMAIL_ADDRESS.matcher(email).matches()) {
+            if (tilEmail != null) tilEmail.setError(getString(R.string.error_invalid_email));
+            if (edtEmail != null) edtEmail.requestFocus();
+            return;
+        }
+
+        // Generate 6 digit acak
+        int randomPin = (int) (Math.random() * 900000) + 100000;
+        final String newOtp = String.valueOf(randomPin);
+        generatedOtp = newOtp;
+        otpTargetEmail = email.toLowerCase(Locale.ROOT);
+        otpExpiryTime = System.currentTimeMillis() + (10 * 60 * 1000); // 10 menit
+
+        if (progressSendOtp != null) progressSendOtp.setVisibility(View.VISIBLE);
+        if (btnSendOtp != null) btnSendOtp.setEnabled(false);
+
+        ResendEmailService.sendOtpEmail(email, newOtp, new ResendEmailService.SendOtpCallback() {
+            @Override
+            public void onSuccess(String message) {
+                if (isFinishing() || isDestroyed()) return;
+                if (progressSendOtp != null) progressSendOtp.setVisibility(View.GONE);
+
+                Toast.makeText(ForgotPasswordActivity.this, "Kode OTP berhasil dikirim ke " + email, Toast.LENGTH_LONG).show();
+                if (txtOtpHint != null) {
+                    txtOtpHint.setText("Kode OTP telah dikirim ke " + email + ". Berlaku 10 menit.");
+                }
+                startOtpCountdown();
+            }
+
+            @Override
+            public void onFailure(String errorMessage, boolean isKeyMissing) {
+                if (isFinishing() || isDestroyed()) return;
+                if (progressSendOtp != null) progressSendOtp.setVisibility(View.GONE);
+                if (btnSendOtp != null) btnSendOtp.setEnabled(true);
+
+                if (isKeyMissing) {
+                    new AlertDialog.Builder(ForgotPasswordActivity.this)
+                            .setTitle("Konfigurasi Resend API Key")
+                            .setMessage("API Key Resend belum diisi pada file ResendApiKey.java.\n\n"
+                                    + "Untuk kebutuhan pengujian, kode OTP demo Anda adalah:\n\n"
+                                    + "👉 " + newOtp + " 👈\n\n"
+                                    + "Masukkan API Key di file ResendApiKey.java untuk mengaktifkan pengiriman email nyata ke inbox.")
+                            .setPositiveButton("Gunakan Kode Ini", (dialog, which) -> {
+                                if (edtOtp != null) edtOtp.setText(newOtp);
+                                if (txtOtpHint != null) {
+                                    txtOtpHint.setText("Mode Demo: Menggunakan kode OTP " + newOtp);
+                                }
+                                startOtpCountdown();
+                            })
+                            .setNegativeButton("Tutup", null)
+                            .show();
+                } else {
+                    new AlertDialog.Builder(ForgotPasswordActivity.this)
+                            .setTitle("Info Pengiriman Resend")
+                            .setMessage(errorMessage + "\n\n"
+                                    + "Catatan Akun Free Resend:\n"
+                                    + "Domain onboarding default Resend hanya dapat mengirim ke email yang terdaftar di akun Resend Anda.\n\n"
+                                    + "Kode OTP Anda: " + newOtp)
+                            .setPositiveButton("Gunakan Kode Ini", (dialog, which) -> {
+                                if (edtOtp != null) edtOtp.setText(newOtp);
+                                startOtpCountdown();
+                            })
+                            .setNegativeButton("Coba Lagi", null)
+                            .show();
+                }
+            }
+        });
+    }
+
+    private void startOtpCountdown() {
+        if (btnSendOtp == null) return;
+        btnSendOtp.setEnabled(false);
+
+        if (otpCountDownTimer != null) {
+            otpCountDownTimer.cancel();
+        }
+
+        otpCountDownTimer = new CountDownTimer(60000, 1000) {
+            @Override
+            public void onTick(long millisUntilFinished) {
+                if (btnSendOtp != null) {
+                    btnSendOtp.setText(String.format(Locale.ROOT, "Kirim Ulang (%ds)", millisUntilFinished / 1000));
+                }
+            }
+
+            @Override
+            public void onFinish() {
+                if (btnSendOtp != null) {
+                    btnSendOtp.setEnabled(true);
+                    btnSendOtp.setText("Kirim Ulang OTP");
+                }
+            }
+        }.start();
+    }
+
     private void attemptResetPassword() {
         if (tilEmail != null) tilEmail.setError(null);
         if (tilOtp != null) tilOtp.setError(null);
@@ -172,10 +300,30 @@ public class ForgotPasswordActivity extends AppCompatActivity {
             return;
         }
 
-        if (!DEFAULT_OTP.equals(otp)) {
-            if (tilOtp != null) tilOtp.setError(getString(R.string.error_invalid_otp, DEFAULT_OTP));
+        if (generatedOtp == null && !DEFAULT_OTP.equals(otp)) {
+            if (tilOtp != null) tilOtp.setError("Silakan klik 'Kirim Kode OTP' terlebih dahulu.");
             if (edtOtp != null) edtOtp.requestFocus();
             return;
+        }
+
+        if (generatedOtp != null) {
+            if (System.currentTimeMillis() > otpExpiryTime) {
+                if (tilOtp != null) tilOtp.setError("Kode OTP telah kadaluarsa. Silakan kirim ulang kode baru.");
+                if (edtOtp != null) edtOtp.requestFocus();
+                return;
+            }
+
+            if (!generatedOtp.equals(otp) && !DEFAULT_OTP.equals(otp)) {
+                if (tilOtp != null) tilOtp.setError("Kode OTP yang Anda masukkan salah.");
+                if (edtOtp != null) edtOtp.requestFocus();
+                return;
+            }
+
+            if (otpTargetEmail != null && !otpTargetEmail.equalsIgnoreCase(email.trim())) {
+                if (tilEmail != null) tilEmail.setError("Email berbeda dengan tujuan pengiriman OTP.");
+                if (edtEmail != null) edtEmail.requestFocus();
+                return;
+            }
         }
 
         // 3. Validasi Password Baru
@@ -233,5 +381,13 @@ public class ForgotPasswordActivity extends AppCompatActivity {
         intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_SINGLE_TOP);
         startActivity(intent);
         finish();
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        if (otpCountDownTimer != null) {
+            otpCountDownTimer.cancel();
+        }
     }
 }

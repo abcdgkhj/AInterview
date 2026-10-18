@@ -16,3 +16,5 @@ local.properties
 .env
 GeminiApiKey.java
 **/GeminiApiKey.java
+ResendApiKey.java
+**/ResendApiKey.java
