@@ -18,6 +18,13 @@ public class QuestionBank {
     public static final String CATEGORY_TEKNIS_IT = "Interview Teknis - IT";
     public static final String CATEGORY_TEKNIS_MARKETING = "Interview Teknis - Marketing";
     public static final String CATEGORY_TEKNIS_ACCOUNTING = "Interview Teknis - Accounting";
+    public static final String CATEGORY_TEKNIS_HR = "Interview Teknis - Human Resources";
+    public static final String CATEGORY_TEKNIS_FINANCE = "Interview Teknis - Finance";
+    public static final String CATEGORY_TEKNIS_BUSINESS_MANAGEMENT = "Interview Teknis - Business Management";
+    public static final String CATEGORY_TEKNIS_SALES = "Interview Teknis - Sales";
+    public static final String CATEGORY_TEKNIS_GRAPHIC_DESIGN = "Interview Teknis - Graphic Design";
+    public static final String CATEGORY_TEKNIS_DATA_ANALYTICS = "Interview Teknis - Data Analytics";
+    public static final String CATEGORY_TEKNIS_CUSTOMER_SERVICE = "Interview Teknis - Customer Service";
 
     // Legacy Kategori untuk backward compatibility
     public static final String CATEGORY_GENERAL = "General Interview";
@@ -43,10 +50,27 @@ public class QuestionBank {
     public static final String LANG_EN = "English";
 
     public static String getTechnicalCategoryForField(String field) {
+        if (field == null) {
+            return CATEGORY_TEKNIS_IT;
+        }
         if ("Marketing".equalsIgnoreCase(field)) {
             return CATEGORY_TEKNIS_MARKETING;
         } else if ("Accounting".equalsIgnoreCase(field)) {
             return CATEGORY_TEKNIS_ACCOUNTING;
+        } else if ("Human Resources".equalsIgnoreCase(field) || "HR".equalsIgnoreCase(field)) {
+            return CATEGORY_TEKNIS_HR;
+        } else if ("Finance".equalsIgnoreCase(field)) {
+            return CATEGORY_TEKNIS_FINANCE;
+        } else if ("Business Management".equalsIgnoreCase(field)) {
+            return CATEGORY_TEKNIS_BUSINESS_MANAGEMENT;
+        } else if ("Sales".equalsIgnoreCase(field)) {
+            return CATEGORY_TEKNIS_SALES;
+        } else if ("Graphic Design".equalsIgnoreCase(field)) {
+            return CATEGORY_TEKNIS_GRAPHIC_DESIGN;
+        } else if ("Data Analytics".equalsIgnoreCase(field)) {
+            return CATEGORY_TEKNIS_DATA_ANALYTICS;
+        } else if ("Customer Service".equalsIgnoreCase(field)) {
+            return CATEGORY_TEKNIS_CUSTOMER_SERVICE;
         } else {
             return CATEGORY_TEKNIS_IT;
         }
@@ -58,6 +82,13 @@ public class QuestionBank {
                 CATEGORY_TEKNIS_IT,
                 CATEGORY_TEKNIS_MARKETING,
                 CATEGORY_TEKNIS_ACCOUNTING,
+                CATEGORY_TEKNIS_HR,
+                CATEGORY_TEKNIS_FINANCE,
+                CATEGORY_TEKNIS_BUSINESS_MANAGEMENT,
+                CATEGORY_TEKNIS_SALES,
+                CATEGORY_TEKNIS_GRAPHIC_DESIGN,
+                CATEGORY_TEKNIS_DATA_ANALYTICS,
+                CATEGORY_TEKNIS_CUSTOMER_SERVICE,
                 CATEGORY_GENERAL,
                 CATEGORY_SOFTWARE,
                 CATEGORY_WEB,
@@ -210,6 +241,57 @@ public class QuestionBank {
                 || targetCategory.contains("Accounting")) {
             return qCategory.equalsIgnoreCase(CATEGORY_TEKNIS_ACCOUNTING)
                     || qCategory.contains("Accounting");
+        }
+
+        // Interview Teknis - Human Resources
+        if (targetCategory.equalsIgnoreCase(CATEGORY_TEKNIS_HR)
+                || targetCategory.contains("Human Resources")
+                || targetCategory.contains("HR")) {
+            return qCategory.equalsIgnoreCase(CATEGORY_TEKNIS_HR)
+                    || qCategory.contains("Human Resources")
+                    || qCategory.contains("HR");
+        }
+
+        // Interview Teknis - Finance
+        if (targetCategory.equalsIgnoreCase(CATEGORY_TEKNIS_FINANCE)
+                || targetCategory.contains("Finance")) {
+            return qCategory.equalsIgnoreCase(CATEGORY_TEKNIS_FINANCE)
+                    || qCategory.contains("Finance");
+        }
+
+        // Interview Teknis - Business Management
+        if (targetCategory.equalsIgnoreCase(CATEGORY_TEKNIS_BUSINESS_MANAGEMENT)
+                || targetCategory.contains("Business Management")) {
+            return qCategory.equalsIgnoreCase(CATEGORY_TEKNIS_BUSINESS_MANAGEMENT)
+                    || qCategory.contains("Business Management");
+        }
+
+        // Interview Teknis - Sales
+        if (targetCategory.equalsIgnoreCase(CATEGORY_TEKNIS_SALES)
+                || targetCategory.contains("Sales")) {
+            return qCategory.equalsIgnoreCase(CATEGORY_TEKNIS_SALES)
+                    || qCategory.contains("Sales");
+        }
+
+        // Interview Teknis - Graphic Design
+        if (targetCategory.equalsIgnoreCase(CATEGORY_TEKNIS_GRAPHIC_DESIGN)
+                || targetCategory.contains("Graphic Design")) {
+            return qCategory.equalsIgnoreCase(CATEGORY_TEKNIS_GRAPHIC_DESIGN)
+                    || qCategory.contains("Graphic Design");
+        }
+
+        // Interview Teknis - Data Analytics
+        if (targetCategory.equalsIgnoreCase(CATEGORY_TEKNIS_DATA_ANALYTICS)
+                || targetCategory.contains("Data Analytics")) {
+            return qCategory.equalsIgnoreCase(CATEGORY_TEKNIS_DATA_ANALYTICS)
+                    || qCategory.contains("Data Analytics");
+        }
+
+        // Interview Teknis - Customer Service
+        if (targetCategory.equalsIgnoreCase(CATEGORY_TEKNIS_CUSTOMER_SERVICE)
+                || targetCategory.contains("Customer Service")) {
+            return qCategory.equalsIgnoreCase(CATEGORY_TEKNIS_CUSTOMER_SERVICE)
+                    || qCategory.contains("Customer Service");
         }
 
         if (targetCategory.contains("General") && qCategory.contains("General")) return true;
@@ -564,6 +646,244 @@ public class QuestionBank {
         list.add(new InterviewQuestion(851, CATEGORY_TEKNIS_IT, DIFFICULTY_BEGINNER, LANG_EN,
                 "Explain the networking differences between TCP and UDP protocols and when to utilize each in production systems.",
                 "Discuss packet ordering, flow control, handshake overhead, and latency vs reliability trade-offs."));
+
+        // ================= 9. TECHNICAL INTERVIEW - HUMAN RESOURCES (INDONESIAN) =================
+        list.add(new InterviewQuestion(901, CATEGORY_TEKNIS_HR, DIFFICULTY_BEGINNER, LANG_ID,
+                "Bagaimana tahapan end-to-end yang Anda lakukan dalam proses rekrutmen talenta, mulai dari sourcing hingga onboarding?",
+                "Jelaskan penentuan kualifikasi peran, screening CV, teknik wawancara berbasis kompetensi, dan orientasi karyawan baru."));
+        list.add(new InterviewQuestion(902, CATEGORY_TEKNIS_HR, DIFFICULTY_INTERMEDIATE, LANG_ID,
+                "Metode apa yang Anda gunakan untuk merancang Key Performance Indicators (KPI) dan mengukur kinerja karyawan secara objektif?",
+                "Bahas penetapan target SMART, evaluasi 360 derajat, kalibrasi performa, dan sesi feedback berkala."));
+        list.add(new InterviewQuestion(903, CATEGORY_TEKNIS_HR, DIFFICULTY_INTERMEDIATE, LANG_ID,
+                "Bagaimana pendekatan Anda dalam menangani konflik interpersonal antar karyawan atau perselisihan hubungan industrial?",
+                "Ulas teknik mediasi yang netral, penegakan regulasi ketenagakerjaan, dan pencarian solusi win-win."));
+        list.add(new InterviewQuestion(904, CATEGORY_TEKNIS_HR, DIFFICULTY_INTERMEDIATE, LANG_ID,
+                "Bagaimana strategi Anda dalam membangun Employee Retention dan menekan angka turnover pada divisi dengan beban kerja tinggi?",
+                "Diskusikan program apresiasi, jenjang karir yang transparan, survei kepuasan kerja (eNPS), dan work-life balance."));
+        list.add(new InterviewQuestion(905, CATEGORY_TEKNIS_HR, DIFFICULTY_ADVANCED, LANG_ID,
+                "Jelaskan bagaimana Anda merancang program pelatihan (Training & Development) berdasarkan Training Needs Analysis (TNA).",
+                "Ulas identifikasi skill gap, desain modul pembelajaran, evaluasi model Kirkpatrick, dan pengukuran ROI pelatihan."));
+
+        // ================= 9. TECHNICAL INTERVIEW - HUMAN RESOURCES (ENGLISH) =================
+        list.add(new InterviewQuestion(951, CATEGORY_TEKNIS_HR, DIFFICULTY_BEGINNER, LANG_EN,
+                "Describe your end-to-end talent acquisition workflow from candidate sourcing to successful onboarding.",
+                "Cover job analysis, multi-channel sourcing, structured behavioral interviews, and onboarding experience."));
+        list.add(new InterviewQuestion(952, CATEGORY_TEKNIS_HR, DIFFICULTY_INTERMEDIATE, LANG_EN,
+                "How do you design objective Key Performance Indicators (KPIs) and manage performance evaluation cycles?",
+                "Highlight SMART goals, 360-degree reviews, performance calibration, and constructive feedback sessions."));
+        list.add(new InterviewQuestion(953, CATEGORY_TEKNIS_HR, DIFFICULTY_INTERMEDIATE, LANG_EN,
+                "What strategies do you implement to foster employee retention and minimize turnover in competitive talent markets?",
+                "Discuss career progression pathways, employee recognition, engagement surveys (eNPS), and workplace culture."));
+        list.add(new InterviewQuestion(954, CATEGORY_TEKNIS_HR, DIFFICULTY_INTERMEDIATE, LANG_EN,
+                "How do you handle sensitive employee relations disputes while ensuring labor law compliance?",
+                "Explain conflict mediation, grievance investigation procedures, and equitable resolution strategies."));
+        list.add(new InterviewQuestion(955, CATEGORY_TEKNIS_HR, DIFFICULTY_ADVANCED, LANG_EN,
+                "Explain your approach to conducting a Training Needs Analysis (TNA) and evaluating learning ROI using the Kirkpatrick model.",
+                "Detail skill matrix assessments, instructional design, post-training evaluation, and business impact measurement."));
+
+        // ================= 10. TECHNICAL INTERVIEW - FINANCE (INDONESIAN) =================
+        list.add(new InterviewQuestion(1001, CATEGORY_TEKNIS_FINANCE, DIFFICULTY_BEGINNER, LANG_ID,
+                "Jelaskan bagaimana Anda menyusun anggaran operasional tahunan (budgeting) perusahaan dan memonitor realisasinya.",
+                "Ulas pendekatan zero-based budgeting vs incremental budgeting, serta pengendalian belanja modal (CapEx) dan operasional (OpEx)."));
+        list.add(new InterviewQuestion(1002, CATEGORY_TEKNIS_FINANCE, DIFFICULTY_INTERMEDIATE, LANG_ID,
+                "Bagaimana cara Anda mengelola dan memproyeksikan arus kas (Cash Flow Forecasting) untuk menjaga likuiditas perusahaan?",
+                "Jelaskan estimasi arus kas masuk/keluar, pengelolaan modal kerja (working capital), dan strategi menjaga buffer kas."));
+        list.add(new InterviewQuestion(1003, CATEGORY_TEKNIS_FINANCE, DIFFICULTY_INTERMEDIATE, LANG_ID,
+                "Metode analisis investasi apa (NPV, IRR, Payback Period) yang Anda prioritaskan untuk mengevaluasi kelayakan proyek modal?",
+                "Bahas konsep time value of money, discount rate (WACC), dan perbandingan skenario kelayakan finansial."));
+        list.add(new InterviewQuestion(1004, CATEGORY_TEKNIS_FINANCE, DIFFICULTY_INTERMEDIATE, LANG_ID,
+                "Bagaimana prosedur Anda dalam melakukan analisis varians (Variance Analysis) antara anggaran dan realisasi keuangan?",
+                "Ulas identifikasi akar penyebab selisih biaya (price variance vs volume variance) dan rekomendasi tindakan korektif."));
+        list.add(new InterviewQuestion(1005, CATEGORY_TEKNIS_FINANCE, DIFFICULTY_ADVANCED, LANG_ID,
+                "Bagaimana strategi Anda dalam manajemen risiko keuangan (Financial Risk Management), seperti risiko suku bunga atau fluktuasi nilai tukar?",
+                "Diskusikan instrumen lindung nilai (hedging), diversifikasi portofolio, dan stress testing skenario ekonomi makro."));
+
+        // ================= 10. TECHNICAL INTERVIEW - FINANCE (ENGLISH) =================
+        list.add(new InterviewQuestion(1051, CATEGORY_TEKNIS_FINANCE, DIFFICULTY_BEGINNER, LANG_EN,
+                "How do you prepare annual operating budgets and track budget-versus-actual expenditures?",
+                "Compare zero-based vs incremental budgeting, CapEx vs OpEx allocation, and departmental accountability."));
+        list.add(new InterviewQuestion(1052, CATEGORY_TEKNIS_FINANCE, DIFFICULTY_INTERMEDIATE, LANG_EN,
+                "Explain your methodology for rolling cash flow forecasting and liquidity management.",
+                "Detail working capital optimization, cash conversion cycle, and scenario modelling for solvency buffer."));
+        list.add(new InterviewQuestion(1053, CATEGORY_TEKNIS_FINANCE, DIFFICULTY_INTERMEDIATE, LANG_EN,
+                "How do you apply capital budgeting techniques (NPV, IRR, Payback Period) to evaluate capital investments?",
+                "Address discount rates (WACC), cash flow timing, terminal value considerations, and sensitivity analysis."));
+        list.add(new InterviewQuestion(1054, CATEGORY_TEKNIS_FINANCE, DIFFICULTY_INTERMEDIATE, LANG_EN,
+                "Describe your process for conducting financial variance analysis and communicating actionable insights to leadership.",
+                "Explain price vs volume variance decomposition and managerial recommendations to optimize profit margins."));
+        list.add(new InterviewQuestion(1055, CATEGORY_TEKNIS_FINANCE, DIFFICULTY_ADVANCED, LANG_EN,
+                "What framework do you use for corporate financial risk management, including interest rate, FX, and credit risks?",
+                "Discuss hedging strategies, scenario stress-testing, and compliance with financial covenants."));
+
+        // ================= 11. TECHNICAL INTERVIEW - BUSINESS MANAGEMENT (INDONESIAN) =================
+        list.add(new InterviewQuestion(1101, CATEGORY_TEKNIS_BUSINESS_MANAGEMENT, DIFFICULTY_BEGINNER, LANG_ID,
+                "Bagaimana Anda menyelaraskan target strategis perusahaan ke dalam rencana operasional harian menggunakan kerangka kerja seperti OKR atau BSC?",
+                "Ulas penerjemahan visi manajemen puncak menjadi sasaran terukur bagi setiap tim operasional."));
+        list.add(new InterviewQuestion(1102, CATEGORY_TEKNIS_BUSINESS_MANAGEMENT, DIFFICULTY_INTERMEDIATE, LANG_ID,
+                "Bagaimana Anda mengelola proyek bisnis lintas fungsi (cross-functional) agar selesai tepat waktu, sesuai scope, dan dalam anggaran?",
+                "Ulas metodologi manajemen proyek (Agile/Waterfall), alokasi sumber daya, dan manajemen ekspektasi stakeholder."));
+        list.add(new InterviewQuestion(1103, CATEGORY_TEKNIS_BUSINESS_MANAGEMENT, DIFFICULTY_INTERMEDIATE, LANG_ID,
+                "Langkah-langkah sistematis apa yang Anda ambil ketika mengidentifikasi inefisiensi proses atau bottleneck operasional?",
+                "Bahas pemetaan proses (Value Stream Mapping), eliminasi pemborosan (Lean), dan standarisasi SOP."));
+        list.add(new InterviewQuestion(1104, CATEGORY_TEKNIS_BUSINESS_MANAGEMENT, DIFFICULTY_INTERMEDIATE, LANG_ID,
+                "Bagaimana pendekatan Anda dalam memimpin manajemen perubahan (Change Management) ketika organisasi mengadopsi proses baru?",
+                "Diskusikan komunikasi proaktif, mengatasi resistensi karyawan, pelatihan transisi, dan pemantauan adopsi."));
+        list.add(new InterviewQuestion(1105, CATEGORY_TEKNIS_BUSINESS_MANAGEMENT, DIFFICULTY_ADVANCED, LANG_ID,
+                "Jelaskan bagaimana Anda menyusun Business Continuity Plan dan mengelola krisis operasional saat terjadi disrupsi bisnis mendadak.",
+                "Bahas penilaian risiko dampak bisnis (BIA), protokol darurat, strategi pemulihan kontinuitas, dan komunikasi krisis."));
+
+        // ================= 11. TECHNICAL INTERVIEW - BUSINESS MANAGEMENT (ENGLISH) =================
+        list.add(new InterviewQuestion(1151, CATEGORY_TEKNIS_BUSINESS_MANAGEMENT, DIFFICULTY_BEGINNER, LANG_EN,
+                "How do you cascade high-level corporate strategic objectives into departmental operational plans using OKRs?",
+                "Explain aligning strategic vision with quarterly deliverables and key performance indicators."));
+        list.add(new InterviewQuestion(1152, CATEGORY_TEKNIS_BUSINESS_MANAGEMENT, DIFFICULTY_INTERMEDIATE, LANG_EN,
+                "Describe your methodology for orchestrating cross-functional projects within strict timeline, scope, and budget constraints.",
+                "Cover project governance, resource allocation, risk management matrices, and stakeholder communication."));
+        list.add(new InterviewQuestion(1153, CATEGORY_TEKNIS_BUSINESS_MANAGEMENT, DIFFICULTY_INTERMEDIATE, LANG_EN,
+                "What analytical framework do you use to detect operational bottlenecks and drive continuous process optimization?",
+                "Discuss process mapping, Lean principles, root-cause analysis (5 Whys), and SOP refinement."));
+        list.add(new InterviewQuestion(1154, CATEGORY_TEKNIS_BUSINESS_MANAGEMENT, DIFFICULTY_INTERMEDIATE, LANG_EN,
+                "How do you lead organizational change management when implementing new digital systems or organizational restructuring?",
+                "Address stakeholder buy-in, mitigating change resistance, training roadmaps, and adoption metrics."));
+        list.add(new InterviewQuestion(1155, CATEGORY_TEKNIS_BUSINESS_MANAGEMENT, DIFFICULTY_ADVANCED, LANG_EN,
+                "Explain your approach to formulating a Business Continuity Plan and navigating operational crisis response.",
+                "Detail Business Impact Analysis (BIA), contingency resource planning, emergency governance, and executive decision-making."));
+
+        // ================= 12. TECHNICAL INTERVIEW - SALES (INDONESIAN) =================
+        list.add(new InterviewQuestion(1201, CATEGORY_TEKNIS_SALES, DIFFICULTY_BEGINNER, LANG_ID,
+                "Bagaimana Anda mengelola siklus penjualan (Sales Pipeline) mulai dari prospek awal, presentasi, hingga tahap closing?",
+                "Jelaskan tahapan prospecting, discovery call, penyusunan proposal solusi, dan teknik penutupan penjualan."));
+        list.add(new InterviewQuestion(1202, CATEGORY_TEKNIS_SALES, DIFFICULTY_INTERMEDIATE, LANG_ID,
+                "Teknik apa yang Anda gunakan untuk menangani penolakan atau keberatan harga (Price Objection) dari calon klien?",
+                "Ulas pergeseran fokus dari harga ke nilai tambah (value-based selling), diferensiasi produk, dan kalkulasi ROI klien."));
+        list.add(new InterviewQuestion(1203, CATEGORY_TEKNIS_SALES, DIFFICULTY_INTERMEDIATE, LANG_ID,
+                "Bagaimana cara Anda melakukan kualifikasi prospek menggunakan kerangka kerja seperti BANT (Budget, Authority, Need, Timeline)?",
+                "Jelaskan cara mengajukan pertanyaan eksplorasi yang tepat untuk memfilter prospek yang paling prospektif."));
+        list.add(new InterviewQuestion(1204, CATEGORY_TEKNIS_SALES, DIFFICULTY_INTERMEDIATE, LANG_ID,
+                "Bagaimana strategi Anda dalam membangun hubungan jangka panjang dengan klien utama (Key Account Management) untuk mendorong repeat order?",
+                "Diskusikan customer relationship management (CRM), layanan pasca jual, upsell/cross-sell, dan komunikasi berkala."));
+        list.add(new InterviewQuestion(1205, CATEGORY_TEKNIS_SALES, DIFFICULTY_ADVANCED, LANG_ID,
+                "Jelaskan strategi Anda dalam menegosiasikan kontrak penjualan bernilai besar (High-ticket Deal) agar mencapai kesepakatan win-win.",
+                "Bahas persiapan BATNA, pemahaman leverage kedua belah pihak, negosiasi klausul kontrak, dan perlindungan margin laba."));
+
+        // ================= 12. TECHNICAL INTERVIEW - SALES (ENGLISH) =================
+        list.add(new InterviewQuestion(1251, CATEGORY_TEKNIS_SALES, DIFFICULTY_BEGINNER, LANG_EN,
+                "Walk through your sales pipeline management from initial prospect discovery to closing deals.",
+                "Cover lead qualification, solution demonstrations, objection handling, and closing milestones."));
+        list.add(new InterviewQuestion(1252, CATEGORY_TEKNIS_SALES, DIFFICULTY_INTERMEDIATE, LANG_EN,
+                "How do you handle persistent price objections and steer conversations toward product value and ROI?",
+                "Explain value-based selling methodologies, highlighting competitive advantages and cost-of-inaction framing."));
+        list.add(new InterviewQuestion(1253, CATEGORY_TEKNIS_SALES, DIFFICULTY_INTERMEDIATE, LANG_EN,
+                "How do you apply lead qualification frameworks like BANT or MEDDPICC to prioritize sales opportunities?",
+                "Detail identifying economic buyers, pain points, budget verification, and decision timeline discovery."));
+        list.add(new InterviewQuestion(1254, CATEGORY_TEKNIS_SALES, DIFFICULTY_INTERMEDIATE, LANG_EN,
+                "What is your approach to Key Account Management to drive account expansion, cross-selling, and client retention?",
+                "Discuss relationship building, executive check-ins, delivering on promises, and strategic account planning."));
+        list.add(new InterviewQuestion(1255, CATEGORY_TEKNIS_SALES, DIFFICULTY_ADVANCED, LANG_EN,
+                "Describe your negotiation tactics for enterprise multi-year contracts while maintaining healthy gross margins.",
+                "Cover BATNA preparation, value trade-offs rather than straight discounts, and risk-sharing clauses."));
+
+        // ================= 13. TECHNICAL INTERVIEW - GRAPHIC DESIGN (INDONESIAN) =================
+        list.add(new InterviewQuestion(1301, CATEGORY_TEKNIS_GRAPHIC_DESIGN, DIFFICULTY_BEGINNER, LANG_ID,
+                "Bagaimana alur proses kreatif Anda mulai dari menerima design brief, riset visual, membuat moodboard, hingga draft akhir?",
+                "Ulas pemahaman target audiens, eksplorasi konsep, sketsa kasar, dan penyempurnaan desain digital."));
+        list.add(new InterviewQuestion(1302, CATEGORY_TEKNIS_GRAPHIC_DESIGN, DIFFICULTY_INTERMEDIATE, LANG_ID,
+                "Bagaimana Anda menerapkan prinsip hierarki visual, kontras warna, dan tipografi agar pesan desain tersampaikan dengan kuat?",
+                "Jelaskan pemilihan font pairing, white space, focal point, serta teori warna dalam memandu pandangan audiens."));
+        list.add(new InterviewQuestion(1303, CATEGORY_TEKNIS_GRAPHIC_DESIGN, DIFFICULTY_INTERMEDIATE, LANG_ID,
+                "Bagaimana cara Anda menjaga konsistensi identitas merek (Brand Guidelines & Design System) di berbagai format media?",
+                "Bahas penggunaan logo guideline, color palette standar, aset reusable, dan dokumentasi design tokens."));
+        list.add(new InterviewQuestion(1304, CATEGORY_TEKNIS_GRAPHIC_DESIGN, DIFFICULTY_INTERMEDIATE, LANG_ID,
+                "Bagaimana Anda menyikapi revisi desain yang signifikan atau umpan balik yang kurang spesifik dari pemangku kepentingan?",
+                "Ulas teknik komunikasi klarifikasi, mengarahkan feedback berbasis tujuan bisnis, dan mempresentasikan opsi alternatif."));
+        list.add(new InterviewQuestion(1305, CATEGORY_TEKNIS_GRAPHIC_DESIGN, DIFFICULTY_ADVANCED, LANG_ID,
+                "Jelaskan perbedaan spesifikasi teknis persiapan artwork untuk media cetak (CMYK, bleed, resolusi 300dpi) vs media digital (RGB, responsive, optimasi kompresi).",
+                "Bahas color gamut, prepress checklist, format vektor vs raster (SVG/PNG/WebP), dan load-time optimization."));
+
+        // ================= 13. TECHNICAL INTERVIEW - GRAPHIC DESIGN (ENGLISH) =================
+        list.add(new InterviewQuestion(1351, CATEGORY_TEKNIS_GRAPHIC_DESIGN, DIFFICULTY_BEGINNER, LANG_EN,
+                "Explain your creative workflow from interpreting a creative brief and creating moodboards to final deliverables.",
+                "Detail audience empathy, thumbnail sketches, typography exploration, and digital prototyping."));
+        list.add(new InterviewQuestion(1352, CATEGORY_TEKNIS_GRAPHIC_DESIGN, DIFFICULTY_INTERMEDIATE, LANG_EN,
+                "How do you apply principles of visual hierarchy, typographic scales, and color theory to guide viewer attention?",
+                "Discuss negative space, contrast ratios, accessibility guidelines (WCAG), and visual pacing."));
+        list.add(new InterviewQuestion(1353, CATEGORY_TEKNIS_GRAPHIC_DESIGN, DIFFICULTY_INTERMEDIATE, LANG_EN,
+                "How do you establish and enforce brand identity guidelines across multi-channel digital and physical marketing collateral?",
+                "Cover design systems, component libraries, style guides, and asset version management."));
+        list.add(new InterviewQuestion(1354, CATEGORY_TEKNIS_GRAPHIC_DESIGN, DIFFICULTY_INTERMEDIATE, LANG_EN,
+                "How do you handle subjective stakeholder feedback and multiple iteration requests constructively?",
+                "Explain anchoring feedback to core design objectives, user-centric rationale, and presenting structured alternatives."));
+        list.add(new InterviewQuestion(1355, CATEGORY_TEKNIS_GRAPHIC_DESIGN, DIFFICULTY_ADVANCED, LANG_EN,
+                "Compare the technical pre-flight requirements for offset print production (CMYK, bleed, trapping, 300 DPI) versus responsive digital screens (RGB, SVG, display scaling).",
+                "Detail color space conversion, vector optimization, DPI vs PPI distinctions, and web asset performance."));
+
+        // ================= 14. TECHNICAL INTERVIEW - DATA ANALYTICS (INDONESIAN) =================
+        list.add(new InterviewQuestion(1401, CATEGORY_TEKNIS_DATA_ANALYTICS, DIFFICULTY_BEGINNER, LANG_ID,
+                "Jelaskan tahapan utama dalam pipeline analisis data dari pengumpulan data mentah, data cleaning, eksplorasi (EDA), hingga visualisasi.",
+                "Ulas penanganan missing values, deteksi outlier, transformasi tipe data, dan perumusan pertanyaan analitik awal."));
+        list.add(new InterviewQuestion(1402, CATEGORY_TEKNIS_DATA_ANALYTICS, DIFFICULTY_INTERMEDIATE, LANG_ID,
+                "Bagaimana Anda menggunakan SQL lanjutan (seperti Window Functions, CTE, dan kompleks JOIN) untuk menganalisis data bisnis?",
+                "Jelaskan penggunaan ROW_NUMBER, RANK, LEAD/LAG, PARTITION BY, dan optimasi query pada dataset besar."));
+        list.add(new InterviewQuestion(1403, CATEGORY_TEKNIS_DATA_ANALYTICS, DIFFICULTY_INTERMEDIATE, LANG_ID,
+                "Bagaimana Anda merancang Dashboard Business Intelligence (Tableau / Power BI / Looker) yang efektif bagi pengambil keputusan?",
+                "Ulas pemilihan chart yang tepat, hierarki KPI utama, visual storytelling, dan performa interaktivitas filter data."));
+        list.add(new InterviewQuestion(1404, CATEGORY_TEKNIS_DATA_ANALYTICS, DIFFICULTY_INTERMEDIATE, LANG_ID,
+                "Bagaimana pendekatan Anda dalam membedakan korelasi dan kausalitas (correlation vs causation) saat menganalisis tren bisnis?",
+                "Bahas confounding variables, bias seleksi, eksperimen terkontrol, dan kehati-hatian dalam menarik kesimpulan bisnis."));
+        list.add(new InterviewQuestion(1405, CATEGORY_TEKNIS_DATA_ANALYTICS, DIFFICULTY_ADVANCED, LANG_ID,
+                "Jelaskan bagaimana Anda merancang dan menganalisis eksperimen A/B Testing, termasuk penentuan ukuran sampel dan uji signifikansi statistik.",
+                "Ulas hipotesis null vs alternatif, p-value, interval kepercayaan (confidence interval), dan penanganan error tipe I/II."));
+
+        // ================= 14. TECHNICAL INTERVIEW - DATA ANALYTICS (ENGLISH) =================
+        list.add(new InterviewQuestion(1451, CATEGORY_TEKNIS_DATA_ANALYTICS, DIFFICULTY_BEGINNER, LANG_EN,
+                "Walk through your end-to-end data analysis methodology from raw data ingestion and cleaning to exploratory data analysis (EDA).",
+                "Cover handling missing data, outlier detection, data normalization, and summary statistics."));
+        list.add(new InterviewQuestion(1452, CATEGORY_TEKNIS_DATA_ANALYTICS, DIFFICULTY_INTERMEDIATE, LANG_EN,
+                "How do you leverage advanced SQL concepts like Window Functions (OVER, PARTITION BY), CTEs, and index optimization for reporting?",
+                "Explain practical applications of running totals, moving averages, ranking queries, and execution plan awareness."));
+        list.add(new InterviewQuestion(1453, CATEGORY_TEKNIS_DATA_ANALYTICS, DIFFICULTY_INTERMEDIATE, LANG_EN,
+                "How do you design Business Intelligence dashboards (Power BI / Tableau) that enable actionable decision-making for executive leadership?",
+                "Discuss chart selection rules, visual cognitive load reduction, KPI hierarchy, and automated data refresh."));
+        list.add(new InterviewQuestion(1454, CATEGORY_TEKNIS_DATA_ANALYTICS, DIFFICULTY_INTERMEDIATE, LANG_EN,
+                "How do you investigate and validate anomalies or sudden trend shifts in business performance metrics?",
+                "Detail segmentation breakdown, cohort analysis, verifying data pipeline integrity, and distinguishing correlation from causation."));
+        list.add(new InterviewQuestion(1455, CATEGORY_TEKNIS_DATA_ANALYTICS, DIFFICULTY_ADVANCED, LANG_EN,
+                "Explain your framework for structuring an A/B test experiment, determining required sample sizes, and evaluating statistical significance.",
+                "Discuss hypothesis formulation, p-value interpretation, confidence intervals, statistical power, and Type I/II error trade-offs."));
+
+        // ================= 15. TECHNICAL INTERVIEW - CUSTOMER SERVICE (INDONESIAN) =================
+        list.add(new InterviewQuestion(1501, CATEGORY_TEKNIS_CUSTOMER_SERVICE, DIFFICULTY_BEGINNER, LANG_ID,
+                "Bagaimana pendekatan Anda dalam meredakan situasi saat menghadapi pelanggan yang sangat marah atau kecewa atas kendala layanan?",
+                "Ulas teknik active listening, empati tulus, tidak memotong pembicaraan, dan menawarkan solusi yang konkret secara tenang."));
+        list.add(new InterviewQuestion(1502, CATEGORY_TEKNIS_CUSTOMER_SERVICE, DIFFICULTY_INTERMEDIATE, LANG_ID,
+                "Metrik kinerja layanan pelanggan apa (CSAT, First Contact Resolution / FCR, Response Time, SLA) yang Anda jadikan tolok ukur sukses?",
+                "Jelaskan bagaimana Anda menyeimbangkan antara kecepatan respon dan kualitas penyelesaian masalah secara tuntas."));
+        list.add(new InterviewQuestion(1503, CATEGORY_TEKNIS_CUSTOMER_SERVICE, DIFFICULTY_INTERMEDIATE, LANG_ID,
+                "Bagaimana cara Anda menyampaikan kabar buruk atau penolakan permintaan pelanggan dengan tetap menjaga kepuasan dan hubungan baik?",
+                "Bahas penggunaan bahasa positif, penjelasan alasan kebijakan yang transparan, dan pemberian alternatif solusi yang membantu."));
+        list.add(new InterviewQuestion(1504, CATEGORY_TEKNIS_CUSTOMER_SERVICE, DIFFICULTY_INTERMEDIATE, LANG_ID,
+                "Langkah apa yang Anda lakukan ketika mendeteksi adanya lonjakan tiket keluhan terkait masalah sistem atau operasional massal?",
+                "Ulas pengelompokan masalah umum, komunikasi berkala pada pelanggan, koordinasi cepat dengan tim produk/teknis, dan update FAQ."));
+        list.add(new InterviewQuestion(1505, CATEGORY_TEKNIS_CUSTOMER_SERVICE, DIFFICULTY_ADVANCED, LANG_ID,
+                "Bagaimana mekanisme eskalasi tiket masalah rumit ke tim tier-2 atau manajemen tanpa membuat pelanggan merasa dioper-oper?",
+                "Diskusikan dokumentasi riwayat tiket yang lengkap, kepemilikan kasus (case ownership), dan pembaruan berkala status resolusi kepada pelanggan."));
+
+        // ================= 15. TECHNICAL INTERVIEW - CUSTOMER SERVICE (ENGLISH) =================
+        list.add(new InterviewQuestion(1551, CATEGORY_TEKNIS_CUSTOMER_SERVICE, DIFFICULTY_BEGINNER, LANG_EN,
+                "How do you handle difficult customer interactions and de-escalate emotional conflicts professionally?",
+                "Cover active listening, sincere empathetic acknowledgment, staying calm under pressure, and focusing on resolution."));
+        list.add(new InterviewQuestion(1552, CATEGORY_TEKNIS_CUSTOMER_SERVICE, DIFFICULTY_INTERMEDIATE, LANG_EN,
+                "Which customer service performance metrics (CSAT, First Contact Resolution, SLA adherence, AHT) do you prioritize and why?",
+                "Discuss the balance between resolution quality, customer empathy, and response speed efficiency."));
+        list.add(new InterviewQuestion(1553, CATEGORY_TEKNIS_CUSTOMER_SERVICE, DIFFICULTY_INTERMEDIATE, LANG_EN,
+                "How do you communicate unfavorable news or policy-based request denials while preserving customer loyalty?",
+                "Explain framing with positive language, transparent reasoning, and proposing viable alternative options."));
+        list.add(new InterviewQuestion(1554, CATEGORY_TEKNIS_CUSTOMER_SERVICE, DIFFICULTY_INTERMEDIATE, LANG_EN,
+                "What is your protocol when a sudden system outage triggers a major surge in customer inquiry volume?",
+                "Cover broadcast communication strategies, canned response templates, incident tagging, and rapid feedback loops with engineering."));
+        list.add(new InterviewQuestion(1555, CATEGORY_TEKNIS_CUSTOMER_SERVICE, DIFFICULTY_ADVANCED, LANG_EN,
+                "Explain your approach to seamless case escalation to specialized technical teams while maintaining end-to-end case ownership.",
+                "Address detailed case notes handover, setting clear customer expectations, and providing proactive progress updates."));
 
         return list;
     }

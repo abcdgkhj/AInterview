@@ -71,6 +71,13 @@
     <string name="field_it">IT</string>
     <string name="field_marketing">Marketing</string>
     <string name="field_accounting">Accounting</string>
+    <string name="field_hr">Human Resources</string>
+    <string name="field_finance">Finance</string>
+    <string name="field_business_management">Business Management</string>
+    <string name="field_sales">Sales</string>
+    <string name="field_graphic_design">Graphic Design</string>
+    <string name="field_data_analytics">Data Analytics</string>
+    <string name="field_customer_service">Customer Service</string>
 
     <!-- Home Screen -->
     <string name="greeting_format">Halo, %1$s!</string>
@@ -89,8 +96,8 @@
     <string name="badge_interview_umum">Langsung Mulai • Umum &amp; Behavioral</string>
 
     <string name="title_interview_teknis">Interview Teknis</string>
-    <string name="desc_interview_teknis">Pertanyaan teknis mendalam sesuai bidang keahlian (IT, Marketing, Accounting). Disesuaikan dengan bidang pilihan Anda.</string>
-    <string name="badge_interview_teknis">Pilih Bidang • IT, Marketing, Accounting</string>
+    <string name="desc_interview_teknis">Pertanyaan teknis mendalam sesuai bidang keahlian (10 Bidang Pilihan). Disesuaikan dengan bidang pilihan Anda.</string>
+    <string name="badge_interview_teknis">Pilih Bidang • 10 Bidang Keahlian</string>
 
     <!-- Technical Field Selection Screen -->
     <string name="title_technical_field_selection">Interview Teknis</string>
@@ -100,6 +107,13 @@
     <string name="field_it_desc">Programming, Database, Networking, Software Development, Web Development</string>
     <string name="field_marketing_desc">Marketing Strategy, Digital Marketing, Branding, Market Analysis</string>
     <string name="field_accounting_desc">Accounting Principles, Financial Statements, Bookkeeping, Financial Analysis</string>
+    <string name="field_hr_desc">Recruitment, Talent Management, Employee Relations, KPI &amp; Performance</string>
+    <string name="field_finance_desc">Corporate Finance, Budgeting, Investment Analysis, Cash Flow &amp; Risk</string>
+    <string name="field_business_management_desc">Operations, Strategic Planning, Project Management, Leadership &amp; Growth</string>
+    <string name="field_sales_desc">B2B/B2C Sales, Lead Generation, Negotiation, Pipeline &amp; CRM Management</string>
+    <string name="field_graphic_design_desc">Visual Identity, UI/UX Principles, Design Systems, Typography &amp; Tools</string>
+    <string name="field_data_analytics_desc">Data Visualization, SQL, Python/R, Business Intelligence, Statistical Analysis</string>
+    <string name="field_customer_service_desc">Customer Support, Conflict Resolution, SLA, Satisfaction (CSAT/NPS)</string>
     <string name="btn_start_technical_interview">Mulai Interview Teknis</string>
 
     <!-- Categories -->

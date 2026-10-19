@@ -21,11 +21,45 @@ public class UserAndSessionUnitTest {
 
         User userAccounting = new User("Bob", "bob@example.com", "pass123", System.currentTimeMillis(), User.FIELD_ACCOUNTING);
         assertEquals(User.FIELD_ACCOUNTING, userAccounting.getField());
+
+        User userHR = new User("Clara", "clara@example.com", "pass123", System.currentTimeMillis(), User.FIELD_HR);
+        assertEquals(User.FIELD_HR, userHR.getField());
+
+        User userFinance = new User("David", "david@example.com", "pass123", System.currentTimeMillis(), User.FIELD_FINANCE);
+        assertEquals(User.FIELD_FINANCE, userFinance.getField());
+
+        User userBM = new User("Eko", "eko@example.com", "pass123", System.currentTimeMillis(), User.FIELD_BUSINESS_MANAGEMENT);
+        assertEquals(User.FIELD_BUSINESS_MANAGEMENT, userBM.getField());
+
+        User userSales = new User("Fani", "fani@example.com", "pass123", System.currentTimeMillis(), User.FIELD_SALES);
+        assertEquals(User.FIELD_SALES, userSales.getField());
+
+        User userGD = new User("Gilang", "gilang@example.com", "pass123", System.currentTimeMillis(), User.FIELD_GRAPHIC_DESIGN);
+        assertEquals(User.FIELD_GRAPHIC_DESIGN, userGD.getField());
+
+        User userDA = new User("Hana", "hana@example.com", "pass123", System.currentTimeMillis(), User.FIELD_DATA_ANALYTICS);
+        assertEquals(User.FIELD_DATA_ANALYTICS, userDA.getField());
+
+        User userCS = new User("Indra", "indra@example.com", "pass123", System.currentTimeMillis(), User.FIELD_CUSTOMER_SERVICE);
+        assertEquals(User.FIELD_CUSTOMER_SERVICE, userCS.getField());
     }
 
     @Test
-    public void user_availableFieldsContainAllThree() {
-        assertArrayEquals(new String[]{"IT", "Marketing", "Accounting"}, User.AVAILABLE_FIELDS);
+    public void user_availableFieldsContainAllTen() {
+        String[] expectedFields = new String[]{
+                "IT",
+                "Marketing",
+                "Accounting",
+                "Human Resources",
+                "Finance",
+                "Business Management",
+                "Sales",
+                "Graphic Design",
+                "Data Analytics",
+                "Customer Service"
+        };
+        assertArrayEquals(expectedFields, User.AVAILABLE_FIELDS);
+        assertEquals(10, User.AVAILABLE_FIELDS.length);
     }
 
     @Test
@@ -44,6 +78,22 @@ public class UserAndSessionUnitTest {
                 com.example.interviewai.data.QuestionBank.getTechnicalCategoryForField("Marketing"));
         assertEquals(com.example.interviewai.data.QuestionBank.CATEGORY_TEKNIS_ACCOUNTING,
                 com.example.interviewai.data.QuestionBank.getTechnicalCategoryForField("Accounting"));
+        assertEquals(com.example.interviewai.data.QuestionBank.CATEGORY_TEKNIS_HR,
+                com.example.interviewai.data.QuestionBank.getTechnicalCategoryForField("Human Resources"));
+        assertEquals(com.example.interviewai.data.QuestionBank.CATEGORY_TEKNIS_HR,
+                com.example.interviewai.data.QuestionBank.getTechnicalCategoryForField("HR"));
+        assertEquals(com.example.interviewai.data.QuestionBank.CATEGORY_TEKNIS_FINANCE,
+                com.example.interviewai.data.QuestionBank.getTechnicalCategoryForField("Finance"));
+        assertEquals(com.example.interviewai.data.QuestionBank.CATEGORY_TEKNIS_BUSINESS_MANAGEMENT,
+                com.example.interviewai.data.QuestionBank.getTechnicalCategoryForField("Business Management"));
+        assertEquals(com.example.interviewai.data.QuestionBank.CATEGORY_TEKNIS_SALES,
+                com.example.interviewai.data.QuestionBank.getTechnicalCategoryForField("Sales"));
+        assertEquals(com.example.interviewai.data.QuestionBank.CATEGORY_TEKNIS_GRAPHIC_DESIGN,
+                com.example.interviewai.data.QuestionBank.getTechnicalCategoryForField("Graphic Design"));
+        assertEquals(com.example.interviewai.data.QuestionBank.CATEGORY_TEKNIS_DATA_ANALYTICS,
+                com.example.interviewai.data.QuestionBank.getTechnicalCategoryForField("Data Analytics"));
+        assertEquals(com.example.interviewai.data.QuestionBank.CATEGORY_TEKNIS_CUSTOMER_SERVICE,
+                com.example.interviewai.data.QuestionBank.getTechnicalCategoryForField("Customer Service"));
     }
 
     @Test
@@ -60,39 +110,24 @@ public class UserAndSessionUnitTest {
     }
 
     @Test
-    public void questionBank_technicalQuestionsAvailableForAllFields() {
-        // IT
-        java.util.List<com.example.interviewai.model.InterviewQuestion> itQuestions =
-                com.example.interviewai.data.QuestionBank.getFilteredQuestions(
-                        com.example.interviewai.data.QuestionBank.CATEGORY_TEKNIS_IT,
-                        com.example.interviewai.data.QuestionBank.DIFFICULTY_INTERMEDIATE,
-                        com.example.interviewai.data.QuestionBank.LANG_ID,
-                        5
-                );
-        assertNotNull(itQuestions);
-        assertEquals(5, itQuestions.size());
+    public void questionBank_technicalQuestionsAvailableForAllTenFields() {
+        String[] fields = User.AVAILABLE_FIELDS;
+        for (String field : fields) {
+            String category = com.example.interviewai.data.QuestionBank.getTechnicalCategoryForField(field);
+            java.util.List<com.example.interviewai.model.InterviewQuestion> questions =
+                    com.example.interviewai.data.QuestionBank.getFilteredQuestions(
+                            category,
+                            com.example.interviewai.data.QuestionBank.DIFFICULTY_INTERMEDIATE,
+                            com.example.interviewai.data.QuestionBank.LANG_ID,
+                            5
+                    );
+            assertNotNull("Questions for field " + field + " should not be null", questions);
+            assertEquals("Expected 5 questions for field " + field, 5, questions.size());
 
-        // Marketing
-        java.util.List<com.example.interviewai.model.InterviewQuestion> mktQuestions =
-                com.example.interviewai.data.QuestionBank.getFilteredQuestions(
-                        com.example.interviewai.data.QuestionBank.CATEGORY_TEKNIS_MARKETING,
-                        com.example.interviewai.data.QuestionBank.DIFFICULTY_INTERMEDIATE,
-                        com.example.interviewai.data.QuestionBank.LANG_ID,
-                        5
-                );
-        assertNotNull(mktQuestions);
-        assertEquals(5, mktQuestions.size());
-
-        // Accounting
-        java.util.List<com.example.interviewai.model.InterviewQuestion> accQuestions =
-                com.example.interviewai.data.QuestionBank.getFilteredQuestions(
-                        com.example.interviewai.data.QuestionBank.CATEGORY_TEKNIS_ACCOUNTING,
-                        com.example.interviewai.data.QuestionBank.DIFFICULTY_INTERMEDIATE,
-                        com.example.interviewai.data.QuestionBank.LANG_ID,
-                        5
-                );
-        assertNotNull(accQuestions);
-        assertEquals(5, accQuestions.size());
+            // Ensure not treated as General Interview
+            assertTrue("Field " + field + " category should contain Teknis", category.contains("Teknis"));
+            assertFalse("Field " + field + " category should not be General", category.equalsIgnoreCase(com.example.interviewai.data.QuestionBank.CATEGORY_UMUM));
+        }
     }
 
     @Test
@@ -200,5 +235,48 @@ public class UserAndSessionUnitTest {
 
         assertTrue(newPass.equals(confirmPassMatching));
         assertFalse(newPass.equals(confirmPassDifferent));
+    }
+
+    @Test
+    public void profileField_and_sessionField_remainSeparate() {
+        // User's profile field is IT
+        User profileUser = new User("Alice", "alice@example.com", "pass123", System.currentTimeMillis(), User.FIELD_IT);
+        assertEquals(User.FIELD_IT, profileUser.getField());
+
+        // User chooses Finance for a technical interview session
+        String temporarySessionField = User.FIELD_FINANCE;
+        String sessionCategory = com.example.interviewai.data.QuestionBank.getTechnicalCategoryForField(temporarySessionField);
+        assertEquals(com.example.interviewai.data.QuestionBank.CATEGORY_TEKNIS_FINANCE, sessionCategory);
+
+        // Verify the profile field was NOT changed by the temporary session selection
+        assertEquals(User.FIELD_IT, profileUser.getField());
+
+        // Now user updates profile to Marketing
+        profileUser.setField(User.FIELD_MARKETING);
+        assertEquals(User.FIELD_MARKETING, profileUser.getField());
+
+        // Next technical interview defaults to Marketing, but user can choose Graphic Design for that session
+        String nextSessionField = User.FIELD_GRAPHIC_DESIGN;
+        String nextSessionCategory = com.example.interviewai.data.QuestionBank.getTechnicalCategoryForField(nextSessionField);
+        assertEquals(com.example.interviewai.data.QuestionBank.CATEGORY_TEKNIS_GRAPHIC_DESIGN, nextSessionCategory);
+
+        // Profile remains Marketing
+        assertEquals(User.FIELD_MARKETING, profileUser.getField());
+    }
+
+    @Test
+    public void generalInterview_preservedAndNotClassifiedAsTechnical() {
+        String generalCategory = com.example.interviewai.data.QuestionBank.CATEGORY_UMUM;
+        assertFalse("General interview should not contain Teknis", generalCategory.toLowerCase().contains("teknis"));
+
+        java.util.List<com.example.interviewai.model.InterviewQuestion> generalQuestions =
+                com.example.interviewai.data.QuestionBank.getFilteredQuestions(
+                        generalCategory,
+                        com.example.interviewai.data.QuestionBank.DIFFICULTY_INTERMEDIATE,
+                        com.example.interviewai.data.QuestionBank.LANG_ID,
+                        5
+                );
+        assertNotNull(generalQuestions);
+        assertEquals(5, generalQuestions.size());
     }
 }

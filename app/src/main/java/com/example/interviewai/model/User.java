@@ -7,9 +7,28 @@ public class User implements Serializable {
     public static final String FIELD_IT = "IT";
     public static final String FIELD_MARKETING = "Marketing";
     public static final String FIELD_ACCOUNTING = "Accounting";
+    public static final String FIELD_HR = "Human Resources";
+    public static final String FIELD_HUMAN_RESOURCES = "Human Resources";
+    public static final String FIELD_FINANCE = "Finance";
+    public static final String FIELD_BUSINESS_MANAGEMENT = "Business Management";
+    public static final String FIELD_SALES = "Sales";
+    public static final String FIELD_GRAPHIC_DESIGN = "Graphic Design";
+    public static final String FIELD_DATA_ANALYTICS = "Data Analytics";
+    public static final String FIELD_CUSTOMER_SERVICE = "Customer Service";
     public static final String DEFAULT_FIELD = FIELD_IT;
 
-    public static final String[] AVAILABLE_FIELDS = {FIELD_IT, FIELD_MARKETING, FIELD_ACCOUNTING};
+    public static final String[] AVAILABLE_FIELDS = {
+            FIELD_IT,
+            FIELD_MARKETING,
+            FIELD_ACCOUNTING,
+            FIELD_HR,
+            FIELD_FINANCE,
+            FIELD_BUSINESS_MANAGEMENT,
+            FIELD_SALES,
+            FIELD_GRAPHIC_DESIGN,
+            FIELD_DATA_ANALYTICS,
+            FIELD_CUSTOMER_SERVICE
+    };
 
     private String name;
     private String email;

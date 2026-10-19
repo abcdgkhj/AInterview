@@ -87,6 +87,14 @@ public class GeminiService {
                         || safeCategory.toLowerCase().contains("it")
                         || safeCategory.toLowerCase().contains("marketing")
                         || safeCategory.toLowerCase().contains("accounting")
+                        || safeCategory.toLowerCase().contains("human resources")
+                        || safeCategory.toLowerCase().contains("hr")
+                        || safeCategory.toLowerCase().contains("finance")
+                        || safeCategory.toLowerCase().contains("business management")
+                        || safeCategory.toLowerCase().contains("sales")
+                        || safeCategory.toLowerCase().contains("graphic design")
+                        || safeCategory.toLowerCase().contains("data analytics")
+                        || safeCategory.toLowerCase().contains("customer service")
                         || safeCategory.toLowerCase().contains("software");
 
                 StringBuilder promptBuilder = new StringBuilder();

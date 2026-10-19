@@ -27,6 +27,20 @@ public class TechnicalFieldSelectionActivity extends AppCompatActivity {
     private RadioButton rbFieldMarketing;
     private View cardOptionAccounting;
     private RadioButton rbFieldAccounting;
+    private View cardOptionHR;
+    private RadioButton rbFieldHR;
+    private View cardOptionFinance;
+    private RadioButton rbFieldFinance;
+    private View cardOptionBusinessManagement;
+    private RadioButton rbFieldBusinessManagement;
+    private View cardOptionSales;
+    private RadioButton rbFieldSales;
+    private View cardOptionGraphicDesign;
+    private RadioButton rbFieldGraphicDesign;
+    private View cardOptionDataAnalytics;
+    private RadioButton rbFieldDataAnalytics;
+    private View cardOptionCustomerService;
+    private RadioButton rbFieldCustomerService;
     private Button btnStartTechnicalInterview;
 
     private UserSessionManager sessionManager;
@@ -57,6 +71,20 @@ public class TechnicalFieldSelectionActivity extends AppCompatActivity {
         rbFieldMarketing = findViewById(R.id.rbFieldMarketing);
         cardOptionAccounting = findViewById(R.id.cardOptionAccounting);
         rbFieldAccounting = findViewById(R.id.rbFieldAccounting);
+        cardOptionHR = findViewById(R.id.cardOptionHR);
+        rbFieldHR = findViewById(R.id.rbFieldHR);
+        cardOptionFinance = findViewById(R.id.cardOptionFinance);
+        rbFieldFinance = findViewById(R.id.rbFieldFinance);
+        cardOptionBusinessManagement = findViewById(R.id.cardOptionBusinessManagement);
+        rbFieldBusinessManagement = findViewById(R.id.rbFieldBusinessManagement);
+        cardOptionSales = findViewById(R.id.cardOptionSales);
+        rbFieldSales = findViewById(R.id.rbFieldSales);
+        cardOptionGraphicDesign = findViewById(R.id.cardOptionGraphicDesign);
+        rbFieldGraphicDesign = findViewById(R.id.rbFieldGraphicDesign);
+        cardOptionDataAnalytics = findViewById(R.id.cardOptionDataAnalytics);
+        rbFieldDataAnalytics = findViewById(R.id.rbFieldDataAnalytics);
+        cardOptionCustomerService = findViewById(R.id.cardOptionCustomerService);
+        rbFieldCustomerService = findViewById(R.id.rbFieldCustomerService);
         btnStartTechnicalInterview = findViewById(R.id.btnStartTechnicalInterview);
 
         if (btnBack != null) {
@@ -83,18 +111,46 @@ public class TechnicalFieldSelectionActivity extends AppCompatActivity {
     private void selectField(String field) {
         selectedField = field;
 
-        rbFieldIT.setChecked(false);
-        rbFieldMarketing.setChecked(false);
-        rbFieldAccounting.setChecked(false);
+        if (rbFieldIT != null) rbFieldIT.setChecked(false);
+        if (rbFieldMarketing != null) rbFieldMarketing.setChecked(false);
+        if (rbFieldAccounting != null) rbFieldAccounting.setChecked(false);
+        if (rbFieldHR != null) rbFieldHR.setChecked(false);
+        if (rbFieldFinance != null) rbFieldFinance.setChecked(false);
+        if (rbFieldBusinessManagement != null) rbFieldBusinessManagement.setChecked(false);
+        if (rbFieldSales != null) rbFieldSales.setChecked(false);
+        if (rbFieldGraphicDesign != null) rbFieldGraphicDesign.setChecked(false);
+        if (rbFieldDataAnalytics != null) rbFieldDataAnalytics.setChecked(false);
+        if (rbFieldCustomerService != null) rbFieldCustomerService.setChecked(false);
 
         if (User.FIELD_MARKETING.equalsIgnoreCase(field)) {
-            rbFieldMarketing.setChecked(true);
+            if (rbFieldMarketing != null) rbFieldMarketing.setChecked(true);
             selectedField = User.FIELD_MARKETING;
         } else if (User.FIELD_ACCOUNTING.equalsIgnoreCase(field)) {
-            rbFieldAccounting.setChecked(true);
+            if (rbFieldAccounting != null) rbFieldAccounting.setChecked(true);
             selectedField = User.FIELD_ACCOUNTING;
+        } else if (User.FIELD_HR.equalsIgnoreCase(field) || "HR".equalsIgnoreCase(field)) {
+            if (rbFieldHR != null) rbFieldHR.setChecked(true);
+            selectedField = User.FIELD_HR;
+        } else if (User.FIELD_FINANCE.equalsIgnoreCase(field)) {
+            if (rbFieldFinance != null) rbFieldFinance.setChecked(true);
+            selectedField = User.FIELD_FINANCE;
+        } else if (User.FIELD_BUSINESS_MANAGEMENT.equalsIgnoreCase(field)) {
+            if (rbFieldBusinessManagement != null) rbFieldBusinessManagement.setChecked(true);
+            selectedField = User.FIELD_BUSINESS_MANAGEMENT;
+        } else if (User.FIELD_SALES.equalsIgnoreCase(field)) {
+            if (rbFieldSales != null) rbFieldSales.setChecked(true);
+            selectedField = User.FIELD_SALES;
+        } else if (User.FIELD_GRAPHIC_DESIGN.equalsIgnoreCase(field)) {
+            if (rbFieldGraphicDesign != null) rbFieldGraphicDesign.setChecked(true);
+            selectedField = User.FIELD_GRAPHIC_DESIGN;
+        } else if (User.FIELD_DATA_ANALYTICS.equalsIgnoreCase(field)) {
+            if (rbFieldDataAnalytics != null) rbFieldDataAnalytics.setChecked(true);
+            selectedField = User.FIELD_DATA_ANALYTICS;
+        } else if (User.FIELD_CUSTOMER_SERVICE.equalsIgnoreCase(field)) {
+            if (rbFieldCustomerService != null) rbFieldCustomerService.setChecked(true);
+            selectedField = User.FIELD_CUSTOMER_SERVICE;
         } else {
-            rbFieldIT.setChecked(true);
+            if (rbFieldIT != null) rbFieldIT.setChecked(true);
             selectedField = User.FIELD_IT;
         }
 
@@ -104,11 +160,20 @@ public class TechnicalFieldSelectionActivity extends AppCompatActivity {
     }
 
     private void setupClickListeners() {
-        cardOptionIT.setOnClickListener(v -> selectField(User.FIELD_IT));
-        cardOptionMarketing.setOnClickListener(v -> selectField(User.FIELD_MARKETING));
-        cardOptionAccounting.setOnClickListener(v -> selectField(User.FIELD_ACCOUNTING));
+        if (cardOptionIT != null) cardOptionIT.setOnClickListener(v -> selectField(User.FIELD_IT));
+        if (cardOptionMarketing != null) cardOptionMarketing.setOnClickListener(v -> selectField(User.FIELD_MARKETING));
+        if (cardOptionAccounting != null) cardOptionAccounting.setOnClickListener(v -> selectField(User.FIELD_ACCOUNTING));
+        if (cardOptionHR != null) cardOptionHR.setOnClickListener(v -> selectField(User.FIELD_HR));
+        if (cardOptionFinance != null) cardOptionFinance.setOnClickListener(v -> selectField(User.FIELD_FINANCE));
+        if (cardOptionBusinessManagement != null) cardOptionBusinessManagement.setOnClickListener(v -> selectField(User.FIELD_BUSINESS_MANAGEMENT));
+        if (cardOptionSales != null) cardOptionSales.setOnClickListener(v -> selectField(User.FIELD_SALES));
+        if (cardOptionGraphicDesign != null) cardOptionGraphicDesign.setOnClickListener(v -> selectField(User.FIELD_GRAPHIC_DESIGN));
+        if (cardOptionDataAnalytics != null) cardOptionDataAnalytics.setOnClickListener(v -> selectField(User.FIELD_DATA_ANALYTICS));
+        if (cardOptionCustomerService != null) cardOptionCustomerService.setOnClickListener(v -> selectField(User.FIELD_CUSTOMER_SERVICE));
 
-        btnStartTechnicalInterview.setOnClickListener(v -> startTechnicalInterview());
+        if (btnStartTechnicalInterview != null) {
+            btnStartTechnicalInterview.setOnClickListener(v -> startTechnicalInterview());
+        }
     }
 
     private void startTechnicalInterview() {
