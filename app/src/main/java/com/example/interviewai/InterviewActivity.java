@@ -236,11 +236,11 @@ public class InterviewActivity extends AppCompatActivity {
                         btnSubmitAnswer.setEnabled(true);
                         btnSubmitAnswer.setAlpha(1.0f);
 
-                        if (questions != null && !questions.isEmpty()) {
+                   /*     if (questions != null && !questions.isEmpty()) {
                             workflowManager.setQuestions(questions);
                             renderCurrentQuestion();
                             Toast.makeText(InterviewActivity.this, "Pertanyaan berhasil dibuat oleh AInterview!", Toast.LENGTH_SHORT).show();
-                        }
+                        }*/
                     }
 
                     @Override
