@@ -6,7 +6,6 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.graphics.Insets;
@@ -17,7 +16,8 @@ import com.example.interviewai.data.InterviewStorage;
 import com.example.interviewai.data.QuestionBank;
 import com.example.interviewai.data.UserSessionManager;
 import com.example.interviewai.model.InterviewSession;
-import com.example.interviewai.model.User;
+import com.example.interviewai.model.User;
+import com.example.interviewai.notification.AppNotification;
 
 import java.util.List;
 
@@ -72,6 +72,18 @@ public class HomeActivity extends AppCompatActivity {
         cardInterviewTeknis = findViewById(R.id.cardInterviewTeknis);
 
         setupEventHandlers();
+
+        if (getIntent() != null) {
+            if (getIntent().getBooleanExtra("extra_show_welcome", false)) {
+                User u = sessionManager.getCurrentUser();
+                String name = (u != null && u.getName() != null) ? u.getName().trim() : "Kandidat";
+                AppNotification.showSuccess(this, "Selamat Datang", "Selamat datang kembali, " + name + "!");
+                getIntent().removeExtra("extra_show_welcome");
+            } else if (getIntent().getBooleanExtra("extra_show_register_success", false)) {
+                AppNotification.showSuccess(this, "Pendaftaran Berhasil", "Akun AInterview Anda berhasil dibuat!");
+                getIntent().removeExtra("extra_show_register_success");
+            }
+        }
     }
 
     @Override
@@ -126,7 +138,7 @@ public class HomeActivity extends AppCompatActivity {
                     intent.putExtra("extra_session_id", latest.getSessionId());
                     startActivity(intent);
                 } else {
-                    Toast.makeText(this, "Belum ada sesi yang selesai. Selesaikan interview pertama Anda!", Toast.LENGTH_SHORT).show();
+                    AppNotification.showInfo(this, "Riwayat Sesi", "Belum ada sesi yang selesai. Selesaikan interview pertama Anda!");
                 }
             });
         }

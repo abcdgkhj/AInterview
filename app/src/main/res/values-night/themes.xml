@@ -2,6 +2,17 @@
     <!-- Base application theme. -->
     <style name="Base.Theme.InterviewAI" parent="Theme.Material3.DayNight.NoActionBar">
         <!-- Customize your dark theme here. -->
-        <!-- <item name="colorPrimary">@color/my_dark_primary</item> -->
+    </style>
+
+    <!-- Dedicated Splash Screen Theme (Pure White & Clean) -->
+    <style name="Theme.InterviewAI.Splash" parent="Theme.Material3.DayNight.NoActionBar">
+        <!-- Pre-Android 12: Window background shows pure white + centered 92dp logo -->
+        <item name="android:windowBackground">@drawable/bg_splash_window</item>
+        <item name="android:statusBarColor">@android:color/transparent</item>
+        <item name="android:navigationBarColor">@android:color/transparent</item>
+        <item name="android:windowLightStatusBar">true</item>
+        <!-- Android 12+ System Splash Screen Support -->
+        <item name="android:windowSplashScreenBackground" tools:targetApi="s">#FFFFFF</item>
+        <item name="android:windowSplashScreenAnimatedIcon" tools:targetApi="s">@drawable/ic_splash_logo</item>
     </style>
 </resources>

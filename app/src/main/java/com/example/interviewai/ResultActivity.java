@@ -6,9 +6,9 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.activity.OnBackPressedCallback;
 import androidx.core.graphics.Insets;
 import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowInsetsCompat;
@@ -18,6 +18,8 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.example.interviewai.adapter.FeedbackAdapter;
 import com.example.interviewai.data.InterviewStorage;
 import com.example.interviewai.model.InterviewSession;
+
+import com.example.interviewai.notification.AppNotification;
 
 import java.util.List;
 
@@ -90,6 +92,13 @@ public class ResultActivity extends AppCompatActivity {
 
         displaySessionData();
         setupActions();
+
+        getOnBackPressedDispatcher().addCallback(this, new OnBackPressedCallback(true) {
+            @Override
+            public void handleOnBackPressed() {
+                navigateToHome();
+            }
+        });
     }
 
     private void ensureCompleteSessionItems(InterviewSession session) {
@@ -119,7 +128,7 @@ public class ResultActivity extends AppCompatActivity {
 
     private void displaySessionData() {
         if (session == null) {
-            Toast.makeText(this, "Tidak ada data sesi untuk ditampilkan.", Toast.LENGTH_SHORT).show();
+            AppNotification.showWarning(this, "Data Sesi", "Tidak ada data sesi untuk ditampilkan.");
             navigateToHome();
             return;
         }
@@ -185,10 +194,5 @@ public class ResultActivity extends AppCompatActivity {
         intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_NEW_TASK);
         startActivity(intent);
         finish();
-    }
-
-    @Override
-    public void onBackPressed() {
-        navigateToHome();
     }
 }

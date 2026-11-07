@@ -1,0 +1,104 @@
+<?xml version="1.0" encoding="utf-8"?>
+<com.google.android.material.card.MaterialCardView
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/cardNotification"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:layout_marginStart="14dp"
+    android:layout_marginEnd="14dp"
+    android:layout_marginTop="8dp"
+    android:clickable="true"
+    android:focusable="true"
+    app:cardCornerRadius="18dp"
+    app:cardElevation="10dp"
+    app:strokeWidth="1.2dp"
+    app:strokeColor="@color/notification_stroke"
+    app:cardBackgroundColor="@color/notification_bg">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:gravity="center_vertical"
+        android:padding="12dp">
+
+        <!-- Left Brand & Status Indicator Container -->
+        <FrameLayout
+            android:layout_width="44dp"
+            android:layout_height="44dp"
+            android:layout_marginEnd="12dp">
+
+            <!-- AInterview App Official Bright Logo -->
+            <ImageView
+                android:id="@+id/imgBrandLogo"
+                android:layout_width="42dp"
+                android:layout_height="42dp"
+                android:layout_gravity="center"
+                android:src="@drawable/ic_ainterview_logo"
+                android:contentDescription="@string/app_name" />
+
+            <!-- Status Indicator Badge with White Ring Background -->
+            <ImageView
+                android:id="@+id/imgStatusBadge"
+                android:layout_width="18dp"
+                android:layout_height="18dp"
+                android:layout_gravity="bottom|end"
+                android:background="@drawable/bg_notification_badge_circle"
+                android:padding="1dp"
+                android:src="@drawable/ic_check_circle"
+                android:contentDescription="Status" />
+        </FrameLayout>
+
+        <!-- Vertical Accent Bar -->
+        <View
+            android:id="@+id/viewAccentBar"
+            android:layout_width="3.5dp"
+            android:layout_height="34dp"
+            android:layout_marginEnd="12dp"
+            android:background="@drawable/bg_notification_accent_bar" />
+
+        <!-- Notification Content (Title & Message) - Always Bright, High Contrast & Crisp -->
+        <LinearLayout
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:orientation="vertical">
+
+            <TextView
+                android:id="@+id/txtNotificationTitle"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Notifikasi"
+                android:textColor="@color/notification_text_title"
+                android:textSize="14sp"
+                android:textStyle="bold"
+                android:maxLines="1"
+                android:ellipsize="end" />
+
+            <TextView
+                android:id="@+id/txtNotificationMessage"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="2dp"
+                android:text="Pesan notifikasi..."
+                android:textColor="@color/notification_text_body"
+                android:textSize="12.5sp"
+                android:lineSpacingExtra="2dp"
+                android:maxLines="3"
+                android:ellipsize="end" />
+        </LinearLayout>
+
+        <!-- Dismiss / Close Button -->
+        <ImageView
+            android:id="@+id/btnCloseNotification"
+            android:layout_width="30dp"
+            android:layout_height="30dp"
+            android:layout_marginStart="8dp"
+            android:padding="6dp"
+            android:background="?attr/selectableItemBackgroundBorderless"
+            android:src="@drawable/ic_close"
+            app:tint="#64748B"
+            android:contentDescription="Tutup" />
+    </LinearLayout>
+</com.google.android.material.card.MaterialCardView>

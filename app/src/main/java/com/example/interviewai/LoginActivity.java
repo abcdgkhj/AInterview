@@ -8,7 +8,6 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.graphics.Insets;
@@ -16,6 +15,7 @@ import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowInsetsCompat;
 
 import com.example.interviewai.data.UserSessionManager;
+import com.example.interviewai.notification.AppNotification;
 import com.google.android.material.textfield.TextInputEditText;
 import com.google.android.material.textfield.TextInputLayout;
 
@@ -78,7 +78,7 @@ public class LoginActivity extends AppCompatActivity {
                 edtPassword.setText("password123");
                 tilEmail.setError(null);
                 tilPassword.setError(null);
-                Toast.makeText(this, "Akun demo terisi otomatis.", Toast.LENGTH_SHORT).show();
+                AppNotification.showInfo(this, "Akun Demo", "Akun demo terisi otomatis.");
             });
         }
 
@@ -157,20 +157,21 @@ public class LoginActivity extends AppCompatActivity {
             if (focusView != null) {
                 focusView.requestFocus();
             }
+            AppNotification.showWarning(this, "Validasi Input", "Silakan periksa kembali email dan kata sandi Anda.");
             return;
         }
 
         boolean success = sessionManager.login(email, password);
         if (success) {
-            Toast.makeText(this, "Selamat datang kembali!", Toast.LENGTH_SHORT).show();
             Intent intent = new Intent(LoginActivity.this, HomeActivity.class);
+            intent.putExtra("extra_show_welcome", true);
             intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_NEW_TASK);
             startActivity(intent);
             finish();
         } else {
             tilPassword.setError(getString(R.string.error_auth_failed));
             edtPassword.requestFocus();
-            Toast.makeText(this, getString(R.string.error_auth_failed), Toast.LENGTH_LONG).show();
+            AppNotification.showError(this, "Gagal Masuk", getString(R.string.error_auth_failed));
         }
     }
 

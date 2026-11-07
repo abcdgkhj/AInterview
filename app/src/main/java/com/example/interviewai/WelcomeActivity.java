@@ -10,7 +10,8 @@ import androidx.core.graphics.Insets;
 import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowInsetsCompat;
 
-import com.example.interviewai.data.UserSessionManager;
+import com.example.interviewai.data.UserSessionManager;
+import com.example.interviewai.notification.AppNotification;
 
 public class WelcomeActivity extends AppCompatActivity {
 

@@ -15,10 +15,11 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.InterviewAI">
 
-        <!-- Entry Point Router Activity -->
+        <!-- Entry Point Router Activity & Splash Screen -->
         <activity
             android:name=".MainActivity"
             android:exported="true"
+            android:theme="@style/Theme.InterviewAI.Splash"
             android:windowSoftInputMode="adjustResize">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />

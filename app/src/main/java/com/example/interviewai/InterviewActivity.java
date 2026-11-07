@@ -12,10 +12,10 @@ import android.widget.LinearLayout;
 import android.widget.ProgressBar;
 import android.widget.ScrollView;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.activity.OnBackPressedCallback;
 import androidx.core.graphics.Insets;
 import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowInsetsCompat;
@@ -30,6 +30,8 @@ import com.example.interviewai.data.QuestionBank;
 import com.example.interviewai.model.InterviewItem;
 import com.example.interviewai.model.InterviewQuestion;
 import com.example.interviewai.model.InterviewSession;
+
+import com.example.interviewai.notification.AppNotification;
 import com.example.interviewai.workflow.InterviewWorkflowManager;
 
 import java.util.List;
@@ -99,6 +101,14 @@ public class InterviewActivity extends AppCompatActivity {
 
         // Panggil Gemini AI untuk meng-generate pertanyaan wawancara unik
         generateQuestionsWithGemini();
+
+        // Handle back press using OnBackPressedDispatcher
+        getOnBackPressedDispatcher().addCallback(this, new OnBackPressedCallback(true) {
+            @Override
+            public void handleOnBackPressed() {
+                showExitConfirmationDialog();
+            }
+        });
     }
 
     private void initializeWorkflow() {
@@ -236,11 +246,11 @@ public class InterviewActivity extends AppCompatActivity {
                         btnSubmitAnswer.setEnabled(true);
                         btnSubmitAnswer.setAlpha(1.0f);
 
-                   /*     if (questions != null && !questions.isEmpty()) {
+                        if (questions != null && !questions.isEmpty()) {
                             workflowManager.setQuestions(questions);
                             renderCurrentQuestion();
-                            Toast.makeText(InterviewActivity.this, "Pertanyaan berhasil dibuat oleh AInterview!", Toast.LENGTH_SHORT).show();
-                        }*/
+                            AppNotification.showSuccess(InterviewActivity.this, "AInterview AI", "Pertanyaan interview berhasil dibuat oleh AInterview!");
+                        }
                     }
 
                     @Override
@@ -259,7 +269,7 @@ public class InterviewActivity extends AppCompatActivity {
                             workflowManager.setQuestions(fallbackQuestions);
                             renderCurrentQuestion();
                         }
-                        Toast.makeText(InterviewActivity.this, "Menggunakan bank pertanyaan lokal.", Toast.LENGTH_SHORT).show();
+                        AppNotification.showWarning(InterviewActivity.this, "Bank Pertanyaan Lokal", "Koneksi AI mengalami kendala. Menggunakan bank pertanyaan lokal.");
                     }
                 }
         );
@@ -276,7 +286,7 @@ public class InterviewActivity extends AppCompatActivity {
     private void handleSubmitAnswerAction() {
         String answerText = edtAnswer.getText() != null ? edtAnswer.getText().toString().trim() : "";
         if (answerText.isEmpty()) {
-            Toast.makeText(this, R.string.toast_empty_answer, Toast.LENGTH_SHORT).show();
+            AppNotification.showWarning(this, "Jawaban Kosong", getString(R.string.toast_empty_answer));
             return;
         }
 
@@ -292,6 +302,7 @@ public class InterviewActivity extends AppCompatActivity {
                 txtAiLoadingMessage.setText("AInterview sedang menganalisis jawaban Anda...");
             }
         }
+        AppNotification.showAiProcess(InterviewActivity.this, "AInterview sedang menganalisis jawaban Anda...");
         btnSubmitAnswer.setEnabled(false);
         btnSubmitAnswer.setAlpha(0.5f);
 
@@ -326,6 +337,7 @@ public class InterviewActivity extends AppCompatActivity {
 
                 workflowManager.setEvaluatedItemForCurrent(feedbackItem);
                 displayFeedback(feedbackItem);
+                AppNotification.showAiSuccess(InterviewActivity.this, "Analisis jawaban berhasil diselesaikan!");
             }
 
             @Override
@@ -342,6 +354,7 @@ public class InterviewActivity extends AppCompatActivity {
                 if (feedbackItem != null) {
                     displayFeedback(feedbackItem);
                 }
+                AppNotification.showWarning(InterviewActivity.this, "Mode Offline", "Koneksi AI terputus. Menggunakan analisis evaluasi lokal.");
             }
         });
     }
@@ -494,7 +507,7 @@ public class InterviewActivity extends AppCompatActivity {
         }
         workflowManager.setSubmitting(true);
 
-        Toast.makeText(this, "Menyimpan hasil interview...", Toast.LENGTH_SHORT).show();
+        AppNotification.showInfo(this, "Menyimpan Hasil", "Hasil interview berhasil disimpan.");
 
         // Bentuk sesi yang telah selesai
         InterviewSession session = workflowManager.createCompletedSession();
@@ -517,10 +530,5 @@ public class InterviewActivity extends AppCompatActivity {
                 .setPositiveButton("Ya, Keluar", (dialog, which) -> finish())
                 .setNegativeButton("Lanjutkan Latihan", null)
                 .show();
-    }
-
-    @Override
-    public void onBackPressed() {
-        showExitConfirmationDialog();
     }
 }

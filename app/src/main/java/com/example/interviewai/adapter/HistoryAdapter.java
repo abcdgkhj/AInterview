@@ -13,7 +13,8 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.interviewai.R;
 import com.example.interviewai.ResultActivity;
-import com.example.interviewai.data.InterviewStorage;
+import com.example.interviewai.data.InterviewStorage;
+import com.example.interviewai.notification.AppNotification;
 import com.example.interviewai.model.InterviewSession;
 
 import java.text.SimpleDateFormat;
@@ -73,6 +74,7 @@ public class HistoryAdapter extends RecyclerView.Adapter<HistoryAdapter.HistoryV
                             sessionList.remove(adapterPosition);
                             notifyItemRemoved(adapterPosition);
                             notifyItemRangeChanged(adapterPosition, sessionList.size());
+                            AppNotification.showSuccess(context, "Sesi Dihapus", "Catatan sesi wawancara berhasil dihapus.");
                             if (listener != null) {
                                 listener.onHistoryChanged();
                             }

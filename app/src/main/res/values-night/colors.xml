@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- Custom In-App Notification (Always Bright & Crisp for High Readability) -->
+    <color name="notification_bg">#FFFFFF</color>
+    <color name="notification_stroke">#E2E8F0</color>
+    <color name="notification_text_title">#0F172A</color>
+    <color name="notification_text_body">#334155</color>
+    <color name="ai_accent">#8B5CF6</color>
+    <color name="ai_accent_light">#F3E8FF</color>
+</resources>

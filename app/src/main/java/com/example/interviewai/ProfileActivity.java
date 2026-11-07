@@ -6,7 +6,6 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
@@ -17,7 +16,8 @@ import androidx.core.view.WindowInsetsCompat;
 import com.example.interviewai.data.InterviewStorage;
 import com.example.interviewai.data.UserSessionManager;
 import com.example.interviewai.model.InterviewSession;
-import com.example.interviewai.model.User;
+import com.example.interviewai.model.User;
+import com.example.interviewai.notification.AppNotification;
 
 import java.text.SimpleDateFormat;
 import java.util.Date;
@@ -160,7 +160,7 @@ public class ProfileActivity extends AppCompatActivity {
                     String selectedField = fields[chosenIndex[0]];
                     sessionManager.setUserField(selectedField);
                     populateUserData();
-                    Toast.makeText(this, "Bidang diubah ke: " + selectedField, Toast.LENGTH_SHORT).show();
+                    AppNotification.showSuccess(this, "Bidang Diperbarui", "Bidang diubah ke: " + selectedField);
                 })
                 .setNegativeButton("Batal", null)
                 .show();
@@ -172,8 +172,8 @@ public class ProfileActivity extends AppCompatActivity {
                 .setMessage(getString(R.string.confirm_logout_message))
                 .setPositiveButton("Keluar", (dialog, which) -> {
                     sessionManager.logout();
-                    Toast.makeText(this, "Anda telah keluar dari sesi.", Toast.LENGTH_SHORT).show();
                     Intent intent = new Intent(ProfileActivity.this, WelcomeActivity.class);
+                    intent.putExtra("extra_show_logout_success", true);
                     intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
                     startActivity(intent);
                     finish();

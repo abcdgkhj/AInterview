@@ -17,7 +17,8 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.interviewai.adapter.HistoryAdapter;
-import com.example.interviewai.data.InterviewStorage;
+import com.example.interviewai.data.InterviewStorage;
+import com.example.interviewai.notification.AppNotification;
 import com.example.interviewai.model.InterviewSession;
 
 import java.util.List;
@@ -117,6 +118,7 @@ public class HistoryActivity extends AppCompatActivity {
                 .setPositiveButton("Hapus Semua", (dialog, which) -> {
                     InterviewStorage.clearHistory(this);
                     loadHistoryData();
+                    AppNotification.showSuccess(this, "Riwayat Dibersihkan", "Semua riwayat interview berhasil dihapus.");
                 })
                 .setNegativeButton("Batal", null)
                 .show();

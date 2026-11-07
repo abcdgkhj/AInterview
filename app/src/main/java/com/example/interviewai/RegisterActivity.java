@@ -10,7 +10,6 @@ import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.Spinner;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.graphics.Insets;
@@ -18,6 +17,7 @@ import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowInsetsCompat;
 
 import com.example.interviewai.data.UserSessionManager;
+import com.example.interviewai.notification.AppNotification;
 import com.google.android.material.textfield.TextInputEditText;
 import com.google.android.material.textfield.TextInputLayout;
 
@@ -177,6 +177,7 @@ public class RegisterActivity extends AppCompatActivity {
             if (focusView != null) {
                 focusView.requestFocus();
             }
+            AppNotification.showWarning(this, "Validasi Input", "Silakan periksa dan lengkapi data registrasi Anda.");
             return;
         }
 
@@ -187,13 +188,13 @@ public class RegisterActivity extends AppCompatActivity {
 
         boolean registered = sessionManager.register(fullName, email, password, selectedField);
         if (registered) {
-            Toast.makeText(this, getString(R.string.success_registered), Toast.LENGTH_SHORT).show();
             Intent intent = new Intent(RegisterActivity.this, HomeActivity.class);
+            intent.putExtra("extra_show_register_success", true);
             intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_NEW_TASK);
             startActivity(intent);
             finish();
         } else {
-            Toast.makeText(this, "Gagal mendaftarkan akun. Silakan coba lagi.", Toast.LENGTH_SHORT).show();
+            AppNotification.showError(this, "Pendaftaran Gagal", "Gagal mendaftarkan akun. Silakan coba lagi.");
         }
     }
 

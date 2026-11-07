@@ -36,4 +36,12 @@
     <color name="info_light">#E0F2FE</color>
     <color name="error">#DC2626</color>
     <color name="error_light">#FEE2E2</color>
+
+    <!-- Custom In-App Notification Colors (Bright & High Contrast) -->
+    <color name="notification_bg">#FFFFFF</color>
+    <color name="notification_stroke">#E2E8F0</color>
+    <color name="notification_text_title">#0F172A</color>
+    <color name="notification_text_body">#334155</color>
+    <color name="ai_accent">#8B5CF6</color>
+    <color name="ai_accent_light">#F3E8FF</color>
 </resources>

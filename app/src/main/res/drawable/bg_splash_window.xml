@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+    Pre-Android 12 Splash Window Background.
+    
+    Combines the lavender gradient background with the centered AInterview
+    logo at 92dp (matching the Android 12+ splash icon size) so the splash
+    experience is identical across all Android versions.
+    
+    Used as android:windowBackground in Theme.InterviewAI.Splash.
+-->
+<layer-list xmlns:android="http://schemas.android.com/apk/res/android">
+    <!-- Lavender gradient background -->
+    <item android:drawable="@drawable/bg_splash_screen" />
+    <!-- Centered AInterview logo at 92dp (same as Android 12+ splash icon) -->
+    <item
+        android:width="92dp"
+        android:height="92dp"
+        android:gravity="center"
+        android:drawable="@drawable/ic_ainterview_logo" />
+</layer-list>
+

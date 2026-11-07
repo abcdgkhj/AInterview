@@ -11,7 +11,6 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ProgressBar;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
@@ -20,7 +19,8 @@ import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowInsetsCompat;
 
 import com.example.interviewai.data.UserSessionManager;
-import com.example.interviewai.email.ResendEmailService;
+import com.example.interviewai.email.ResendEmailService;
+import com.example.interviewai.notification.AppNotification;
 import com.google.android.material.textfield.TextInputEditText;
 import com.google.android.material.textfield.TextInputLayout;
 
@@ -196,7 +196,7 @@ public class ForgotPasswordActivity extends AppCompatActivity {
                 if (isFinishing() || isDestroyed()) return;
                 if (progressSendOtp != null) progressSendOtp.setVisibility(View.GONE);
 
-                Toast.makeText(ForgotPasswordActivity.this, "Kode OTP berhasil dikirim ke " + email, Toast.LENGTH_LONG).show();
+                AppNotification.showSuccess(ForgotPasswordActivity.this, "OTP Terkirim", "Kode OTP berhasil dikirim ke " + email);
                 if (txtOtpHint != null) {
                     txtOtpHint.setText("Kode OTP telah dikirim ke " + email + ". Berlaku 10 menit.");
                 }
@@ -367,9 +367,9 @@ public class ForgotPasswordActivity extends AppCompatActivity {
                 cardResetSuccess.setVisibility(View.VISIBLE);
             }
 
-            Toast.makeText(this, getString(R.string.toast_reset_success), Toast.LENGTH_SHORT).show();
+            AppNotification.showSuccess(this, "Reset Berhasil", getString(R.string.toast_reset_success));
         } else {
-            Toast.makeText(this, "Gagal mereset kata sandi. Silakan periksa kembali email Anda.", Toast.LENGTH_SHORT).show();
+            AppNotification.showError(this, "Reset Gagal", "Gagal mereset kata sandi. Silakan periksa kembali email Anda.");
         }
     }
 

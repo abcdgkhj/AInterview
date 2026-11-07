@@ -7,7 +7,6 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.graphics.Insets;
@@ -15,7 +14,10 @@ import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowInsetsCompat;
 
 import com.example.interviewai.data.UserSessionManager;
-import com.example.interviewai.model.User;
+import com.example.interviewai.model.User;
+import com.example.interviewai.notification.AppNotification;
+import android.os.Handler;
+import android.os.Looper;
 
 /**
  * Allows the user to view and edit their personal information (name, email).
@@ -90,6 +92,7 @@ public class DataDiriActivity extends AppCompatActivity {
         if (name.isEmpty()) {
             edtName.setError(getString(R.string.error_empty_name));
             edtName.requestFocus();
+            AppNotification.showWarning(this, "Validasi Input", getString(R.string.error_empty_name));
             return;
         }
 
@@ -100,8 +103,8 @@ public class DataDiriActivity extends AppCompatActivity {
             User updatedUser = new User(name, user.getEmail(), user.getPassword(), user.getRegisteredDate(), user.getField());
             sessionManager.saveUser(updatedUser);
 
-            Toast.makeText(this, "Data diri berhasil diperbarui!", Toast.LENGTH_SHORT).show();
-            finish();
+            AppNotification.showSuccess(this, "Data Diri Disimpan", "Data diri Anda berhasil diperbarui!");
+            new Handler(Looper.getMainLooper()).postDelayed(this::finish, 600);
         }
     }
 }
