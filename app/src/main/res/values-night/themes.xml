@@ -1,16 +1,30 @@
 <resources xmlns:tools="http://schemas.android.com/tools">
-    <!-- Base application theme. -->
+    <!-- Base application theme (Consistent bright white styling across light/dark modes). -->
     <style name="Base.Theme.InterviewAI" parent="Theme.Material3.DayNight.NoActionBar">
-        <!-- Customize your dark theme here. -->
+        <!-- Brand Colors -->
+        <item name="colorPrimary">@color/primary</item>
+        <item name="colorOnPrimary">@color/on_primary</item>
+        <item name="colorPrimaryContainer">@color/primary_container</item>
+        <item name="colorSecondary">@color/secondary</item>
+
+        <!-- Window & Status Bar: Pure white (#FFFFFF) with dark/black text & icons -->
+        <item name="android:windowBackground">@color/white</item>
+        <item name="android:statusBarColor">@color/white</item>
+        <item name="android:windowLightStatusBar">true</item>
+        <item name="android:navigationBarColor">@color/white</item>
+        <item name="android:windowLightNavigationBar" tools:targetApi="o_mr1">true</item>
     </style>
+
+    <style name="Theme.InterviewAI" parent="Base.Theme.InterviewAI" />
 
     <!-- Dedicated Splash Screen Theme (Pure White & Clean) -->
     <style name="Theme.InterviewAI.Splash" parent="Theme.Material3.DayNight.NoActionBar">
-        <!-- Pre-Android 12: Window background shows pure white + centered 92dp logo -->
+        <!-- Pre-Android 12: Window background shows pure white + centered 96dp logo -->
         <item name="android:windowBackground">@drawable/bg_splash_window</item>
-        <item name="android:statusBarColor">@android:color/transparent</item>
-        <item name="android:navigationBarColor">@android:color/transparent</item>
+        <item name="android:statusBarColor">@color/white</item>
+        <item name="android:navigationBarColor">@color/white</item>
         <item name="android:windowLightStatusBar">true</item>
+        <item name="android:windowLightNavigationBar" tools:targetApi="o_mr1">true</item>
         <!-- Android 12+ System Splash Screen Support -->
         <item name="android:windowSplashScreenBackground" tools:targetApi="s">#FFFFFF</item>
         <item name="android:windowSplashScreenAnimatedIcon" tools:targetApi="s">@drawable/ic_splash_logo</item>

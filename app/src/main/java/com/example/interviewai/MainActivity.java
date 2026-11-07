@@ -88,7 +88,7 @@ public class MainActivity extends AppCompatActivity {
 
             WindowInsetsControllerCompat controller =
                     new WindowInsetsControllerCompat(window, window.getDecorView());
-            // Dark icons on bright lavender background
+            // Dark/black text and icons on pure white background
             controller.setAppearanceLightStatusBars(true);
             controller.setAppearanceLightNavigationBars(true);
         }

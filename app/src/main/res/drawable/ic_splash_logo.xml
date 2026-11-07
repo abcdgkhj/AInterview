@@ -3,20 +3,16 @@
     Dedicated Splash Screen Icon for Android 12+ (API 31+).
     
     Android 12 SplashScreen uses a 160dp viewport with a 115dp circular mask.
-    The AInterview logo is a squircle (rounded square). At 92dp, the maximum
-    corner distance to center is ~56.6dp < 57.5dp (mask radius), so ZERO
-    pixels are clipped by the circular mask.
+    The AInterview logo is a transparent PNG centered inside a 96dp x 96dp layer item.
+    At 96dp, the maximum corner distance of the logo to center is ~56.2dp < 57.5dp,
+    ensuring zero clipping by the 115dp circular mask.
     
-    Inset = (160 - 92) / 2 = 34dp on each side.
-    
-    This resource is ONLY used for windowSplashScreenAnimatedIcon.
-    The launcher icon remains untouched.
+    This resource is used exclusively for windowSplashScreenAnimatedIcon.
 -->
 <layer-list xmlns:android="http://schemas.android.com/apk/res/android">
     <item
-        android:width="92dp"
-        android:height="92dp"
+        android:width="96dp"
+        android:height="96dp"
         android:gravity="center"
         android:drawable="@drawable/ic_ainterview_logo" />
 </layer-list>
-

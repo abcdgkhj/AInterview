@@ -6,24 +6,27 @@
         <item name="colorOnPrimary">@color/on_primary</item>
         <item name="colorPrimaryContainer">@color/primary_container</item>
         <item name="colorSecondary">@color/secondary</item>
-        <item name="android:windowBackground">@color/bg_light</item>
-        <item name="android:statusBarColor">@color/bg_light</item>
+
+        <!-- Window & Status Bar: Pure white (#FFFFFF) with dark/black text & icons -->
+        <item name="android:windowBackground">@color/white</item>
+        <item name="android:statusBarColor">@color/white</item>
         <item name="android:windowLightStatusBar">true</item>
+        <item name="android:navigationBarColor">@color/white</item>
+        <item name="android:windowLightNavigationBar" tools:targetApi="o_mr1">true</item>
     </style>
 
     <style name="Theme.InterviewAI" parent="Base.Theme.InterviewAI" />
 
     <!-- Dedicated Splash Screen Theme -->
     <style name="Theme.InterviewAI.Splash" parent="Theme.Material3.DayNight.NoActionBar">
-        <!-- Pre-Android 12: Window background shows gradient + centered 92dp logo -->
+        <!-- Pre-Android 12: Window background shows pure white + centered 96dp logo -->
         <item name="android:windowBackground">@drawable/bg_splash_window</item>
-        <item name="android:statusBarColor">@android:color/transparent</item>
-        <item name="android:navigationBarColor">@android:color/transparent</item>
+        <item name="android:statusBarColor">@color/white</item>
+        <item name="android:navigationBarColor">@color/white</item>
         <item name="android:windowLightStatusBar">true</item>
+        <item name="android:windowLightNavigationBar" tools:targetApi="o_mr1">true</item>
         <!-- Android 12+ System Splash Screen Support -->
-        <!-- Background: Pure white (#FFFFFF) -->
         <item name="android:windowSplashScreenBackground" tools:targetApi="s">#FFFFFF</item>
-        <!-- Dedicated inset icon (92dp in 160dp canvas) — avoids 115dp circle clipping -->
         <item name="android:windowSplashScreenAnimatedIcon" tools:targetApi="s">@drawable/ic_splash_logo</item>
     </style>
 </resources>
