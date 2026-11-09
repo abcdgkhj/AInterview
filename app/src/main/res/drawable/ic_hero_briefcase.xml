@@ -1,0 +1,56 @@
+<?xml version="1.0" encoding="utf-8"?>
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    android:width="84dp"
+    android:height="84dp"
+    android:viewportWidth="84"
+    android:viewportHeight="84">
+
+    <!-- Glowing Background Circle -->
+    <path
+        android:fillColor="#20FFFFFF"
+        android:pathData="M42,6 A36,36 0 1,1 41.99,6 Z" />
+    <path
+        android:fillColor="#1538BDF8"
+        android:pathData="M42,12 A30,30 0 1,1 41.99,12 Z" />
+
+    <!-- Smartphone with interview app / CV -->
+    <path
+        android:fillColor="#0C4A6E"
+        android:pathData="M14,22 C14,19.8 15.8,18 18,18 L34,18 C36.2,18 38,19.8 38,22 L38,62 C38,64.2 36.2,66 34,66 L18,66 C15.8,66 14,64.2 14,62 Z" />
+    <!-- Screen -->
+    <path
+        android:fillColor="#38BDF8"
+        android:pathData="M17,23 L35,23 L35,59 L17,59 Z" />
+    <!-- Screen lines (CV preview) -->
+    <path
+        android:fillColor="#FFFFFF"
+        android:pathData="M20,28 L32,28 L32,30 L20,30 Z M20,33 L30,33 L30,35 L20,35 Z M20,38 L28,38 L28,40 L20,40 Z" />
+    <!-- Checkmark on phone -->
+    <path
+        android:fillColor="#4ADE80"
+        android:pathData="M22,48 L25,51 L31,44 L32.5,45.5 L25,54 L20.5,49.5 Z" />
+
+    <!-- Document / Resume overlapping -->
+    <path
+        android:fillColor="#FFFFFF"
+        android:pathData="M40,24 C40,22 41.6,20.5 43.5,20.5 L64,20.5 C65.5,20.5 67,22 67,23.5 L67,61.5 C67,63.5 65.5,65 63.5,65 L43.5,65 C41.6,65 40,63.5 40,61.5 Z" />
+    <!-- Folded corner on document -->
+    <path
+        android:fillColor="#BAE6FD"
+        android:pathData="M59,20.5 L67,28.5 L59,28.5 Z" />
+    <!-- Document header bar -->
+    <path
+        android:fillColor="#0284C7"
+        android:pathData="M45,26 L55,26 L55,30 L45,30 Z" />
+    <!-- Document text lines -->
+    <path
+        android:fillColor="#94A3B8"
+        android:pathData="M45,34 L62,34 L62,36 L45,36 Z M45,39 L62,39 L62,41 L45,41 Z M45,44 L58,44 L58,46 L45,46 Z M45,49 L62,49 L62,51 L45,51 Z M45,54 L55,54 L55,56 L45,56 Z" />
+    <!-- Verified Badge on Document -->
+    <path
+        android:fillColor="#38BDF8"
+        android:pathData="M60,56 A5,5 0 1,1 59.99,56 Z" />
+    <path
+        android:fillColor="#FFFFFF"
+        android:pathData="M58,56 L59.5,57.5 L62.5,54.5 L63.5,55.5 L59.5,59.5 L57,57 Z" />
+</vector>

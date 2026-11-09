@@ -1,0 +1,67 @@
+<?xml version="1.0" encoding="utf-8"?>
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    android:width="84dp"
+    android:height="84dp"
+    android:viewportWidth="84"
+    android:viewportHeight="84">
+
+    <!-- Soft Glow Backdrop Rings -->
+    <path
+        android:fillColor="#20FFFFFF"
+        android:pathData="M42,6 A36,36 0 1,1 41.99,6 Z" />
+    <path
+        android:fillColor="#1538BDF8"
+        android:pathData="M42,12 A30,30 0 1,1 41.99,12 Z" />
+
+    <!-- Performance Dashboard Card Base -->
+    <path
+        android:fillColor="#0C4A6E"
+        android:pathData="M16,22 C16,19 18.5,16.5 21.5,16.5 L66.5,16.5 C69.5,16.5 72,19 72,22 L72,64 C72,67 69.5,69.5 66.5,69.5 L21.5,69.5 C18.5,69.5 16,67 16,64 Z" />
+
+    <!-- Card Interior Screen -->
+    <path
+        android:fillColor="#082F49"
+        android:pathData="M19,25 C19,23.5 20.5,22 22,22 L66,22 C67.5,22 69,23.5 69,25 L69,61 C69,62.5 67.5,64 66,64 L22,64 C20.5,64 19,62.5 19,61 Z" />
+
+    <!-- Target Score Badge (Top Right) -->
+    <path
+        android:fillColor="#38BDF8"
+        android:pathData="M52,27 C52,25.5 53.5,24 55,24 L64,24 C65.5,24 67,25.5 67,27 L67,33 C67,34.5 65.5,36 64,36 L55,36 C53.5,36 52,34.5 52,33 Z" />
+    <!-- Checkmark in score badge -->
+    <path
+        android:fillColor="#FFFFFF"
+        android:pathData="M56,30 L58.5,32.5 L63,27.5 L64.2,28.7 L58.5,35 L54.8,31.2 Z" />
+
+    <!-- Chart Grid Axes -->
+    <path
+        android:fillColor="#1E293B"
+        android:pathData="M23,30 L25,30 L25,58 L65,58 L65,60 L23,60 Z" />
+
+    <!-- Bar 1 (Beginning) -->
+    <path
+        android:fillColor="#0284C7"
+        android:pathData="M28,48 C28,47 29,46 30,46 L33,46 C34,46 35,47 35,48 L35,58 L28,58 Z" />
+
+    <!-- Bar 2 (Growth) -->
+    <path
+        android:fillColor="#0EA5E9"
+        android:pathData="M38,40 C38,39 39,38 40,38 L43,38 C44,38 45,39 45,40 L45,58 L38,58 Z" />
+
+    <!-- Bar 3 (Mastery - High) -->
+    <path
+        android:fillColor="#38BDF8"
+        android:pathData="M48,32 C48,31 49,30 50,30 L53,30 C54,30 55,31 55,32 L55,58 L48,58 Z" />
+
+    <!-- Trend Line Glowing Arrow Overlay -->
+    <path
+        android:fillColor="#FDE047"
+        android:pathData="M29,45 L40,37 L50,29 L54,32 L50,23 L42,26 L45.5,28.5 L38,34.5 L28,42 Z" />
+
+    <!-- Achievement Gold Trophy Icon (Floating Bottom Left) -->
+    <path
+        android:fillColor="#FDE047"
+        android:pathData="M11,15 L17,15 L17,19 C17,21.5 15,23.5 12.5,23.5 L12.5,25.5 L17,25.5 L17,27.5 L7,27.5 L7,25.5 L11.5,25.5 L11.5,23.5 C9,23.5 7,21.5 7,19 L7,15 Z" />
+    <path
+        android:fillColor="#EAB308"
+        android:pathData="M7,16 L5,16 C4.5,16 4,16.5 4,17 L4,19 C4,20 5,21 6,21 L7,21 Z M17,21 L18,21 C19,21 20,20 20,19 L20,17 C20,16.5 19.5,16 19,16 L17,16 Z" />
+</vector>

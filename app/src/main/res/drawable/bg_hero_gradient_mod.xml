@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layer-list xmlns:android="http://schemas.android.com/apk/res/android">
+    <!-- Base gradient with rounded corners -->
+    <item>
+        <shape android:shape="rectangle">
+            <corners android:radius="16dp" />
+            <gradient
+                android:angle="135"
+                android:startColor="#1E3A8A"
+                android:endColor="#2563EB"
+                android:type="linear" />
+        </shape>
+    </item>
+    <!-- Decorative transparent circles -->
+    <item android:gravity="top|start">
+        <shape android:shape="oval">
+            <size android:width="180dp" android:height="180dp" />
+            <solid android:color="#33FFFFFF" />
+        </shape>
+        <padding android:left="-80dp" android:top="-80dp" />
+    </item>
+    <item android:gravity="bottom|end">
+        <shape android:shape="oval">
+            <size android:width="140dp" android:height="140dp" />
+            <solid android:color="#33FFFFFF" />
+        </shape>
+        <padding android:right="-60dp" android:bottom="-60dp" />
+    </item>
+</layer-list>

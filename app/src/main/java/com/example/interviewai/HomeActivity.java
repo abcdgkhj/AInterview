@@ -2,8 +2,10 @@ package com.example.interviewai;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.os.Handler;
+import android.os.Looper;
+import android.view.ViewGroup;
 import android.view.View;
-import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
 
@@ -11,35 +13,42 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.graphics.Insets;
 import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowInsetsCompat;
+import androidx.core.widget.NestedScrollView;
+import androidx.viewpager2.widget.ViewPager2;
 
-import com.example.interviewai.data.InterviewStorage;
+import com.example.interviewai.adapter.HeroCarouselAdapter;
 import com.example.interviewai.data.QuestionBank;
 import com.example.interviewai.data.UserSessionManager;
-import com.example.interviewai.model.InterviewSession;
-import com.example.interviewai.model.User;
+import com.example.interviewai.model.HeroSlideItem;
+import com.example.interviewai.model.User;
 import com.example.interviewai.notification.AppNotification;
+import com.google.android.material.bottomnavigation.BottomNavigationView;
 
+import java.util.ArrayList;
 import java.util.List;
 
 public class HomeActivity extends AppCompatActivity {
 
     public static final String EXTRA_INITIAL_CATEGORY = "extra_initial_category";
+    private static final long AUTO_SLIDE_INTERVAL_MS = 5000L;
 
     private TextView txtGreeting;
-    private TextView txtHistorySessionCount;
-    private TextView txtLatestScore;
-    private ImageView btnHeaderProfile;
-    private Button btnMainStartInterview;
-
-    private View cardQuickHistory;
-    private View cardQuickResult;
-    private View cardQuickProfile;
+    private NestedScrollView scrollHome;
+    private View txtSectionCategories;
 
     private View cardInterviewUmum;
     private View cardInterviewTeknis;
 
+    private ViewPager2 pagerHeroCarousel;
+    private ImageView[] dots;
+    private BottomNavigationView bottomNavHome;
+
     private UserSessionManager sessionManager;
-    private List<InterviewSession> sessions;
+
+    private final Handler autoSlideHandler = new Handler(Looper.getMainLooper());
+    private Runnable autoSlideRunnable;
+    private boolean isAutoSlideRunning = false;
+    private int slideCount = 4;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -48,7 +57,7 @@ public class HomeActivity extends AppCompatActivity {
 
         sessionManager = new UserSessionManager(this);
 
-        // Safe insets handling for R.id.main
+        // Safe insets handling for R.id.main (White background, light status bar)
         View rootView = findViewById(R.id.main);
         if (rootView != null) {
             ViewCompat.setOnApplyWindowInsetsListener(rootView, (v, insets) -> {
@@ -59,18 +68,17 @@ public class HomeActivity extends AppCompatActivity {
         }
 
         txtGreeting = findViewById(R.id.txtGreeting);
-        txtHistorySessionCount = findViewById(R.id.txtHistorySessionCount);
-        txtLatestScore = findViewById(R.id.txtLatestScore);
-        btnHeaderProfile = findViewById(R.id.btnHeaderProfile);
-        btnMainStartInterview = findViewById(R.id.btnMainStartInterview);
-
-        cardQuickHistory = findViewById(R.id.cardQuickHistory);
-        cardQuickResult = findViewById(R.id.cardQuickResult);
-        cardQuickProfile = findViewById(R.id.cardQuickProfile);
+        scrollHome = findViewById(R.id.scrollHome);
+        txtSectionCategories = findViewById(R.id.txtSectionCategories);
 
         cardInterviewUmum = findViewById(R.id.cardInterviewUmum);
         cardInterviewTeknis = findViewById(R.id.cardInterviewTeknis);
 
+        pagerHeroCarousel = findViewById(R.id.pagerHeroCarousel);
+        bottomNavHome = findViewById(R.id.bottomNavHome);
+
+        setupCarousel();
+        setupBottomNav();
         setupEventHandlers();
 
         if (getIntent() != null) {
@@ -89,66 +97,146 @@ public class HomeActivity extends AppCompatActivity {
     @Override
     protected void onResume() {
         super.onResume();
-        refreshUserDataAndStats();
+        refreshUserData();
+        if (bottomNavHome != null) {
+            bottomNavHome.setSelectedItemId(R.id.nav_home);
+        }
+        startAutoSlide();
     }
 
-    private void refreshUserDataAndStats() {
+    @Override
+    protected void onPause() {
+        super.onPause();
+        stopAutoSlide();
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        stopAutoSlide();
+    }
+
+    private void refreshUserData() {
         User user = sessionManager.getCurrentUser();
         if (user != null && user.getName() != null && !user.getName().trim().isEmpty()) {
             txtGreeting.setText(getString(R.string.greeting_format, user.getName().trim()));
         } else {
             txtGreeting.setText("Halo, Kandidat!");
         }
+    }
 
-        sessions = InterviewStorage.getSessions(this);
-        int count = (sessions != null) ? sessions.size() : 0;
-        txtHistorySessionCount.setText(count + " Sesi");
+    private void setupCarousel() {
+        List<HeroSlideItem> slides = new ArrayList<>();
+        slides.add(new HeroSlideItem(R.drawable.onboarding_slide_1));
+        slides.add(new HeroSlideItem(R.drawable.onboarding_slide_2));
+        slides.add(new HeroSlideItem(R.drawable.onboarding_slide_3));
+        slides.add(new HeroSlideItem(R.drawable.onboarding_slide_4));
 
-        if (count > 0 && sessions != null && !sessions.isEmpty()) {
-            InterviewSession latest = sessions.get(0);
-            txtLatestScore.setText("Skor " + latest.getOverallScore());
-        } else {
-            txtLatestScore.setText("Belum Ada");
+        slideCount = slides.size();
+
+        HeroCarouselAdapter adapter = new HeroCarouselAdapter(slides);
+        pagerHeroCarousel.setAdapter(adapter);
+
+        dots = new ImageView[4];
+        dots[0] = findViewById(R.id.dot0);
+        dots[1] = findViewById(R.id.dot1);
+        dots[2] = findViewById(R.id.dot2);
+        dots[3] = findViewById(R.id.dot3);
+
+        updateDots(0);
+
+        pagerHeroCarousel.registerOnPageChangeCallback(new ViewPager2.OnPageChangeCallback() {
+            @Override
+            public void onPageSelected(int position) {
+                super.onPageSelected(position);
+                updateDots(position);
+            }
+        });
+
+        autoSlideRunnable = new Runnable() {
+            @Override
+            public void run() {
+                if (pagerHeroCarousel != null && slideCount > 0) {
+                    int nextItem = (pagerHeroCarousel.getCurrentItem() + 1) % slideCount;
+                    pagerHeroCarousel.setCurrentItem(nextItem, true);
+                }
+                autoSlideHandler.postDelayed(this, AUTO_SLIDE_INTERVAL_MS);
+            }
+        };
+    }
+
+    private void startAutoSlide() {
+        if (!isAutoSlideRunning && autoSlideRunnable != null) {
+            autoSlideHandler.removeCallbacks(autoSlideRunnable);
+            autoSlideHandler.postDelayed(autoSlideRunnable, AUTO_SLIDE_INTERVAL_MS);
+            isAutoSlideRunning = true;
         }
     }
 
-    private void setupEventHandlers() {
-        btnMainStartInterview.setOnClickListener(v -> startInterviewUmum());
+    private void stopAutoSlide() {
+        if (autoSlideRunnable != null) {
+            autoSlideHandler.removeCallbacks(autoSlideRunnable);
+            isAutoSlideRunning = false;
+        }
+    }
 
-        View.OnClickListener profileListener = v -> {
-            Intent intent = new Intent(HomeActivity.this, ProfileActivity.class);
-            startActivity(intent);
-        };
-        if (btnHeaderProfile != null) btnHeaderProfile.setOnClickListener(profileListener);
-        if (cardQuickProfile != null) cardQuickProfile.setOnClickListener(profileListener);
+    private void updateDots(int activePosition) {
+        if (dots == null) return;
+        float density = getResources().getDisplayMetrics().density;
+        int widthActive = (int) (26 * density + 0.5f);
+        int widthInactive = (int) (8 * density + 0.5f);
+        int height = (int) (8 * density + 0.5f);
+        for (int i = 0; i < dots.length; i++) {
+            if (dots[i] != null) {
+                boolean isActive = (i == activePosition);
+                dots[i].setImageResource(isActive ? R.drawable.dot_indicator_active : R.drawable.dot_indicator_inactive);
+                ViewGroup.LayoutParams lp = dots[i].getLayoutParams();
+                if (lp instanceof ViewGroup.MarginLayoutParams) {
+                    // keep margins if any
+                }
+                lp.width = isActive ? widthActive : widthInactive;
+                lp.height = height;
+                dots[i].setLayoutParams(lp);
+            }
+        }
+    }
 
-        if (cardQuickHistory != null) {
-            cardQuickHistory.setOnClickListener(v -> {
+    private void scrollToInterviewOptions() {
+        if (scrollHome != null && txtSectionCategories != null) {
+            scrollHome.smoothScrollTo(0, txtSectionCategories.getTop() - 20);
+        }
+    }
+
+    private void setupBottomNav() {
+        if (bottomNavHome == null) return;
+        bottomNavHome.setOnItemSelectedListener(item -> {
+            int itemId = item.getItemId();
+            if (itemId == R.id.nav_home) {
+                // Already on home, scroll to top
+                if (scrollHome != null) {
+                    scrollHome.smoothScrollTo(0, 0);
+                }
+                return true;
+            } else if (itemId == R.id.nav_history) {
                 Intent intent = new Intent(HomeActivity.this, HistoryActivity.class);
                 startActivity(intent);
-            });
-        }
+                return true;
+            } else if (itemId == R.id.nav_profile) {
+                Intent intent = new Intent(HomeActivity.this, ProfileActivity.class);
+                startActivity(intent);
+                return true;
+            }
+            return false;
+        });
+    }
 
-        if (cardQuickResult != null) {
-            cardQuickResult.setOnClickListener(v -> {
-                if (sessions != null && !sessions.isEmpty()) {
-                    Intent intent = new Intent(HomeActivity.this, ResultActivity.class);
-                    InterviewSession latest = sessions.get(0);
-                    intent.putExtra(ResultActivity.EXTRA_SESSION, latest);
-                    intent.putExtra("extra_session_id", latest.getSessionId());
-                    startActivity(intent);
-                } else {
-                    AppNotification.showInfo(this, "Riwayat Sesi", "Belum ada sesi yang selesai. Selesaikan interview pertama Anda!");
-                }
-            });
-        }
-
+    private void setupEventHandlers() {
         // 1. Interview Umum -> langsung mulai sesi latihan tanpa memilih bidang
         if (cardInterviewUmum != null) {
             cardInterviewUmum.setOnClickListener(v -> startInterviewUmum());
         }
 
-        // 2. Interview Teknis -> buka layar pemilihan bidang (IT, Marketing, Accounting)
+        // 2. Interview Teknis -> buka layar pemilihan bidang (10 bidang keahlian)
         if (cardInterviewTeknis != null) {
             cardInterviewTeknis.setOnClickListener(v -> openTechnicalFieldSelection());
         }
