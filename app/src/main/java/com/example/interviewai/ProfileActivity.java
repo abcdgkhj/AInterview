@@ -16,8 +16,9 @@ import androidx.core.view.WindowInsetsCompat;
 import com.example.interviewai.data.InterviewStorage;
 import com.example.interviewai.data.UserSessionManager;
 import com.example.interviewai.model.InterviewSession;
-import com.example.interviewai.model.User;
+import com.example.interviewai.model.User;
 import com.example.interviewai.notification.AppNotification;
+import com.google.android.material.bottomnavigation.BottomNavigationView;
 
 import java.text.SimpleDateFormat;
 import java.util.Date;
@@ -37,6 +38,7 @@ public class ProfileActivity extends AppCompatActivity {
     private View btnGantiBidang;
     private Button btnLogout;
     private ImageView btnBack;
+    private BottomNavigationView bottomNavHome;
 
     private UserSessionManager sessionManager;
     private final SimpleDateFormat dateFormat = new SimpleDateFormat("MMM yyyy", new Locale("id", "ID"));
@@ -91,6 +93,7 @@ public class ProfileActivity extends AppCompatActivity {
             btnLogout.setOnClickListener(v -> showLogoutConfirmationDialog());
         }
 
+        setupBottomNav();
         populateUserData();
         populateStats();
     }
@@ -98,8 +101,36 @@ public class ProfileActivity extends AppCompatActivity {
     @Override
     protected void onResume() {
         super.onResume();
+        if (bottomNavHome != null && bottomNavHome.getSelectedItemId() != R.id.nav_profile) {
+            bottomNavHome.setSelectedItemId(R.id.nav_profile);
+        }
         populateUserData();
         populateStats();
+    }
+
+    private void setupBottomNav() {
+        bottomNavHome = findViewById(R.id.bottomNavHome);
+        if (bottomNavHome == null) return;
+        bottomNavHome.setSelectedItemId(R.id.nav_profile);
+        bottomNavHome.setOnItemSelectedListener(item -> {
+            int itemId = item.getItemId();
+            if (itemId == R.id.nav_profile) {
+                return true;
+            } else if (itemId == R.id.nav_home) {
+                Intent intent = new Intent(ProfileActivity.this, HomeActivity.class);
+                intent.addFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT);
+                startActivity(intent);
+                overridePendingTransition(0, 0);
+                return true;
+            } else if (itemId == R.id.nav_history) {
+                Intent intent = new Intent(ProfileActivity.this, HistoryActivity.class);
+                intent.addFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT);
+                startActivity(intent);
+                overridePendingTransition(0, 0);
+                return true;
+            }
+            return false;
+        });
     }
 
     private void populateUserData() {

@@ -17,9 +17,10 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.interviewai.adapter.HistoryAdapter;
-import com.example.interviewai.data.InterviewStorage;
+import com.example.interviewai.data.InterviewStorage;
 import com.example.interviewai.notification.AppNotification;
 import com.example.interviewai.model.InterviewSession;
+import com.google.android.material.bottomnavigation.BottomNavigationView;
 
 import java.util.List;
 
@@ -31,6 +32,7 @@ public class HistoryActivity extends AppCompatActivity {
     private Button btnStartFirstInterview;
     private ImageView btnBack;
     private TextView txtHintDeleteHint;
+    private BottomNavigationView bottomNavHome;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -72,13 +74,45 @@ public class HistoryActivity extends AppCompatActivity {
             });
         }
 
+        setupBottomNav();
         loadHistoryData();
     }
 
     @Override
     protected void onResume() {
         super.onResume();
+        if (bottomNavHome != null && bottomNavHome.getSelectedItemId() != R.id.nav_history) {
+            bottomNavHome.setSelectedItemId(R.id.nav_history);
+        }
         loadHistoryData();
+    }
+
+    private void setupBottomNav() {
+        bottomNavHome = findViewById(R.id.bottomNavHome);
+        if (bottomNavHome == null) return;
+        bottomNavHome.setSelectedItemId(R.id.nav_history);
+        bottomNavHome.setOnItemSelectedListener(item -> {
+            int itemId = item.getItemId();
+            if (itemId == R.id.nav_history) {
+                if (rvHistory != null) {
+                    rvHistory.smoothScrollToPosition(0);
+                }
+                return true;
+            } else if (itemId == R.id.nav_home) {
+                Intent intent = new Intent(HistoryActivity.this, HomeActivity.class);
+                intent.addFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT);
+                startActivity(intent);
+                overridePendingTransition(0, 0);
+                return true;
+            } else if (itemId == R.id.nav_profile) {
+                Intent intent = new Intent(HistoryActivity.this, ProfileActivity.class);
+                intent.addFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT);
+                startActivity(intent);
+                overridePendingTransition(0, 0);
+                return true;
+            }
+            return false;
+        });
     }
 
     private void loadHistoryData() {
