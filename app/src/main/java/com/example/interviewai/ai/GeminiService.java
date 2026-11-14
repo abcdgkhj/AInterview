@@ -145,12 +145,12 @@ public class GeminiService {
                     return;
                 }
 
-                // Fallback jika parsing menghasilkan daftar kosong
+                // Error jika parsing menghasilkan daftar kosong
                 throw new Exception("Hasil parsing pertanyaan dari AInterview kosong.");
             } catch (Exception e) {
                 Log.e(TAG, "Gagal meng-generate pertanyaan via AInterview: " + e.getMessage(), e);
-                List<InterviewQuestion> fallback = QuestionBank.getFilteredQuestions(safeCategory, safeDifficulty, safeLanguage, targetCount);
-                mainHandler.post(() -> callback.onError("Koneksi AInterview bermasalah, menggunakan bank soal lokal: " + e.getMessage(), fallback));
+                // Gemini AI adalah satu-satunya sumber pertanyaan; jangan gunakan bank pertanyaan lokal sebagai fallback
+                mainHandler.post(() -> callback.onError("Gagal menghasilkan pertanyaan dari Gemini AI: " + e.getMessage(), null));
             }
         });
     }
@@ -177,16 +177,14 @@ public class GeminiService {
 
         // Jika user tidak menjawab atau kosong
         if (answer == null || answer.trim().isEmpty()) {
-            boolean isEn = "English".equalsIgnoreCase(language);
+            final String noEvalMessage = "Tidak ada data evaluasi karena pertanyaan tidak dijawab.";
             EvaluationResponse emptyResponse = new EvaluationResponse.Builder(EvaluationStatus.COMPLETED)
-                    .overallScore(30)
-                    .strengths(isEn ? "• No response provided." : "• Tidak ada jawaban yang diberikan.")
-                    .weaknesses(isEn ? "• Question was left blank." : "• Pertanyaan dilewati / kosong tanpa jawaban.")
-                    .improvements(isEn ? "• Always attempt to provide key framework points rather than skipping."
-                            : "• Cobalah untuk selalu memberikan poin kerangka pemikiran awal meskipun belum menguasai topik sepenuhnya.")
-                    .modelAnswer(isEn ? "Introduce context, outline your key methodology, and illustrate with an actionable past experience."
-                            : "Mulai dengan konteks peran, jelaskan tantangan yang dihadapi, langkah sistematis yang Anda ambil, dan sebutkan hasil positif yang terukur.")
-                    .scoreRationale(isEn ? "Score 30: Blank answer." : "Skor 30: Jawaban kosong.")
+                    .overallScore(0)
+                    .strengths(noEvalMessage)
+                    .weaknesses(noEvalMessage)
+                    .improvements(noEvalMessage)
+                    .modelAnswer(noEvalMessage)
+                    .scoreRationale("Skor 0: Pertanyaan tidak dijawab.")
                     .build();
             mainHandler.post(() -> callback.onSuccess(emptyResponse));
             return;
@@ -243,20 +241,8 @@ public class GeminiService {
                 throw new Exception("Gagal mengurai respons evaluasi AInterview.");
             } catch (Exception e) {
                 Log.e(TAG, "Gagal mengevaluasi via AInterview: " + e.getMessage(), e);
-                // Fallback cerdas jika koneksi gagal
-                InterviewQuestion fallbackQ = new InterviewQuestion(1, category, difficulty, language, question, "");
-                InterviewItem heuristic = com.example.interviewai.workflow.InterviewWorkflowManager.evaluateAnswer(fallbackQ, answer, language);
-
-                EvaluationResponse fallbackResponse = new EvaluationResponse.Builder(EvaluationStatus.COMPLETED)
-                        .overallScore(heuristic.getScore())
-                        .strengths("• " + heuristic.getStrength())
-                        .weaknesses("• " + heuristic.getImprovement())
-                        .improvements("• Perjelas konteks proyek dan peran spesifik Anda.\n• Sebutkan hasil kuantitatif atau dampak yang dicapai.")
-                        .modelAnswer(heuristic.getSampleAnswer())
-                        .scoreRationale("Skor estimasi heuristik (Offline/Fallback).")
-                        .build();
-
-                mainHandler.post(() -> callback.onSuccess(fallbackResponse));
+                // Gemini AI adalah satu-satunya sumber evaluasi; jangan berikan feedback atau skor lokal palsu
+                mainHandler.post(() -> callback.onFailure("Koneksi AInterview terputus atau gagal: " + e.getMessage()));
             }
         });
     }

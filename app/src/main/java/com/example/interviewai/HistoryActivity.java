@@ -80,6 +80,8 @@ public class HistoryActivity extends AppCompatActivity {
     private void setupBottomNav() {
         bottomNavHome = findViewById(R.id.bottomNavHome);
         if (bottomNavHome == null) return;
+        // Remove Material 3 purple capsule/pill active indicator
+        bottomNavHome.setItemActiveIndicatorEnabled(false);
         bottomNavHome.setSelectedItemId(R.id.nav_history);
         bottomNavHome.setOnItemSelectedListener(item -> {
             int itemId = item.getItemId();

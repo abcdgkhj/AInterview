@@ -22,6 +22,7 @@ import com.example.interviewai.data.UserSessionManager;
 import com.example.interviewai.model.HeroSlideItem;
 import com.example.interviewai.model.User;
 import com.example.interviewai.notification.AppNotification;
+import com.example.interviewai.util.NetworkMonitor;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 
 import java.util.ArrayList;
@@ -224,6 +225,8 @@ public class HomeActivity extends AppCompatActivity {
 
     private void setupBottomNav() {
         if (bottomNavHome == null) return;
+        // Remove Material 3 purple capsule/pill active indicator
+        bottomNavHome.setItemActiveIndicatorEnabled(false);
         bottomNavHome.setOnItemSelectedListener(item -> {
             int itemId = item.getItemId();
             if (itemId == R.id.nav_home) {
@@ -258,14 +261,26 @@ public class HomeActivity extends AppCompatActivity {
             });
         }
 
-        // 1. Interview Umum -> langsung mulai sesi latihan tanpa memilih bidang
+        // 1. Interview Umum -> periksa koneksi internet sebelum memulai
         if (cardInterviewUmum != null) {
-            cardInterviewUmum.setOnClickListener(v -> startInterviewUmum());
+            cardInterviewUmum.setOnClickListener(v -> {
+                if (!NetworkMonitor.isInternetAvailable(HomeActivity.this)) {
+                    NetworkMonitor.showNoInternetDialog(HomeActivity.this, null);
+                    return;
+                }
+                startInterviewUmum();
+            });
         }
 
-        // 2. Interview Teknis -> buka layar pemilihan bidang (10 bidang keahlian)
+        // 2. Interview Teknis -> periksa koneksi internet sebelum membuka layar pemilihan bidang
         if (cardInterviewTeknis != null) {
-            cardInterviewTeknis.setOnClickListener(v -> openTechnicalFieldSelection());
+            cardInterviewTeknis.setOnClickListener(v -> {
+                if (!NetworkMonitor.isInternetAvailable(HomeActivity.this)) {
+                    NetworkMonitor.showNoInternetDialog(HomeActivity.this, null);
+                    return;
+                }
+                openTechnicalFieldSelection();
+            });
         }
     }
 

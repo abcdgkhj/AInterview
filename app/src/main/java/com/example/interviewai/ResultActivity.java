@@ -102,28 +102,8 @@ public class ResultActivity extends AppCompatActivity {
     }
 
     private void ensureCompleteSessionItems(InterviewSession session) {
-        if (session == null || session.getItems() == null) return;
-        List<com.example.interviewai.model.InterviewItem> items = session.getItems();
-        int targetCount = Math.max(5, session.getTotalQuestions());
-        if (items.size() < targetCount) {
-            List<com.example.interviewai.model.InterviewQuestion> fallbackQuestions =
-                    com.example.interviewai.data.QuestionBank.getFilteredQuestions(
-                            session.getRoleCategory(),
-                            session.getDifficulty(),
-                            session.getLanguage(),
-                            targetCount
-                    );
-            for (int i = items.size(); i < targetCount; i++) {
-                if (i < fallbackQuestions.size()) {
-                    com.example.interviewai.model.InterviewQuestion q = fallbackQuestions.get(i);
-                    items.add(com.example.interviewai.workflow.InterviewWorkflowManager.evaluateAnswer(
-                            q,
-                            "",
-                            session.getLanguage()
-                    ));
-                }
-            }
-        }
+        // Jangan pernah memaksakan jumlah pertanyaan sesi menjadi 5.
+        // Jumlah pertanyaan murni mengikuti jumlah yang dipilih saat interview.
     }
 
     private void displaySessionData() {
@@ -133,17 +113,28 @@ public class ResultActivity extends AppCompatActivity {
             return;
         }
 
-        ensureCompleteSessionItems(session);
-
         String diff = session.getDifficulty() != null ? session.getDifficulty() : "Intermediate";
         String meta = session.getCandidateName() + " • " + session.getRoleCategory() + " (" + diff + ")";
         txtCandidateRole.setText(meta);
 
-        // Tampilkan persentase keterisian latihan
+        // Tampilkan skor akhir interview
         txtOverallScore.setText(String.valueOf(session.getOverallScore()));
         txtSummaryStatus.setText(session.getSummaryStatus());
-        txtSummaryFeedback.setText(session.getSummaryFeedback());
 
+        // Hapus teks ringkasan yang tidak relevan / tidak sesuai kondisi jawaban
+        String feedback = session.getSummaryFeedback();
+        if (txtSummaryFeedback != null) {
+            if (feedback == null || feedback.trim().isEmpty()
+                    || feedback.contains("Jawaban Anda masih singkat atau belum terjawab lengkap")
+                    || feedback.contains("Answers were brief or partially incomplete")) {
+                txtSummaryFeedback.setVisibility(View.GONE);
+            } else {
+                txtSummaryFeedback.setText(feedback);
+                txtSummaryFeedback.setVisibility(View.VISIBLE);
+            }
+        }
+
+        // Tampilkan jumlah pertanyaan terjawab secara dinamis: X dari Y
         if (txtAnsweredStat != null) {
             int answered = session.getAnsweredQuestionsCount();
             int total = session.getTotalQuestions();

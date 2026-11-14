@@ -77,72 +77,96 @@ public class FeedbackAdapter extends RecyclerView.Adapter<FeedbackAdapter.Feedba
             txtItemNumber.setText("Pertanyaan " + index);
             txtItemQuestion.setText(item.getQuestion());
 
-            // Score badge for this specific question
-            if (txtItemScore != null) {
-                txtItemScore.setText("Skor: " + item.getScore());
-            }
-
-            // Answer status badge
+            // Answer status badge - diperiksa per pertanyaan secara individual
             String answer = item.getUserAnswer();
-            boolean hasAnswer = answer != null && !answer.trim().isEmpty();
+            boolean hasAnswer = isQuestionAnswered(answer);
 
             if (hasAnswer) {
+                if (txtItemScore != null) {
+                    txtItemScore.setText("Skor: " + item.getScore());
+                }
                 txtItemStatusBadge.setText("Terjawab");
                 txtItemStatusBadge.setTextColor(ContextCompat.getColor(itemView.getContext(), R.color.success));
                 txtItemStatusBadge.setBackgroundResource(R.drawable.bg_badge_role);
                 txtItemAnswer.setText(answer);
                 txtItemAnswer.setAlpha(1.0f);
+
+                // 1. Kelebihan
+                if (txtItemStrength != null) {
+                    String strength = item.getStrength();
+                    txtItemStrength.setText((strength != null && !strength.trim().isEmpty()) ? strength : "-");
+                    if (layoutItemStrength != null) layoutItemStrength.setVisibility(View.VISIBLE);
+                }
+
+                // 2. Kekurangan
+                if (txtItemWeakness != null) {
+                    String weakness = item.getWeakness();
+                    txtItemWeakness.setText((weakness != null && !weakness.trim().isEmpty()) ? weakness : "-");
+                    if (layoutItemWeakness != null) layoutItemWeakness.setVisibility(View.VISIBLE);
+                }
+
+                // 3. Saran Perbaikan
+                if (txtItemGuideline != null) {
+                    String improvement = item.getImprovement();
+                    txtItemGuideline.setText((improvement != null && !improvement.trim().isEmpty()) ? improvement : "-");
+                    if (layoutItemImprovement != null) layoutItemImprovement.setVisibility(View.VISIBLE);
+                }
+
+                // 4. Rekomendasi Jawaban Ideal
+                if (txtItemAiNotice != null) {
+                    String sampleAnswer = item.getSampleAnswer();
+                    txtItemAiNotice.setText((sampleAnswer != null && !sampleAnswer.trim().isEmpty()) ? sampleAnswer : "-");
+                    if (layoutItemAiNotice != null) layoutItemAiNotice.setVisibility(View.VISIBLE);
+                }
             } else {
+                if (txtItemScore != null) {
+                    txtItemScore.setText("Skor: 0");
+                }
                 txtItemStatusBadge.setText("Tidak Dijawab");
                 txtItemStatusBadge.setTextColor(ContextCompat.getColor(itemView.getContext(), R.color.warning));
                 txtItemStatusBadge.setBackgroundResource(R.drawable.bg_badge_score);
                 txtItemAnswer.setText("(Pertanyaan ini dilewati / tidak dijawab)");
                 txtItemAnswer.setAlpha(0.6f);
-            }
 
-            // Strengths / Analysis feedback
-            if (txtItemStrength != null) {
-                String strength = item.getStrength();
-                if (strength != null && !strength.trim().isEmpty()) {
-                    txtItemStrength.setText(strength);
+                // Pada keempat bagian feedback di atas, tampilkan pesan:
+                // "Tidak ada data evaluasi karena pertanyaan tidak dijawab."
+                final String noEvalMessage = "Tidak ada data evaluasi karena pertanyaan tidak dijawab.";
+
+                if (txtItemStrength != null) {
+                    txtItemStrength.setText(noEvalMessage);
                     if (layoutItemStrength != null) layoutItemStrength.setVisibility(View.VISIBLE);
-                } else {
-                    if (layoutItemStrength != null) layoutItemStrength.setVisibility(View.GONE);
                 }
-            }
 
-            // Weaknesses feedback
-            if (txtItemWeakness != null) {
-                String weakness = item.getWeakness();
-                if (weakness != null && !weakness.trim().isEmpty()) {
-                    txtItemWeakness.setText(weakness);
+                if (txtItemWeakness != null) {
+                    txtItemWeakness.setText(noEvalMessage);
                     if (layoutItemWeakness != null) layoutItemWeakness.setVisibility(View.VISIBLE);
-                } else {
-                    if (layoutItemWeakness != null) layoutItemWeakness.setVisibility(View.GONE);
                 }
-            }
 
-            // Improvement / Guideline feedback
-            if (txtItemGuideline != null) {
-                String improvement = item.getImprovement();
-                if (improvement != null && !improvement.trim().isEmpty()) {
-                    txtItemGuideline.setText(improvement);
+                if (txtItemGuideline != null) {
+                    txtItemGuideline.setText(noEvalMessage);
                     if (layoutItemImprovement != null) layoutItemImprovement.setVisibility(View.VISIBLE);
-                } else {
-                    if (layoutItemImprovement != null) layoutItemImprovement.setVisibility(View.GONE);
                 }
-            }
 
-            // Ideal sample answer / recommendation
-            if (txtItemAiNotice != null) {
-                String sampleAnswer = item.getSampleAnswer();
-                if (sampleAnswer != null && !sampleAnswer.trim().isEmpty()) {
-                    txtItemAiNotice.setText(sampleAnswer);
+                if (txtItemAiNotice != null) {
+                    txtItemAiNotice.setText(noEvalMessage);
                     if (layoutItemAiNotice != null) layoutItemAiNotice.setVisibility(View.VISIBLE);
-                } else {
-                    if (layoutItemAiNotice != null) layoutItemAiNotice.setVisibility(View.GONE);
                 }
             }
+        }
+
+        private boolean isQuestionAnswered(String answer) {
+            if (answer == null) return false;
+            String trimmed = answer.trim();
+            if (trimmed.isEmpty()) return false;
+            if (trimmed.equalsIgnoreCase("(Pertanyaan ini dilewati / tidak dijawab)")
+                    || trimmed.equalsIgnoreCase("(Pertanyaan ini tidak dijawab)")
+                    || trimmed.equalsIgnoreCase("(Pertanyaan tidak dijawab)")
+                    || trimmed.equalsIgnoreCase("(Pertanyaan ini dilewati)")
+                    || trimmed.equalsIgnoreCase("Pertanyaan ini dilewati / belum dijawab.")
+                    || trimmed.equalsIgnoreCase("Question skipped or left unanswered.")) {
+                return false;
+            }
+            return true;
         }
     }
 }

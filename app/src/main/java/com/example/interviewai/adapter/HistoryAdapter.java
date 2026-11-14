@@ -127,10 +127,17 @@ public class HistoryAdapter extends RecyclerView.Adapter<HistoryAdapter.HistoryV
             txtHistoryStatus.setText("Status: " + session.getSummaryStatus());
             if (txtHistorySnippet != null) {
                 String feedback = session.getSummaryFeedback();
-                if (feedback != null && feedback.length() > 100) {
-                    feedback = feedback.substring(0, 97) + "...";
+                if (feedback == null || feedback.trim().isEmpty()
+                        || feedback.contains("Jawaban Anda masih singkat atau belum terjawab lengkap")
+                        || feedback.contains("Answers were brief or partially incomplete")) {
+                    txtHistorySnippet.setVisibility(View.GONE);
+                } else {
+                    if (feedback.length() > 100) {
+                        feedback = feedback.substring(0, 97) + "...";
+                    }
+                    txtHistorySnippet.setText(feedback);
+                    txtHistorySnippet.setVisibility(View.VISIBLE);
                 }
-                txtHistorySnippet.setText(feedback);
             }
         }
     }

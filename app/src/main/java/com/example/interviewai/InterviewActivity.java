@@ -32,6 +32,7 @@ import com.example.interviewai.model.InterviewQuestion;
 import com.example.interviewai.model.InterviewSession;
 
 import com.example.interviewai.notification.AppNotification;
+import com.example.interviewai.util.NetworkMonitor;
 import com.example.interviewai.workflow.InterviewWorkflowManager;
 
 import java.util.List;
@@ -45,6 +46,10 @@ public class InterviewActivity extends AppCompatActivity {
     // Dedicated Full Page Loading View
     private LinearLayout layoutPageLoading;
     private ScrollView scrollInterviewContent;
+    private ProgressBar progressPageLoading;
+    private TextView txtPageLoadingTitle;
+    private TextView txtPageLoadingSubtitle;
+    private Button btnRetryPageLoading;
 
     private TextView txtQuestionNumber;
     private TextView txtQuestion;
@@ -75,6 +80,10 @@ public class InterviewActivity extends AppCompatActivity {
     private ImageView btnBack;
 
     private InterviewWorkflowManager workflowManager;
+    private NetworkMonitor networkMonitor;
+    private AlertDialog disconnectedDialog;
+    private boolean isGeneratingQuestions = false;
+    private boolean isEvaluatingAnswer = false;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -95,9 +104,7 @@ public class InterviewActivity extends AppCompatActivity {
 
         initViews();
         setupWordCounter();
-
-        // Tampilkan pertanyaan awal (default lokal terlebih dahulu)
-        renderCurrentQuestion();
+        setupNetworkMonitoring();
 
         // Panggil Gemini AI untuk meng-generate pertanyaan wawancara unik
         generateQuestionsWithGemini();
@@ -109,6 +116,34 @@ public class InterviewActivity extends AppCompatActivity {
                 showExitConfirmationDialog();
             }
         });
+    }
+
+    @Override
+    protected void onStart() {
+        super.onStart();
+        if (networkMonitor != null) {
+            networkMonitor.startMonitoring();
+        }
+    }
+
+    @Override
+    protected void onStop() {
+        super.onStop();
+        if (networkMonitor != null) {
+            networkMonitor.stopMonitoring();
+        }
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        if (networkMonitor != null) {
+            networkMonitor.stopMonitoring();
+        }
+        if (disconnectedDialog != null && disconnectedDialog.isShowing()) {
+            disconnectedDialog.dismiss();
+            disconnectedDialog = null;
+        }
     }
 
     private void initializeWorkflow() {
@@ -157,6 +192,14 @@ public class InterviewActivity extends AppCompatActivity {
     private void initViews() {
         layoutPageLoading = findViewById(R.id.layoutPageLoading);
         scrollInterviewContent = findViewById(R.id.scrollInterviewContent);
+        progressPageLoading = findViewById(R.id.progressPageLoading);
+        txtPageLoadingTitle = findViewById(R.id.txtPageLoadingTitle);
+        txtPageLoadingSubtitle = findViewById(R.id.txtPageLoadingSubtitle);
+        btnRetryPageLoading = findViewById(R.id.btnRetryPageLoading);
+
+        if (btnRetryPageLoading != null) {
+            btnRetryPageLoading.setOnClickListener(v -> generateQuestionsWithGemini());
+        }
 
         txtQuestionNumber = findViewById(R.id.txtQuestionNumber);
         txtQuestion = findViewById(R.id.txtQuestion);
@@ -217,13 +260,108 @@ public class InterviewActivity extends AppCompatActivity {
         }
     }
 
+    private void setupNetworkMonitoring() {
+        networkMonitor = new NetworkMonitor(this, new NetworkMonitor.NetworkStateListener() {
+            @Override
+            public void onNetworkAvailable() {
+                handleNetworkAvailable();
+            }
+
+            @Override
+            public void onNetworkLost() {
+                handleNetworkLost();
+            }
+        });
+    }
+
+    private void handleNetworkLost() {
+        if (isFinishing() || isDestroyed()) return;
+
+        // Hentikan sementara indikasi pemrosesan AI agar user tahu AI tidak sedang memproses
+        if (layoutAiLoading != null && layoutAiLoading.getVisibility() == View.VISIBLE) {
+            layoutAiLoading.setVisibility(View.GONE);
+            btnSubmitAnswer.setEnabled(true);
+            btnSubmitAnswer.setAlpha(1.0f);
+            btnSubmitAnswer.setText("Coba Kirim Ulang");
+            isEvaluatingAnswer = false;
+        }
+
+        if (isGeneratingQuestions) {
+            if (progressPageLoading != null) progressPageLoading.setVisibility(View.GONE);
+            if (btnRetryPageLoading != null) btnRetryPageLoading.setVisibility(View.VISIBLE);
+            if (txtPageLoadingTitle != null) txtPageLoadingTitle.setText("Koneksi Internet Terputus");
+            if (txtPageLoadingSubtitle != null) {
+                txtPageLoadingSubtitle.setText("Koneksi internet Anda terputus. AInterview tidak dapat menghasilkan pertanyaan wawancara.");
+            }
+            isGeneratingQuestions = false;
+        }
+
+        showDisconnectedDialogIfNeeded();
+    }
+
+    private void handleNetworkAvailable() {
+        if (isFinishing() || isDestroyed()) return;
+
+        if (disconnectedDialog != null && disconnectedDialog.isShowing()) {
+            disconnectedDialog.dismiss();
+            disconnectedDialog = null;
+        }
+
+        AppNotification.showSuccess(InterviewActivity.this, "Koneksi Tersedia", "Koneksi internet kembali tersedia. Anda dapat melanjutkan wawancara.");
+
+        // Jika pertanyaan awal belum berhasil dibuat, otomatis coba generate kembali
+        if (!workflowManager.hasQuestions()) {
+            generateQuestionsWithGemini();
+        } else if (btnSubmitAnswer != null && !workflowManager.isCurrentQuestionEvaluated()) {
+            btnSubmitAnswer.setEnabled(true);
+            btnSubmitAnswer.setAlpha(1.0f);
+        }
+    }
+
+    private void showDisconnectedDialogIfNeeded() {
+        if (isFinishing() || isDestroyed()) return;
+        if (disconnectedDialog != null && disconnectedDialog.isShowing()) {
+            return;
+        }
+        disconnectedDialog = NetworkMonitor.showDisconnectedDialog(this, () -> {
+            disconnectedDialog = null;
+        });
+    }
+
     private void generateQuestionsWithGemini() {
+        if (!NetworkMonitor.isInternetAvailable(this)) {
+            if (layoutPageLoading != null) layoutPageLoading.setVisibility(View.VISIBLE);
+            if (scrollInterviewContent != null) scrollInterviewContent.setVisibility(View.GONE);
+            if (progressPageLoading != null) progressPageLoading.setVisibility(View.GONE);
+            if (btnRetryPageLoading != null) btnRetryPageLoading.setVisibility(View.VISIBLE);
+            if (txtPageLoadingTitle != null) txtPageLoadingTitle.setText("Koneksi Internet Terputus");
+            if (txtPageLoadingSubtitle != null) {
+                txtPageLoadingSubtitle.setText("Koneksi internet Anda terputus. AInterview tidak dapat menghasilkan pertanyaan wawancara.");
+            }
+            showDisconnectedDialogIfNeeded();
+            return;
+        }
+
+        isGeneratingQuestions = true;
         if (layoutPageLoading != null) {
             layoutPageLoading.setVisibility(View.VISIBLE);
         }
         if (scrollInterviewContent != null) {
             scrollInterviewContent.setVisibility(View.GONE);
         }
+        if (progressPageLoading != null) {
+            progressPageLoading.setVisibility(View.VISIBLE);
+        }
+        if (btnRetryPageLoading != null) {
+            btnRetryPageLoading.setVisibility(View.GONE);
+        }
+        if (txtPageLoadingTitle != null) {
+            txtPageLoadingTitle.setText("Menyiapkan Simulasi Interview");
+        }
+        if (txtPageLoadingSubtitle != null) {
+            txtPageLoadingSubtitle.setText("AInterview sedang membuat pertanyaan yang unik dan relevan untuk Anda. Mohon tunggu sebentar...");
+        }
+
         btnSubmitAnswer.setEnabled(false);
         btnSubmitAnswer.setAlpha(0.6f);
 
@@ -236,6 +374,7 @@ public class InterviewActivity extends AppCompatActivity {
                 new GeminiService.QuestionGenerationCallback() {
                     @Override
                     public void onSuccess(List<InterviewQuestion> questions) {
+                        isGeneratingQuestions = false;
                         if (isFinishing() || isDestroyed()) return;
                         if (layoutPageLoading != null) {
                             layoutPageLoading.setVisibility(View.GONE);
@@ -255,21 +394,18 @@ public class InterviewActivity extends AppCompatActivity {
 
                     @Override
                     public void onError(String errorMessage, List<InterviewQuestion> fallbackQuestions) {
+                        isGeneratingQuestions = false;
                         if (isFinishing() || isDestroyed()) return;
-                        if (layoutPageLoading != null) {
-                            layoutPageLoading.setVisibility(View.GONE);
-                        }
-                        if (scrollInterviewContent != null) {
-                            scrollInterviewContent.setVisibility(View.VISIBLE);
-                        }
-                        btnSubmitAnswer.setEnabled(true);
-                        btnSubmitAnswer.setAlpha(1.0f);
 
-                        if (fallbackQuestions != null && !fallbackQuestions.isEmpty()) {
-                            workflowManager.setQuestions(fallbackQuestions);
-                            renderCurrentQuestion();
+                        // AI Gemini wajib menjadi satu-satunya sumber pertanyaan: jangan gunakan fallback lokal
+                        if (progressPageLoading != null) progressPageLoading.setVisibility(View.GONE);
+                        if (btnRetryPageLoading != null) btnRetryPageLoading.setVisibility(View.VISIBLE);
+                        if (txtPageLoadingTitle != null) txtPageLoadingTitle.setText("Gagal Menghubungi AI");
+                        if (txtPageLoadingSubtitle != null) {
+                            txtPageLoadingSubtitle.setText("Tidak dapat menghasilkan pertanyaan dari Gemini AI. Pastikan koneksi internet Anda aktif, kemudian coba kembali.");
                         }
-                        AppNotification.showWarning(InterviewActivity.this, "Bank Pertanyaan Lokal", "Koneksi AI mengalami kendala. Menggunakan bank pertanyaan lokal.");
+
+                        showDisconnectedDialogIfNeeded();
                     }
                 }
         );
@@ -292,9 +428,16 @@ public class InterviewActivity extends AppCompatActivity {
 
         saveInputToManager();
 
+        // Pemeriksaan internet sebelum mengirim permintaan evaluasi ke Gemini AI
+        if (!NetworkMonitor.isInternetAvailable(this)) {
+            showDisconnectedDialogIfNeeded();
+            return;
+        }
+
         InterviewQuestion currentQ = workflowManager.getCurrentQuestion();
         if (currentQ == null) return;
 
+        isEvaluatingAnswer = true;
         // Tampilkan status loading AI
         if (layoutAiLoading != null) {
             layoutAiLoading.setVisibility(View.VISIBLE);
@@ -317,12 +460,14 @@ public class InterviewActivity extends AppCompatActivity {
         GeminiService.evaluateAnswer(request, new EvaluationCallback() {
             @Override
             public void onSuccess(EvaluationResponse response) {
+                isEvaluatingAnswer = false;
                 if (isFinishing() || isDestroyed()) return;
                 if (layoutAiLoading != null) {
                     layoutAiLoading.setVisibility(View.GONE);
                 }
                 btnSubmitAnswer.setEnabled(true);
                 btnSubmitAnswer.setAlpha(1.0f);
+                btnSubmitAnswer.setText(getString(R.string.btn_submit_answer));
 
                 InterviewItem feedbackItem = new InterviewItem(
                         currentQ.getQuestionText(),
@@ -342,19 +487,23 @@ public class InterviewActivity extends AppCompatActivity {
 
             @Override
             public void onFailure(String errorMessage) {
+                isEvaluatingAnswer = false;
                 if (isFinishing() || isDestroyed()) return;
                 if (layoutAiLoading != null) {
                     layoutAiLoading.setVisibility(View.GONE);
                 }
                 btnSubmitAnswer.setEnabled(true);
                 btnSubmitAnswer.setAlpha(1.0f);
+                btnSubmitAnswer.setText("Coba Kirim Ulang");
 
-                // Fallback evaluasi lokal jika gagal
-                InterviewItem feedbackItem = workflowManager.evaluateCurrentAnswer();
-                if (feedbackItem != null) {
-                    displayFeedback(feedbackItem);
+                // AI Gemini wajib menjadi satu-satunya sumber feedback: jangan gunakan evaluasi lokal palsu
+                // Pertahankan teks jawaban pengguna di edtAnswer tanpa menghapusnya
+                AppNotification.showWarning(InterviewActivity.this, "Koneksi Terganggu",
+                        "Gagal mendapatkan evaluasi Gemini AI. Jawaban Anda tetap tersimpan. Silakan periksa koneksi lalu coba kirim kembali.");
+
+                if (!NetworkMonitor.isInternetAvailable(InterviewActivity.this)) {
+                    showDisconnectedDialogIfNeeded();
                 }
-                AppNotification.showWarning(InterviewActivity.this, "Mode Offline", "Koneksi AI terputus. Menggunakan analisis evaluasi lokal.");
             }
         });
     }
@@ -450,6 +599,9 @@ public class InterviewActivity extends AppCompatActivity {
                 layoutAiLoading.setVisibility(View.GONE);
             }
             btnSubmitAnswer.setVisibility(View.VISIBLE);
+            btnSubmitAnswer.setEnabled(true);
+            btnSubmitAnswer.setAlpha(1.0f);
+            btnSubmitAnswer.setText(getString(R.string.btn_submit_answer));
             btnNextQuestion.setVisibility(View.GONE);
 
             if (btnFinishEarly != null) {

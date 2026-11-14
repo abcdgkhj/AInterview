@@ -79,7 +79,7 @@ public class MockEvaluator {
                 summaryFeedback = "Anda memahami pokok pertanyaan, namun beberapa jawaban masih terlalu umum. Berikan rincian pengalaman nyata dan alasan lebih spesifik.";
             } else {
                 summaryStatus = "Perlu Latihan Tambahan";
-                summaryFeedback = "Jawaban Anda masih singkat atau belum terjawab lengkap. Luangkan waktu untuk menguraikan proses berpikir, solusi yang Anda tawarkan, dan pencapaian nyata.";
+                summaryFeedback = "";
             }
         }
 
@@ -111,16 +111,10 @@ public class MockEvaluator {
         String sampleAnswer;
 
         if (trimmed.isEmpty()) {
-            score = 30;
-            if (isEnglish) {
-                strength = "Question skipped or left unanswered.";
-                improvement = "Practice tackling unfamiliar questions by breaking them down systematically rather than leaving them blank.";
-                sampleAnswer = "Recommended Answer: Introduce context, outline your key methodology, and illustrate with an actionable past experience.";
-            } else {
-                strength = "Pertanyaan ini dilewati / belum dijawab.";
-                improvement = "Berlatihlah mengutarakan kerangka pemikiran awal meskipun belum menguasai topik sepenuhnya, hindari mengosongkan jawaban.";
-                sampleAnswer = "Contoh Jawaban Ideal: Mulai dengan konteks peran, jelaskan tantangan yang dihadapi, langkah sistematis yang Anda ambil, dan sebutkan hasil positif yang terukur.";
-            }
+            score = 0;
+            strength = "Tidak ada data evaluasi karena pertanyaan tidak dijawab.";
+            improvement = "Tidak ada data evaluasi karena pertanyaan tidak dijawab.";
+            sampleAnswer = "Tidak ada data evaluasi karena pertanyaan tidak dijawab.";
         } else if (wordCount < 10) {
             score = 55 + (wordCount * 2);
             if (isEnglish) {

@@ -16,6 +16,7 @@ import androidx.core.view.WindowInsetsCompat;
 import com.example.interviewai.data.QuestionBank;
 import com.example.interviewai.data.UserSessionManager;
 import com.example.interviewai.model.User;
+import com.example.interviewai.util.NetworkMonitor;
 
 public class TechnicalFieldSelectionActivity extends AppCompatActivity {
 
@@ -172,7 +173,13 @@ public class TechnicalFieldSelectionActivity extends AppCompatActivity {
         if (cardOptionCustomerService != null) cardOptionCustomerService.setOnClickListener(v -> selectField(User.FIELD_CUSTOMER_SERVICE));
 
         if (btnStartTechnicalInterview != null) {
-            btnStartTechnicalInterview.setOnClickListener(v -> startTechnicalInterview());
+            btnStartTechnicalInterview.setOnClickListener(v -> {
+                if (!NetworkMonitor.isInternetAvailable(TechnicalFieldSelectionActivity.this)) {
+                    NetworkMonitor.showNoInternetDialog(TechnicalFieldSelectionActivity.this, null);
+                    return;
+                }
+                startTechnicalInterview();
+            });
         }
     }
 

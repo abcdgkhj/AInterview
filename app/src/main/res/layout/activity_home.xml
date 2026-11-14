@@ -43,7 +43,7 @@
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="Mari persiapkan karir impian Anda"
+                    android:text="Mari persiapkan karier impian Anda"
                     android:textColor="@color/text_secondary"
                     android:textSize="13sp"
                     android:layout_marginTop="3dp" />
@@ -62,8 +62,8 @@
                 android:layout_height="wrap_content"
                 android:orientation="horizontal"
                 android:gravity="center"
-                android:layout_marginTop="10dp"
-                android:layout_marginBottom="16dp">
+                android:layout_marginTop="8dp"
+                android:layout_marginBottom="14dp">
 
                 <ImageView
                     android:id="@+id/dot0"
@@ -114,7 +114,7 @@
                 app:iconPadding="10dp"
                 app:backgroundTint="@color/primary"
                 app:cornerRadius="12dp"
-                android:layout_marginBottom="22dp" />
+                android:layout_marginBottom="16dp" />
 
             <!-- 4. Pilihan Jenis Wawancara Section Header -->
             <TextView
@@ -125,7 +125,7 @@
                 android:textColor="@color/text_primary"
                 android:textSize="17sp"
                 android:textStyle="bold"
-                android:layout_marginBottom="14dp" />
+                android:layout_marginBottom="12dp" />
 
             <!-- Card 1: Wawancara Umum -->
             <LinearLayout
@@ -138,7 +138,7 @@
                 android:clickable="true"
                 android:focusable="true"
                 android:foreground="?attr/selectableItemBackground"
-                android:layout_marginBottom="14dp">
+                android:layout_marginBottom="12dp">
 
                 <LinearLayout
                     android:layout_width="match_parent"
@@ -215,7 +215,7 @@
                 android:clickable="true"
                 android:focusable="true"
                 android:foreground="?attr/selectableItemBackground"
-                android:layout_marginBottom="24dp">
+                android:layout_marginBottom="16dp">
 
                 <LinearLayout
                     android:layout_width="match_parent"
@@ -299,6 +299,7 @@
         app:itemIconTint="@color/bottom_nav_color_selector"
         app:itemTextColor="@color/bottom_nav_color_selector"
         app:labelVisibilityMode="labeled"
+        app:itemBackground="@null"
         app:menu="@menu/bottom_nav_menu" />
 
 </LinearLayout>

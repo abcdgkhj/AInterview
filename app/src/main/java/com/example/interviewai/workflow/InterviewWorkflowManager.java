@@ -1,5 +1,6 @@
 package com.example.interviewai.workflow;
 
+import com.example.interviewai.ai.EvaluationStatus;
 import com.example.interviewai.data.QuestionBank;
 import com.example.interviewai.model.InterviewItem;
 import com.example.interviewai.model.InterviewQuestion;
@@ -41,21 +42,17 @@ public class InterviewWorkflowManager implements Serializable {
                 ? language.trim() : QuestionBank.LANG_ID;
         this.requestedCount = requestedCount > 0 ? requestedCount : 5;
 
-        loadQuestions();
+        // Jangan mengambil pertanyaan default lokal; Gemini AI adalah satu-satunya sumber pertanyaan
+        this.questions = new ArrayList<>();
+        this.answers = new ArrayList<>();
+        this.evaluatedItems = new ArrayList<>();
+        this.currentIndex = 0;
     }
 
     private void loadQuestions() {
-        this.questions = QuestionBank.getFilteredQuestions(category, difficulty, language, requestedCount);
-        if (this.questions == null) {
-            this.questions = new ArrayList<>();
-        }
-
+        this.questions = new ArrayList<>();
         this.answers = new ArrayList<>();
         this.evaluatedItems = new ArrayList<>();
-        for (int i = 0; i < this.questions.size(); i++) {
-            this.answers.add("");
-            this.evaluatedItems.add(null);
-        }
         this.currentIndex = 0;
     }
 
@@ -64,7 +61,7 @@ public class InterviewWorkflowManager implements Serializable {
     }
 
     public int getTotalQuestions() {
-        return questions != null ? questions.size() : 0;
+        return (questions != null && !questions.isEmpty()) ? questions.size() : requestedCount;
     }
 
     public int getCurrentIndex() {
@@ -255,18 +252,11 @@ public class InterviewWorkflowManager implements Serializable {
         String sampleAnswer;
 
         if (trimmed.isEmpty()) {
-            score = 30;
-            if (isEnglish) {
-                strength = "Question skipped or left unanswered.";
-                weakness = "No content was provided.";
-                improvement = "Practice tackling unfamiliar questions by breaking them down systematically rather than leaving them blank.";
-                sampleAnswer = "Introduce context, outline your key methodology, and illustrate with an actionable past experience.";
-            } else {
-                strength = "Pertanyaan ini dilewati / belum dijawab.";
-                weakness = "Tidak ada jawaban yang dikirimkan.";
-                improvement = "Berlatihlah mengutarakan kerangka pemikiran awal meskipun belum menguasai topik sepenuhnya, hindari mengosongkan jawaban.";
-                sampleAnswer = "Mulai dengan konteks peran, jelaskan tantangan yang dihadapi, langkah sistematis yang Anda ambil, dan sebutkan hasil positif yang terukur.";
-            }
+            score = 0;
+            strength = "Tidak ada data evaluasi karena pertanyaan tidak dijawab.";
+            weakness = "Tidak ada data evaluasi karena pertanyaan tidak dijawab.";
+            improvement = "Tidak ada data evaluasi karena pertanyaan tidak dijawab.";
+            sampleAnswer = "Tidak ada data evaluasi karena pertanyaan tidak dijawab.";
         } else if (wordCount < 10) {
             score = 55 + (wordCount * 2);
             if (isEnglish) {
@@ -334,18 +324,15 @@ public class InterviewWorkflowManager implements Serializable {
 
     /**
      * Menyelesaikan sesi latihan dan membentuk model InterviewSession resmi.
-     * Uses the evaluated items stored during the interview for proper feedback scores.
-     * Guarantees all 5 questions are preserved with their own question, answer, and feedback.
+     * Menggunakan item hasil evaluasi aktual dari sesi tanpa hardcoded 5 pertanyaan.
+     * Menghitung skor aktual termasuk skor 0 untuk pertanyaan yang tidak dijawab.
      */
     public InterviewSession createCompletedSession() {
         List<InterviewItem> items = new ArrayList<>();
         int totalScore = 0;
 
-        int totalCount = Math.max(5, questions != null ? questions.size() : 0);
-        List<InterviewQuestion> fallbackQuestions = null;
-        if (questions == null || questions.size() < totalCount) {
-            fallbackQuestions = QuestionBank.getFilteredQuestions(category, difficulty, language, totalCount);
-        }
+        // Jumlah pertanyaan murni mengikuti jumlah pertanyaan aktual sesi wawancara (misal 3, 5, atau lainnya)
+        int totalCount = (questions != null && !questions.isEmpty()) ? questions.size() : requestedCount;
 
         for (int i = 0; i < totalCount; i++) {
             InterviewItem evaluated = (evaluatedItems != null && i < evaluatedItems.size())
@@ -356,15 +343,22 @@ public class InterviewWorkflowManager implements Serializable {
                 totalScore += evaluated.getScore();
             } else {
                 InterviewQuestion q = (questions != null && i < questions.size()) ? questions.get(i) : null;
-                if (q == null && fallbackQuestions != null && i < fallbackQuestions.size()) {
-                    q = fallbackQuestions.get(i);
-                }
-                if (q != null) {
-                    String ans = (answers != null && i < answers.size()) ? answers.get(i) : "";
-                    InterviewItem placeholder = evaluateAnswer(q, ans, language);
-                    items.add(placeholder);
-                    totalScore += placeholder.getScore();
-                }
+                String qText = q != null ? q.getQuestionText() : ("Pertanyaan " + (i + 1));
+                String ans = (answers != null && i < answers.size()) ? answers.get(i) : "";
+
+                // Pertanyaan tidak dijawab / dilewati: skor otomatis 0 dan keempat bagian evaluasi standar
+                InterviewItem placeholder = new InterviewItem(
+                        qText,
+                        ans,
+                        0,
+                        "Tidak ada data evaluasi karena pertanyaan tidak dijawab.",
+                        "Tidak ada data evaluasi karena pertanyaan tidak dijawab.",
+                        "Tidak ada data evaluasi karena pertanyaan tidak dijawab.",
+                        "Tidak ada data evaluasi karena pertanyaan tidak dijawab.",
+                        EvaluationStatus.COMPLETED
+                );
+                items.add(placeholder);
+                totalScore += 0;
             }
         }
 
@@ -388,7 +382,7 @@ public class InterviewWorkflowManager implements Serializable {
                 summaryFeedback = "You grasp core concepts well, though some answers were concise or general. Provide deeper practical context.";
             } else {
                 summaryStatus = "Needs More Practice";
-                summaryFeedback = "Answers were brief or partially incomplete. Take time to structure thoughts and detail past learnings.";
+                summaryFeedback = "";
             }
         } else {
             if (overallScore >= 88) {
@@ -402,7 +396,7 @@ public class InterviewWorkflowManager implements Serializable {
                 summaryFeedback = "Anda memahami pokok pertanyaan, namun beberapa jawaban masih terlalu umum. Berikan rincian pengalaman nyata dan alasan lebih spesifik.";
             } else {
                 summaryStatus = "Perlu Latihan Tambahan";
-                summaryFeedback = "Jawaban Anda masih singkat atau belum terjawab lengkap. Luangkan waktu untuk menguraikan proses berpikir, solusi yang Anda tawarkan, dan pencapaian nyata.";
+                summaryFeedback = "";
             }
         }
 

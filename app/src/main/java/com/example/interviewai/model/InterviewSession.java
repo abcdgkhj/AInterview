@@ -80,17 +80,6 @@ public class InterviewSession implements Serializable {
         String diff = obj.optString("difficulty", "Intermediate");
         String lang = obj.optString("language", "Indonesian");
 
-        // Menjamin sesi lama yang tersimpan tetap menyediakan 5 pertanyaan lengkap saat dibuka kembali
-        if (list.size() < 5) {
-            List<InterviewQuestion> fallbackQuestions = QuestionBank.getFilteredQuestions(role, diff, lang, 5);
-            for (int i = list.size(); i < 5; i++) {
-                if (i < fallbackQuestions.size()) {
-                    InterviewQuestion q = fallbackQuestions.get(i);
-                    list.add(InterviewWorkflowManager.evaluateAnswer(q, "", lang));
-                }
-            }
-        }
-
         return new InterviewSession(
                 obj.optString("sessionId", ""),
                 obj.optString("candidateName", "Kandidat"),
@@ -153,7 +142,11 @@ public class InterviewSession implements Serializable {
         if (items == null) return 0;
         int count = 0;
         for (InterviewItem item : items) {
-            if (item.getUserAnswer() != null && !item.getUserAnswer().trim().isEmpty()) {
+            String ans = item.getUserAnswer();
+            if (ans != null && !ans.trim().isEmpty()
+                    && !ans.trim().equalsIgnoreCase("(Pertanyaan ini dilewati / tidak dijawab)")
+                    && !ans.trim().equalsIgnoreCase("(Pertanyaan ini tidak dijawab)")
+                    && !ans.trim().equalsIgnoreCase("(Pertanyaan tidak dijawab)")) {
                 count++;
             }
         }

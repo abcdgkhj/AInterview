@@ -195,7 +195,7 @@
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
                     android:checked="true"
-                    android:text="@string/lang_indonesian"
+                    android:text="Indoneisa"
                     android:textColor="@color/text_secondary"
                     android:textSize="13sp" />
 
@@ -204,7 +204,7 @@
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
-                    android:text="@string/lang_english"
+                    android:text="Inggris"
                     android:textColor="@color/text_secondary"
                     android:textSize="13sp" />
             </RadioGroup>

@@ -6,6 +6,7 @@
         <item name="colorOnPrimary">@color/on_primary</item>
         <item name="colorPrimaryContainer">@color/primary_container</item>
         <item name="colorSecondary">@color/secondary</item>
+        <item name="colorSecondaryContainer">@android:color/transparent</item>
 
         <!-- Window & Status Bar: Pure white (#FFFFFF) with dark/black text & icons -->
         <item name="android:windowBackground">@color/white</item>
