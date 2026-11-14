@@ -41,9 +41,30 @@ public class QuestionBank {
     public static final String ROLE_PRODUCT = "Behavioral Interview";
 
     // Tingkat Kesulitan
+    public static final String DIFFICULTY_MUDAH = "Mudah";
+    public static final String DIFFICULTY_SEDANG = "Sedang";
+    public static final String DIFFICULTY_SULIT = "Sulit";
+
     public static final String DIFFICULTY_BEGINNER = "Beginner";
     public static final String DIFFICULTY_INTERMEDIATE = "Intermediate";
     public static final String DIFFICULTY_ADVANCED = "Advanced";
+
+    public static String normalizeDifficulty(String difficulty) {
+        if (difficulty == null) return DIFFICULTY_SEDANG;
+        String d = difficulty.trim().toLowerCase();
+        if (d.contains("mudah") || d.contains("beginner") || d.contains("easy") || d.contains("dasar")) {
+            return DIFFICULTY_MUDAH;
+        } else if (d.contains("sulit") || d.contains("advanced") || d.contains("hard") || d.contains("lanjut")) {
+            return DIFFICULTY_SULIT;
+        } else {
+            return DIFFICULTY_SEDANG;
+        }
+    }
+
+    public static boolean matchesDifficulty(String qDifficulty, String targetDifficulty) {
+        if (qDifficulty == null || targetDifficulty == null) return false;
+        return normalizeDifficulty(qDifficulty).equalsIgnoreCase(normalizeDifficulty(targetDifficulty));
+    }
 
     // Bahasa Wawancara
     public static final String LANG_ID = "Indonesian";
@@ -129,14 +150,14 @@ public class QuestionBank {
         List<InterviewQuestion> filtered = new ArrayList<>();
 
         String targetCategory = (category != null && !category.isEmpty()) ? category : CATEGORY_GENERAL;
-        String targetDifficulty = (difficulty != null && !difficulty.isEmpty()) ? difficulty : DIFFICULTY_INTERMEDIATE;
+        String targetDifficulty = (difficulty != null && !difficulty.isEmpty()) ? difficulty : DIFFICULTY_SEDANG;
         String targetLanguage = (language != null && !language.isEmpty()) ? language : LANG_ID;
 
         // 1. Prioritas 1: Kategori sama, Bahasa sama, Kesulitan sama persis
         for (InterviewQuestion q : masterList) {
             if (matchesCategory(q.getCategory(), targetCategory)
                     && q.getLanguage().equalsIgnoreCase(targetLanguage)
-                    && q.getDifficulty().equalsIgnoreCase(targetDifficulty)) {
+                    && matchesDifficulty(q.getDifficulty(), targetDifficulty)) {
                 filtered.add(q);
             }
         }

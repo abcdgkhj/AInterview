@@ -3,14 +3,10 @@ package com.example.interviewai;
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
-import android.widget.ArrayAdapter;
 import android.widget.Button;
-import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.RadioButton;
 import android.widget.RadioGroup;
-import android.widget.Spinner;
-import android.widget.TextView;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.graphics.Insets;
@@ -19,9 +15,7 @@ import androidx.core.view.WindowInsetsCompat;
 
 import com.example.interviewai.data.QuestionBank;
 import com.example.interviewai.data.UserSessionManager;
-import com.example.interviewai.model.User;
-
-import java.util.List;
+import com.example.interviewai.notification.AppNotification;
 
 public class InterviewSetupActivity extends AppCompatActivity {
 
@@ -29,9 +23,6 @@ public class InterviewSetupActivity extends AppCompatActivity {
     public static final String EXTRA_QUESTION_COUNT = "extra_question_count";
     public static final String EXTRA_LANGUAGE = "extra_language";
 
-    private EditText edtCandidateName;
-    private TextView txtUserFieldBadge;
-    private Spinner spnCategory;
     private RadioGroup rgDifficulty;
     private RadioButton rbBeginner;
     private RadioButton rbIntermediate;
@@ -46,11 +37,10 @@ public class InterviewSetupActivity extends AppCompatActivity {
     private RadioButton rbLangId;
     private RadioButton rbLangEn;
 
-    private Button btnStartSession;
+    private Button btnSaveConfig;
     private ImageView btnBack;
 
     private UserSessionManager sessionManager;
-    private String initialCategory = QuestionBank.CATEGORY_GENERAL;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -69,16 +59,6 @@ public class InterviewSetupActivity extends AppCompatActivity {
             });
         }
 
-        if (getIntent() != null && getIntent().hasExtra(HomeActivity.EXTRA_INITIAL_CATEGORY)) {
-            String cat = getIntent().getStringExtra(HomeActivity.EXTRA_INITIAL_CATEGORY);
-            if (cat != null && !cat.isEmpty()) {
-                initialCategory = cat;
-            }
-        }
-
-        edtCandidateName = findViewById(R.id.edtCandidateName);
-        txtUserFieldBadge = findViewById(R.id.txtUserFieldBadge);
-        spnCategory = findViewById(R.id.spnCategory);
         rgDifficulty = findViewById(R.id.rgDifficulty);
         rbBeginner = findViewById(R.id.rbBeginner);
         rbIntermediate = findViewById(R.id.rbIntermediate);
@@ -93,72 +73,56 @@ public class InterviewSetupActivity extends AppCompatActivity {
         rbLangId = findViewById(R.id.rbLangId);
         rbLangEn = findViewById(R.id.rbLangEn);
 
-        btnStartSession = findViewById(R.id.btnStartSession);
+        btnSaveConfig = findViewById(R.id.btnSaveConfig);
         btnBack = findViewById(R.id.btnBack);
 
         if (btnBack != null) {
             btnBack.setOnClickListener(v -> finish());
         }
 
-        prefillUserData();
-        setupCategorySpinner();
+        loadSavedConfiguration();
 
-        btnStartSession.setOnClickListener(v -> startInterview());
+        if (btnSaveConfig != null) {
+            btnSaveConfig.setOnClickListener(v -> saveConfiguration());
+        }
     }
 
-    private void prefillUserData() {
-        User user = sessionManager.getCurrentUser();
-        if (user != null && user.getName() != null && !user.getName().trim().isEmpty()) {
-            edtCandidateName.setText(user.getName().trim());
+    private void loadSavedConfiguration() {
+        // 1. Difficulty (Default: Sedang)
+        String difficulty = sessionManager.getInterviewDifficulty();
+        if (QuestionBank.DIFFICULTY_MUDAH.equalsIgnoreCase(difficulty) || QuestionBank.DIFFICULTY_BEGINNER.equalsIgnoreCase(difficulty)) {
+            rbBeginner.setChecked(true);
+        } else if (QuestionBank.DIFFICULTY_SULIT.equalsIgnoreCase(difficulty) || QuestionBank.DIFFICULTY_ADVANCED.equalsIgnoreCase(difficulty)) {
+            rbAdvanced.setChecked(true);
         } else {
-            edtCandidateName.setText("Kandidat");
+            rbIntermediate.setChecked(true);
         }
 
-        if (txtUserFieldBadge != null) {
-            String field = (user != null) ? user.getField() : sessionManager.getUserField();
-            txtUserFieldBadge.setText("Bidang Utama: " + field);
+        // 2. Question Count (Default: 5 Soal)
+        int count = sessionManager.getInterviewQuestionCount();
+        if (count == 3) {
+            rbCount3.setChecked(true);
+        } else if (count == 10) {
+            rbCount10.setChecked(true);
+        } else {
+            rbCount5.setChecked(true);
         }
 
-        String defaultLang = sessionManager.getDefaultLanguage();
-        if ("English".equalsIgnoreCase(defaultLang)) {
+        // 3. Language (Default: Bahasa Indonesia)
+        String language = sessionManager.getInterviewLanguage();
+        if (QuestionBank.LANG_EN.equalsIgnoreCase(language)) {
             rbLangEn.setChecked(true);
         } else {
             rbLangId.setChecked(true);
         }
     }
 
-    private void setupCategorySpinner() {
-        List<String> categories = QuestionBank.getAvailableCategories();
-        ArrayAdapter<String> adapter = new ArrayAdapter<>(
-                this,
-                android.R.layout.simple_spinner_item,
-                categories
-        );
-        adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
-        spnCategory.setAdapter(adapter);
-
-        int selectedIndex = categories.indexOf(initialCategory);
-        if (selectedIndex >= 0) {
-            spnCategory.setSelection(selectedIndex);
-        }
-    }
-
-    private void startInterview() {
-        String candidateName = edtCandidateName.getText().toString().trim();
-        if (candidateName.isEmpty()) {
-            candidateName = "Kandidat";
-        }
-
-        String category = QuestionBank.CATEGORY_GENERAL;
-        if (spnCategory.getSelectedItem() != null) {
-            category = spnCategory.getSelectedItem().toString();
-        }
-
-        String difficulty = QuestionBank.DIFFICULTY_INTERMEDIATE;
+    private void saveConfiguration() {
+        String difficulty = QuestionBank.DIFFICULTY_SEDANG;
         if (rbBeginner.isChecked()) {
-            difficulty = QuestionBank.DIFFICULTY_BEGINNER;
+            difficulty = QuestionBank.DIFFICULTY_MUDAH;
         } else if (rbAdvanced.isChecked()) {
-            difficulty = QuestionBank.DIFFICULTY_ADVANCED;
+            difficulty = QuestionBank.DIFFICULTY_SULIT;
         }
 
         int count = 5;
@@ -170,12 +134,15 @@ public class InterviewSetupActivity extends AppCompatActivity {
 
         String language = rbLangEn.isChecked() ? QuestionBank.LANG_EN : QuestionBank.LANG_ID;
 
-        Intent intent = new Intent(InterviewSetupActivity.this, InterviewActivity.class);
-        intent.putExtra(MainActivity.EXTRA_CANDIDATE_NAME, candidateName);
-        intent.putExtra(MainActivity.EXTRA_ROLE_CATEGORY, category);
-        intent.putExtra(EXTRA_DIFFICULTY, difficulty);
-        intent.putExtra(EXTRA_QUESTION_COUNT, count);
-        intent.putExtra(EXTRA_LANGUAGE, language);
+        sessionManager.setInterviewDifficulty(difficulty);
+        sessionManager.setInterviewQuestionCount(count);
+        sessionManager.setInterviewLanguage(language);
+
+        Intent intent = new Intent(InterviewSetupActivity.this, HomeActivity.class);
+        intent.putExtra("extra_show_config_success", true);
+        intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_SINGLE_TOP);
         startActivity(intent);
+        overridePendingTransition(0, 0);
+        finish();
     }
 }

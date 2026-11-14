@@ -36,7 +36,7 @@ public class InterviewWorkflowManager implements Serializable {
         this.category = (category != null && !category.trim().isEmpty())
                 ? category.trim() : QuestionBank.CATEGORY_GENERAL;
         this.difficulty = (difficulty != null && !difficulty.trim().isEmpty())
-                ? difficulty.trim() : QuestionBank.DIFFICULTY_INTERMEDIATE;
+                ? QuestionBank.normalizeDifficulty(difficulty) : QuestionBank.DIFFICULTY_SEDANG;
         this.language = (language != null && !language.trim().isEmpty())
                 ? language.trim() : QuestionBank.LANG_ID;
         this.requestedCount = requestedCount > 0 ? requestedCount : 5;

@@ -114,7 +114,7 @@ public class InterviewActivity extends AppCompatActivity {
     private void initializeWorkflow() {
         String candidateName = "Kandidat";
         String category = QuestionBank.CATEGORY_GENERAL;
-        String difficulty = QuestionBank.DIFFICULTY_INTERMEDIATE;
+        String difficulty = QuestionBank.DIFFICULTY_SEDANG;
         String language = QuestionBank.LANG_ID;
         int count = 5;
 
@@ -131,7 +131,7 @@ public class InterviewActivity extends AppCompatActivity {
 
             String diff = getIntent().getStringExtra(EXTRA_DIFFICULTY);
             if (diff != null && !diff.trim().isEmpty()) {
-                difficulty = diff;
+                difficulty = QuestionBank.normalizeDifficulty(diff);
             }
 
             String lang = getIntent().getStringExtra(EXTRA_LANGUAGE);

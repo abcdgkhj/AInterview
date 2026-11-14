@@ -122,7 +122,7 @@
         </LinearLayout>
 
         <!-- Explicit AI Evaluation Placeholder Card -->
-        <LinearLayout
+     <!--   <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:background="@drawable/bg_banner_ai_placeholder"
@@ -172,7 +172,7 @@
                 android:textColor="@color/text_secondary"
                 android:textSize="12sp"
                 android:lineSpacingExtra="2dp" />
-        </LinearLayout>
+        </LinearLayout> -->
 
         <!-- Section Title: Answer Review -->
         <TextView

@@ -38,6 +38,7 @@ public class HomeActivity extends AppCompatActivity {
 
     private View cardInterviewUmum;
     private View cardInterviewTeknis;
+    private View btnInterviewConfig;
 
     private ViewPager2 pagerHeroCarousel;
     private ImageView[] dots;
@@ -73,6 +74,7 @@ public class HomeActivity extends AppCompatActivity {
 
         cardInterviewUmum = findViewById(R.id.cardInterviewUmum);
         cardInterviewTeknis = findViewById(R.id.cardInterviewTeknis);
+        btnInterviewConfig = findViewById(R.id.btnInterviewConfig);
 
         pagerHeroCarousel = findViewById(R.id.pagerHeroCarousel);
         bottomNavHome = findViewById(R.id.bottomNavHome);
@@ -81,17 +83,13 @@ public class HomeActivity extends AppCompatActivity {
         setupBottomNav();
         setupEventHandlers();
 
-        if (getIntent() != null) {
-            if (getIntent().getBooleanExtra("extra_show_welcome", false)) {
-                User u = sessionManager.getCurrentUser();
-                String name = (u != null && u.getName() != null) ? u.getName().trim() : "Kandidat";
-                AppNotification.showSuccess(this, "Selamat Datang", "Selamat datang kembali, " + name + "!");
-                getIntent().removeExtra("extra_show_welcome");
-            } else if (getIntent().getBooleanExtra("extra_show_register_success", false)) {
-                AppNotification.showSuccess(this, "Pendaftaran Berhasil", "Akun AInterview Anda berhasil dibuat!");
-                getIntent().removeExtra("extra_show_register_success");
-            }
-        }
+        checkNotificationExtras(getIntent());
+    }
+
+    @Override
+    protected void onNewIntent(Intent intent) {
+        super.onNewIntent(intent);
+        setIntent(intent);
     }
 
     @Override
@@ -102,6 +100,23 @@ public class HomeActivity extends AppCompatActivity {
             bottomNavHome.setSelectedItemId(R.id.nav_home);
         }
         startAutoSlide();
+        checkNotificationExtras(getIntent());
+    }
+
+    private void checkNotificationExtras(Intent intent) {
+        if (intent == null) return;
+        if (intent.getBooleanExtra("extra_show_welcome", false)) {
+            User u = sessionManager.getCurrentUser();
+            String name = (u != null && u.getName() != null) ? u.getName().trim() : "Kandidat";
+            AppNotification.showSuccess(this, "Selamat Datang", "Selamat datang kembali, " + name + "!");
+            intent.removeExtra("extra_show_welcome");
+        } else if (intent.getBooleanExtra("extra_show_register_success", false)) {
+            AppNotification.showSuccess(this, "Pendaftaran Berhasil", "Akun AInterview Anda berhasil dibuat!");
+            intent.removeExtra("extra_show_register_success");
+        } else if (intent.getBooleanExtra("extra_show_config_success", false)) {
+            AppNotification.showSuccess(this, "Konfigurasi Disimpan", "Pengaturan wawancara berhasil diperbarui.", AppNotification.DURATION_MEDIUM);
+            intent.removeExtra("extra_show_config_success");
+        }
     }
 
     @Override
@@ -235,6 +250,14 @@ public class HomeActivity extends AppCompatActivity {
     }
 
     private void setupEventHandlers() {
+        // 0. Konfigurasi Wawancara -> buka halaman pengaturan kesulitan, jumlah soal, dan bahasa
+        if (btnInterviewConfig != null) {
+            btnInterviewConfig.setOnClickListener(v -> {
+                Intent intent = new Intent(HomeActivity.this, InterviewSetupActivity.class);
+                startActivity(intent);
+            });
+        }
+
         // 1. Interview Umum -> langsung mulai sesi latihan tanpa memilih bidang
         if (cardInterviewUmum != null) {
             cardInterviewUmum.setOnClickListener(v -> startInterviewUmum());
@@ -251,12 +274,16 @@ public class HomeActivity extends AppCompatActivity {
         String candidateName = (user != null && user.getName() != null && !user.getName().trim().isEmpty())
                 ? user.getName().trim() : "Kandidat";
 
+        String difficulty = sessionManager.getInterviewDifficulty();
+        int count = sessionManager.getInterviewQuestionCount();
+        String language = sessionManager.getInterviewLanguage();
+
         Intent intent = new Intent(HomeActivity.this, InterviewActivity.class);
         intent.putExtra(MainActivity.EXTRA_CANDIDATE_NAME, candidateName);
         intent.putExtra(MainActivity.EXTRA_ROLE_CATEGORY, QuestionBank.CATEGORY_UMUM);
-        intent.putExtra(InterviewActivity.EXTRA_DIFFICULTY, QuestionBank.DIFFICULTY_INTERMEDIATE);
-        intent.putExtra(InterviewActivity.EXTRA_QUESTION_COUNT, 5);
-        intent.putExtra(InterviewActivity.EXTRA_LANGUAGE, sessionManager.getDefaultLanguage());
+        intent.putExtra(InterviewActivity.EXTRA_DIFFICULTY, difficulty);
+        intent.putExtra(InterviewActivity.EXTRA_QUESTION_COUNT, count);
+        intent.putExtra(InterviewActivity.EXTRA_LANGUAGE, language);
         startActivity(intent);
     }
 

@@ -29,7 +29,6 @@ public class HistoryActivity extends AppCompatActivity {
     private RecyclerView rvHistory;
     private LinearLayout layoutEmpty;
     private Button btnClearHistory;
-    private Button btnStartFirstInterview;
     private ImageView btnBack;
     private TextView txtHintDeleteHint;
     private BottomNavigationView bottomNavHome;
@@ -52,7 +51,6 @@ public class HistoryActivity extends AppCompatActivity {
         rvHistory = findViewById(R.id.rvHistory);
         layoutEmpty = findViewById(R.id.layoutEmpty);
         btnClearHistory = findViewById(R.id.btnClearHistory);
-        btnStartFirstInterview = findViewById(R.id.btnStartFirstInterview);
         btnBack = findViewById(R.id.btnBack);
         txtHintDeleteHint = findViewById(R.id.txtHintDeleteHint);
 
@@ -64,14 +62,6 @@ public class HistoryActivity extends AppCompatActivity {
 
         if (btnClearHistory != null) {
             btnClearHistory.setOnClickListener(v -> showClearConfirmationDialog());
-        }
-
-        if (btnStartFirstInterview != null) {
-            btnStartFirstInterview.setOnClickListener(v -> {
-                Intent intent = new Intent(HistoryActivity.this, InterviewSetupActivity.class);
-                startActivity(intent);
-                finish();
-            });
         }
 
         setupBottomNav();

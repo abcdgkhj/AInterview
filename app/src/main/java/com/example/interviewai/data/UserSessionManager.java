@@ -16,6 +16,11 @@ public class UserSessionManager {
     private static final String KEY_DEFAULT_LANG = "pref_default_lang";
     private static final String KEY_USER_FIELD = "pref_user_field";
 
+    // Keys for Interview Configuration
+    private static final String KEY_INTERVIEW_DIFFICULTY = "pref_interview_difficulty";
+    private static final String KEY_INTERVIEW_QUESTION_COUNT = "pref_interview_question_count";
+    private static final String KEY_INTERVIEW_LANGUAGE = "pref_interview_language";
+
     private final SharedPreferences prefs;
 
     public UserSessionManager(Context context) {
@@ -145,10 +150,42 @@ public class UserSessionManager {
     }
 
     public String getDefaultLanguage() {
-        return prefs.getString(KEY_DEFAULT_LANG, "Indonesian");
+        return prefs.getString(KEY_DEFAULT_LANG, QuestionBank.LANG_ID);
     }
 
     public void setDefaultLanguage(String language) {
         prefs.edit().putString(KEY_DEFAULT_LANG, language).apply();
+    }
+
+    // --- Interview Configuration Getters and Setters ---
+
+    public String getInterviewDifficulty() {
+        return QuestionBank.normalizeDifficulty(prefs.getString(KEY_INTERVIEW_DIFFICULTY, QuestionBank.DIFFICULTY_SEDANG));
+    }
+
+    public void setInterviewDifficulty(String difficulty) {
+        String val = QuestionBank.normalizeDifficulty(difficulty);
+        prefs.edit().putString(KEY_INTERVIEW_DIFFICULTY, val).apply();
+    }
+
+    public int getInterviewQuestionCount() {
+        return prefs.getInt(KEY_INTERVIEW_QUESTION_COUNT, 5);
+    }
+
+    public void setInterviewQuestionCount(int count) {
+        if (count != 3 && count != 5 && count != 10) {
+            count = 5;
+        }
+        prefs.edit().putInt(KEY_INTERVIEW_QUESTION_COUNT, count).apply();
+    }
+
+    public String getInterviewLanguage() {
+        return prefs.getString(KEY_INTERVIEW_LANGUAGE, QuestionBank.LANG_ID);
+    }
+
+    public void setInterviewLanguage(String language) {
+        String val = (language != null && !language.trim().isEmpty()) ? language.trim() : QuestionBank.LANG_ID;
+        prefs.edit().putString(KEY_INTERVIEW_LANGUAGE, val).apply();
+        setDefaultLanguage(val);
     }
 }

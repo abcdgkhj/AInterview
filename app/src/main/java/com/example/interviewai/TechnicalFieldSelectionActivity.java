@@ -182,13 +182,16 @@ public class TechnicalFieldSelectionActivity extends AppCompatActivity {
                 ? user.getName().trim() : "Kandidat";
 
         String category = QuestionBank.getTechnicalCategoryForField(selectedField);
+        String difficulty = sessionManager.getInterviewDifficulty();
+        int count = sessionManager.getInterviewQuestionCount();
+        String language = sessionManager.getInterviewLanguage();
 
         Intent intent = new Intent(TechnicalFieldSelectionActivity.this, InterviewActivity.class);
         intent.putExtra(MainActivity.EXTRA_CANDIDATE_NAME, candidateName);
         intent.putExtra(MainActivity.EXTRA_ROLE_CATEGORY, category);
-        intent.putExtra(InterviewActivity.EXTRA_DIFFICULTY, QuestionBank.DIFFICULTY_INTERMEDIATE);
-        intent.putExtra(InterviewActivity.EXTRA_QUESTION_COUNT, 5);
-        intent.putExtra(InterviewActivity.EXTRA_LANGUAGE, sessionManager.getDefaultLanguage());
+        intent.putExtra(InterviewActivity.EXTRA_DIFFICULTY, difficulty);
+        intent.putExtra(InterviewActivity.EXTRA_QUESTION_COUNT, count);
+        intent.putExtra(InterviewActivity.EXTRA_LANGUAGE, language);
         startActivity(intent);
         finish();
     }

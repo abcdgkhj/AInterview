@@ -57,7 +57,7 @@ public class GeminiService {
                                           QuestionGenerationCallback callback) {
         final int targetCount = count > 0 ? count : 5;
         final String safeCategory = (category != null && !category.isEmpty()) ? category : QuestionBank.CATEGORY_UMUM;
-        final String safeDifficulty = (difficulty != null && !difficulty.isEmpty()) ? difficulty : QuestionBank.DIFFICULTY_INTERMEDIATE;
+        final String safeDifficulty = (difficulty != null && !difficulty.isEmpty()) ? QuestionBank.normalizeDifficulty(difficulty) : QuestionBank.DIFFICULTY_SEDANG;
         final String safeLanguage = (language != null && !language.isEmpty()) ? language : QuestionBank.LANG_ID;
 
         // Ambil riwayat pertanyaan sebelumnya dari database penyimpanan sesi
@@ -110,7 +110,14 @@ public class GeminiService {
                     promptBuilder.append("- Jenis Wawancara: Interview Umum / Behavioral\n");
                     promptBuilder.append("- Kategori: Pertanyaan Umum (pengenalan diri, kerja tim, resolusi konflik, motivasi, kepemimpinan, dan etika kerja)\n");
                 }
-                promptBuilder.append("- Tingkat Kesulitan: ").append(safeDifficulty).append("\n");
+                promptBuilder.append("- Tingkat Kesulitan: ").append(safeDifficulty);
+                if (QuestionBank.DIFFICULTY_MUDAH.equalsIgnoreCase(safeDifficulty)) {
+                    promptBuilder.append(" (Tingkat Mudah / Dasar: Buat pertanyaan tingkat dasar, fundamental, pengenalan konsep, tidak berbelit-belit, dan ramah untuk level pemula/fresh graduate)\n");
+                } else if (QuestionBank.DIFFICULTY_SULIT.equalsIgnoreCase(safeDifficulty)) {
+                    promptBuilder.append(" (Tingkat Sulit / Lanjut: Buat pertanyaan mendalam, kompleks, studi kasus pemecahan masalah kritis, penanganan skenario sulit/edge cases, arsitektur, dan problem solving tingkat senior)\n");
+                } else {
+                    promptBuilder.append(" (Tingkat Sedang / Menengah: Buat pertanyaan tingkat menengah, penerapan praktis di lingkungan kerja nyata, studi kasus realistis standar industri)\n");
+                }
                 promptBuilder.append("- Bahasa Pertanyaan: ").append(safeLanguage).append("\n\n");
 
                 if (!pastQuestions.isEmpty()) {
@@ -196,7 +203,15 @@ public class GeminiService {
                 prompt.append("Jawaban User: ").append(answer).append("\n");
                 prompt.append("Jumlah Kata Jawaban: ").append(wordCount).append(" kata\n");
                 prompt.append("Kategori / Bidang: ").append(category).append("\n");
-                prompt.append("Tingkat Kesulitan: ").append(difficulty).append("\n");
+                String safeEvalDifficulty = QuestionBank.normalizeDifficulty(difficulty);
+                prompt.append("Tingkat Kesulitan: ").append(safeEvalDifficulty);
+                if (QuestionBank.DIFFICULTY_MUDAH.equalsIgnoreCase(safeEvalDifficulty)) {
+                    prompt.append(" (Tingkat Mudah: Terapkan ekspektasi penilaian yang ramah untuk level pemula/entry-level)\n");
+                } else if (QuestionBank.DIFFICULTY_SULIT.equalsIgnoreCase(safeEvalDifficulty)) {
+                    prompt.append(" (Tingkat Sulit: Terapkan standar penilaian kritis dan mendalam level profesional/senior)\n");
+                } else {
+                    prompt.append(" (Tingkat Sedang: Terapkan standar penilaian seimbang dan realistis level menengah)\n");
+                }
                 prompt.append("Bahasa: ").append(language).append("\n\n");
 
                 prompt.append("KRITERIA EVALUASI DAN PENILAIAN WAJIB:\n");

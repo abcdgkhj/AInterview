@@ -63,7 +63,7 @@
                 android:orientation="horizontal"
                 android:gravity="center"
                 android:layout_marginTop="10dp"
-                android:layout_marginBottom="24dp">
+                android:layout_marginBottom="16dp">
 
                 <ImageView
                     android:id="@+id/dot0"
@@ -99,7 +99,24 @@
 
             </LinearLayout>
 
-            <!-- 3. Pilihan Jenis Wawancara Section Header -->
+            <!-- 3. Tombol Konfigurasi Wawancara -->
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/btnInterviewConfig"
+                android:layout_width="match_parent"
+                android:layout_height="48dp"
+                android:text="Konfigurasi Wawancara"
+                android:textColor="@color/white"
+                android:textSize="14sp"
+                android:textStyle="bold"
+                app:icon="@drawable/ic_settings"
+                app:iconTint="@color/white"
+                app:iconGravity="textStart"
+                app:iconPadding="10dp"
+                app:backgroundTint="@color/primary"
+                app:cornerRadius="12dp"
+                android:layout_marginBottom="22dp" />
+
+            <!-- 4. Pilihan Jenis Wawancara Section Header -->
             <TextView
                 android:id="@+id/txtSectionCategories"
                 android:layout_width="wrap_content"

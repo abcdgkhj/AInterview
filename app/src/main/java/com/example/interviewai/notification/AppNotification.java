@@ -76,6 +76,10 @@ public class AppNotification {
         show(context, Type.SUCCESS, title, message, DURATION_SHORT);
     }
 
+    public static void showSuccess(@Nullable Context context, @NonNull String title, @NonNull String message, long durationMs) {
+        show(context, Type.SUCCESS, title, message, durationMs);
+    }
+
     public static void showError(@Nullable Context context, @NonNull String message) {
         show(context, Type.ERROR, "Terjadi Kesalahan", message, DURATION_LONG);
     }

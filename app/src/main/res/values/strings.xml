@@ -132,9 +132,9 @@
     <string name="title_setup">Konfigurasi Interview</string>
     <string name="label_select_category">Kategori Pertanyaan</string>
     <string name="label_select_difficulty">Tingkat Kesulitan</string>
-    <string name="diff_beginner">Beginner (Dasar)</string>
-    <string name="diff_intermediate">Intermediate (Menengah)</string>
-    <string name="diff_advanced">Advanced (Tingkat Lanjut)</string>
+    <string name="diff_beginner">Mudah</string>
+    <string name="diff_intermediate">Sedang</string>
+    <string name="diff_advanced">Sulit</string>
     <string name="label_question_count">Jumlah Pertanyaan</string>
     <string name="label_select_language">Bahasa Wawancara</string>
     <string name="lang_indonesian">Bahasa Indonesia</string>
