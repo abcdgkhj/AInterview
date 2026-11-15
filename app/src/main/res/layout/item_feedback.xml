@@ -84,16 +84,18 @@
         android:textColor="@color/text_primary"
         android:textSize="13sp"
         android:lineSpacingExtra="2dp"
-        android:layout_marginBottom="12dp" />
+        android:layout_marginBottom="16dp" />
 
-    <!-- Feedback Section: Kelebihan (Strengths) -->
+    <!-- Feedback Section: Kelebihan (Strengths) Card -->
     <LinearLayout
         android:id="@+id/layoutItemStrength"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:background="@drawable/bg_card_feedback_strength"
         android:orientation="horizontal"
         android:gravity="top"
-        android:layout_marginBottom="8dp">
+        android:padding="14dp"
+        android:layout_marginBottom="16dp">
 
         <ImageView
             android:layout_width="18dp"
@@ -101,7 +103,7 @@
             android:src="@drawable/ic_check_circle"
             app:tint="@color/success"
             android:contentDescription="Kelebihan"
-            android:layout_marginEnd="8dp"
+            android:layout_marginEnd="10dp"
             android:layout_marginTop="2dp" />
 
         <LinearLayout
@@ -117,7 +119,7 @@
                 android:textColor="@color/success"
                 android:textSize="12sp"
                 android:textStyle="bold"
-                android:layout_marginBottom="2dp" />
+                android:layout_marginBottom="3dp" />
 
             <TextView
                 android:id="@+id/txtItemStrength"
@@ -130,14 +132,16 @@
         </LinearLayout>
     </LinearLayout>
 
-    <!-- Feedback Section: Kekurangan (Weaknesses) -->
+    <!-- Feedback Section: Kekurangan (Weaknesses) Card -->
     <LinearLayout
         android:id="@+id/layoutItemWeakness"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:background="@drawable/bg_card_feedback_weakness"
         android:orientation="horizontal"
         android:gravity="top"
-        android:layout_marginBottom="8dp">
+        android:padding="14dp"
+        android:layout_marginBottom="16dp">
 
         <ImageView
             android:layout_width="18dp"
@@ -145,7 +149,7 @@
             android:src="@drawable/ic_lightbulb"
             app:tint="@color/warning"
             android:contentDescription="Kekurangan"
-            android:layout_marginEnd="8dp"
+            android:layout_marginEnd="10dp"
             android:layout_marginTop="2dp" />
 
         <LinearLayout
@@ -161,7 +165,7 @@
                 android:textColor="@color/warning"
                 android:textSize="12sp"
                 android:textStyle="bold"
-                android:layout_marginBottom="2dp" />
+                android:layout_marginBottom="3dp" />
 
             <TextView
                 android:id="@+id/txtItemWeakness"
@@ -174,14 +178,16 @@
         </LinearLayout>
     </LinearLayout>
 
-    <!-- Feedback Section: Saran Perbaikan (Improvement) -->
+    <!-- Feedback Section: Saran Perbaikan (Improvement) Card -->
     <LinearLayout
         android:id="@+id/layoutItemImprovement"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:background="@drawable/bg_card_feedback_improvement"
         android:orientation="horizontal"
         android:gravity="top"
-        android:layout_marginBottom="8dp">
+        android:padding="14dp"
+        android:layout_marginBottom="16dp">
 
         <ImageView
             android:layout_width="18dp"
@@ -189,7 +195,7 @@
             android:src="@drawable/ic_chat"
             app:tint="@color/primary"
             android:contentDescription="Saran Perbaikan"
-            android:layout_marginEnd="8dp"
+            android:layout_marginEnd="10dp"
             android:layout_marginTop="2dp" />
 
         <LinearLayout
@@ -205,7 +211,7 @@
                 android:textColor="@color/primary"
                 android:textSize="12sp"
                 android:textStyle="bold"
-                android:layout_marginBottom="2dp" />
+                android:layout_marginBottom="3dp" />
 
             <TextView
                 android:id="@+id/txtItemGuideline"

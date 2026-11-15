@@ -10,6 +10,7 @@ import android.widget.TextView;
 
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.activity.OnBackPressedCallback;
 import androidx.core.graphics.Insets;
 import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowInsetsCompat;
@@ -57,8 +58,15 @@ public class HistoryActivity extends AppCompatActivity {
         rvHistory.setLayoutManager(new LinearLayoutManager(this));
 
         if (btnBack != null) {
-            btnBack.setOnClickListener(v -> finish());
+            btnBack.setOnClickListener(v -> navigateToHome());
         }
+
+        getOnBackPressedDispatcher().addCallback(this, new OnBackPressedCallback(true) {
+            @Override
+            public void handleOnBackPressed() {
+                navigateToHome();
+            }
+        });
 
         if (btnClearHistory != null) {
             btnClearHistory.setOnClickListener(v -> showClearConfirmationDialog());
@@ -66,6 +74,14 @@ public class HistoryActivity extends AppCompatActivity {
 
         setupBottomNav();
         loadHistoryData();
+    }
+
+    private void navigateToHome() {
+        Intent intent = new Intent(HistoryActivity.this, HomeActivity.class);
+        intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_SINGLE_TOP);
+        startActivity(intent);
+        overridePendingTransition(0, 0);
+        finish();
     }
 
     @Override
@@ -91,16 +107,14 @@ public class HistoryActivity extends AppCompatActivity {
                 }
                 return true;
             } else if (itemId == R.id.nav_home) {
-                Intent intent = new Intent(HistoryActivity.this, HomeActivity.class);
-                intent.addFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT);
-                startActivity(intent);
-                overridePendingTransition(0, 0);
+                navigateToHome();
                 return true;
             } else if (itemId == R.id.nav_profile) {
                 Intent intent = new Intent(HistoryActivity.this, ProfileActivity.class);
-                intent.addFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT);
+                intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_SINGLE_TOP);
                 startActivity(intent);
                 overridePendingTransition(0, 0);
+                finish();
                 return true;
             }
             return false;

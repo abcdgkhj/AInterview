@@ -44,4 +44,12 @@
     <color name="notification_text_body">#334155</color>
     <color name="ai_accent">#8B5CF6</color>
     <color name="ai_accent_light">#F3E8FF</color>
+
+    <!-- Feedback Item Card Colors (Pastel Backgrounds and Matching Strokes) -->
+    <color name="feedback_card_strength_bg">#F0FDF4</color>
+    <color name="feedback_card_strength_stroke">#86EFAC</color>
+    <color name="feedback_card_weakness_bg">#FFFBEB</color>
+    <color name="feedback_card_weakness_stroke">#FCD34D</color>
+    <color name="feedback_card_improvement_bg">#EFF6FF</color>
+    <color name="feedback_card_improvement_stroke">#BFDBFE</color>
 </resources>

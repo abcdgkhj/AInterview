@@ -29,7 +29,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:orientation="vertical"
-                android:layout_marginBottom="16dp">
+                android:layout_marginBottom="20dp">
 
                 <TextView
                     android:id="@+id/txtGreeting"
@@ -62,8 +62,8 @@
                 android:layout_height="wrap_content"
                 android:orientation="horizontal"
                 android:gravity="center"
-                android:layout_marginTop="8dp"
-                android:layout_marginBottom="14dp">
+                android:layout_marginTop="20dp"
+                android:layout_marginBottom="25dp">
 
                 <ImageView
                     android:id="@+id/dot0"
@@ -114,7 +114,7 @@
                 app:iconPadding="10dp"
                 app:backgroundTint="@color/primary"
                 app:cornerRadius="12dp"
-                android:layout_marginBottom="16dp" />
+                android:layout_marginBottom="25dp" />
 
             <!-- 4. Pilihan Jenis Wawancara Section Header -->
             <TextView

@@ -216,16 +216,6 @@
             app:strokeColor="@color/primary"
             app:strokeWidth="1.5dp"
             app:cornerRadius="12dp"
-            android:layout_marginBottom="10dp" />
-
-        <Button
-            android:id="@+id/btnViewHistory"
-            style="@style/Widget.Material3.Button.TextButton"
-            android:layout_width="match_parent"
-            android:layout_height="48dp"
-            android:text="@string/btn_view_history_from_result"
-            android:textColor="@color/text_secondary"
-            android:textSize="14sp"
             android:layout_marginBottom="16dp" />
 
     </LinearLayout>

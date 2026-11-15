@@ -35,7 +35,6 @@ public class ResultActivity extends AppCompatActivity {
     private RecyclerView rvFeedback;
     private Button btnRetake;
     private Button btnHome;
-    private Button btnViewHistory;
     private ImageView btnBack;
 
     private InterviewSession session;
@@ -63,7 +62,6 @@ public class ResultActivity extends AppCompatActivity {
         rvFeedback = findViewById(R.id.rvFeedback);
         btnRetake = findViewById(R.id.btnRetake);
         btnHome = findViewById(R.id.btnHome);
-        btnViewHistory = findViewById(R.id.btnViewHistory);
         btnBack = findViewById(R.id.btnBack);
 
         // Ambil data session dari Intent
@@ -96,7 +94,7 @@ public class ResultActivity extends AppCompatActivity {
         getOnBackPressedDispatcher().addCallback(this, new OnBackPressedCallback(true) {
             @Override
             public void handleOnBackPressed() {
-                navigateToHome();
+                handleBackAction();
             }
         });
     }
@@ -169,20 +167,21 @@ public class ResultActivity extends AppCompatActivity {
         }
 
         if (btnBack != null) {
-            btnBack.setOnClickListener(v -> navigateToHome());
+            btnBack.setOnClickListener(v -> handleBackAction());
         }
+    }
 
-        if (btnViewHistory != null) {
-            btnViewHistory.setOnClickListener(v -> {
-                Intent intent = new Intent(ResultActivity.this, HistoryActivity.class);
-                startActivity(intent);
-            });
+    private void handleBackAction() {
+        if (isTaskRoot()) {
+            navigateToHome();
+        } else {
+            finish();
         }
     }
 
     private void navigateToHome() {
         Intent intent = new Intent(ResultActivity.this, HomeActivity.class);
-        intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_NEW_TASK);
+        intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_SINGLE_TOP);
         startActivity(intent);
         finish();
     }
