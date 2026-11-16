@@ -604,11 +604,9 @@ public class InterviewActivity extends AppCompatActivity {
             btnNextQuestion.setVisibility(View.GONE);
 
             if (btnFinishEarly != null) {
-                if (workflowManager.isLastQuestion() || workflowManager.isAllAnswered()) {
-                    btnFinishEarly.setVisibility(View.GONE);
-                } else {
-                    btnFinishEarly.setVisibility(View.VISIBLE);
-                }
+                // Tombol "Selesaikan Interview" selalu tampil pada setiap pertanyaan yang belum dievaluasi,
+                // termasuk pertanyaan terakhir, agar pengguna bisa mengakhiri kapan saja.
+                btnFinishEarly.setVisibility(View.VISIBLE);
             }
         }
     }
