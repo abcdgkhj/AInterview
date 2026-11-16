@@ -150,7 +150,7 @@ public class GeminiService {
             } catch (Exception e) {
                 Log.e(TAG, "Gagal meng-generate pertanyaan via AInterview: " + e.getMessage(), e);
                 // Gemini AI adalah satu-satunya sumber pertanyaan; jangan gunakan bank pertanyaan lokal sebagai fallback
-                mainHandler.post(() -> callback.onError("Gagal menghasilkan pertanyaan dari Gemini AI: " + e.getMessage(), null));
+                mainHandler.post(() -> callback.onError("Gagal menghasilkan pertanyaan dari AI: " + e.getMessage(), null));
             }
         });
     }
@@ -332,7 +332,7 @@ public class GeminiService {
                     }
                 }
 
-                throw new Exception("Format respons Gemini tidak memiliki teks candidate: " + sb.toString());
+                throw new Exception("Format respons AI tidak memiliki teks candidate: " + sb.toString());
             } catch (Exception e) {
                 lastException = e;
                 if (e.getMessage() != null && e.getMessage().contains("429")) {

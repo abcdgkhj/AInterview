@@ -401,7 +401,7 @@ public class InterviewActivity extends AppCompatActivity {
                         if (btnRetryPageLoading != null) btnRetryPageLoading.setVisibility(View.VISIBLE);
                         if (txtPageLoadingTitle != null) txtPageLoadingTitle.setText("Gagal Menghubungi AI");
                         if (txtPageLoadingSubtitle != null) {
-                            txtPageLoadingSubtitle.setText("Tidak dapat menghasilkan pertanyaan dari Gemini AI. Pastikan koneksi internet Anda aktif, kemudian coba kembali.");
+                            txtPageLoadingSubtitle.setText("Tidak dapat menghasilkan pertanyaan dari AI. Pastikan koneksi internet Anda aktif, kemudian coba kembali.");
                         }
 
                         showDisconnectedDialogIfNeeded();
@@ -498,7 +498,7 @@ public class InterviewActivity extends AppCompatActivity {
                 // AI Gemini wajib menjadi satu-satunya sumber feedback: jangan gunakan evaluasi lokal palsu
                 // Pertahankan teks jawaban pengguna di edtAnswer tanpa menghapusnya
                 AppNotification.showWarning(InterviewActivity.this, "Koneksi Terganggu",
-                        "Gagal mendapatkan evaluasi Gemini AI. Jawaban Anda tetap tersimpan. Silakan periksa koneksi lalu coba kirim kembali.");
+                        "Gagal mendapatkan evaluasi AI. Jawaban Anda tetap tersimpan. Silakan periksa koneksi lalu coba kirim kembali.");
 
                 if (!NetworkMonitor.isInternetAvailable(InterviewActivity.this)) {
                     showDisconnectedDialogIfNeeded();
