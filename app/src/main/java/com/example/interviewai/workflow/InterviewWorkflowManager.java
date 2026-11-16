@@ -128,10 +128,11 @@ public class InterviewWorkflowManager implements Serializable {
     }
 
     public int getAnsweredCount() {
-        if (answers == null) return 0;
+        // Hanya menghitung pertanyaan yang sudah dievaluasi (sudah dikirim via "Kirim Jawaban")
+        if (evaluatedItems == null) return 0;
         int count = 0;
-        for (String ans : answers) {
-            if (ans != null && !ans.trim().isEmpty()) {
+        for (InterviewItem item : evaluatedItems) {
+            if (item != null) {
                 count++;
             }
         }
@@ -344,12 +345,12 @@ public class InterviewWorkflowManager implements Serializable {
             } else {
                 InterviewQuestion q = (questions != null && i < questions.size()) ? questions.get(i) : null;
                 String qText = q != null ? q.getQuestionText() : ("Pertanyaan " + (i + 1));
-                String ans = (answers != null && i < answers.size()) ? answers.get(i) : "";
 
-                // Pertanyaan tidak dijawab / dilewati: skor otomatis 0 dan keempat bagian evaluasi standar
+                // Pertanyaan tidak dijawab / dilewati: abaikan teks draft, gunakan string kosong
+                // Hanya jawaban yang sudah dikirim via "Kirim Jawaban" yang tersimpan di evaluatedItems
                 InterviewItem placeholder = new InterviewItem(
                         qText,
-                        ans,
+                        "",
                         0,
                         "Tidak ada data evaluasi karena pertanyaan tidak dijawab.",
                         "Tidak ada data evaluasi karena pertanyaan tidak dijawab.",

@@ -320,21 +320,23 @@
                         android:textStyle="bold" />
                 </LinearLayout>
 
-                <!-- Kelebihan (Strengths) -->
+                <!-- Kelebihan (Strengths) Card -->
                 <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
+                    android:background="@drawable/bg_card_feedback_strength"
                     android:orientation="horizontal"
                     android:gravity="top"
-                    android:layout_marginBottom="10dp">
+                    android:padding="14dp"
+                    android:layout_marginBottom="16dp">
 
                     <ImageView
-                        android:layout_width="16dp"
-                        android:layout_height="16dp"
+                        android:layout_width="18dp"
+                        android:layout_height="18dp"
                         android:src="@drawable/ic_check_circle"
                         app:tint="@color/success"
                         android:contentDescription="Kelebihan"
-                        android:layout_marginEnd="8dp"
+                        android:layout_marginEnd="10dp"
                         android:layout_marginTop="2dp" />
 
                     <LinearLayout
@@ -346,11 +348,11 @@
                         <TextView
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:text="Kelebihan"
+                            android:text="Kelebihan:"
                             android:textColor="@color/success"
                             android:textSize="12sp"
                             android:textStyle="bold"
-                            android:layout_marginBottom="2dp" />
+                            android:layout_marginBottom="3dp" />
 
                         <TextView
                             android:id="@+id/txtImmediateStrength"
@@ -358,26 +360,28 @@
                             android:layout_height="wrap_content"
                             android:text="-"
                             android:textColor="@color/text_secondary"
-                            android:textSize="13sp"
+                            android:textSize="12sp"
                             android:lineSpacingExtra="2dp" />
                     </LinearLayout>
                 </LinearLayout>
 
-                <!-- Kekurangan (Weaknesses) -->
+                <!-- Kekurangan (Weaknesses) Card -->
                 <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
+                    android:background="@drawable/bg_card_feedback_weakness"
                     android:orientation="horizontal"
                     android:gravity="top"
-                    android:layout_marginBottom="10dp">
+                    android:padding="14dp"
+                    android:layout_marginBottom="16dp">
 
                     <ImageView
-                        android:layout_width="16dp"
-                        android:layout_height="16dp"
+                        android:layout_width="18dp"
+                        android:layout_height="18dp"
                         android:src="@drawable/ic_lightbulb"
                         app:tint="@color/warning"
                         android:contentDescription="Kekurangan"
-                        android:layout_marginEnd="8dp"
+                        android:layout_marginEnd="10dp"
                         android:layout_marginTop="2dp" />
 
                     <LinearLayout
@@ -389,11 +393,11 @@
                         <TextView
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:text="Kekurangan"
+                            android:text="Kekurangan:"
                             android:textColor="@color/warning"
                             android:textSize="12sp"
                             android:textStyle="bold"
-                            android:layout_marginBottom="2dp" />
+                            android:layout_marginBottom="3dp" />
 
                         <TextView
                             android:id="@+id/txtImmediateImprovement"
@@ -401,26 +405,28 @@
                             android:layout_height="wrap_content"
                             android:text="-"
                             android:textColor="@color/text_secondary"
-                            android:textSize="13sp"
+                            android:textSize="12sp"
                             android:lineSpacingExtra="2dp" />
                     </LinearLayout>
                 </LinearLayout>
 
-                <!-- Saran Perbaikan (Improvement) -->
+                <!-- Saran Perbaikan (Improvement) Card -->
                 <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
+                    android:background="@drawable/bg_card_feedback_improvement"
                     android:orientation="horizontal"
                     android:gravity="top"
-                    android:layout_marginBottom="10dp">
+                    android:padding="14dp"
+                    android:layout_marginBottom="16dp">
 
                     <ImageView
-                        android:layout_width="16dp"
-                        android:layout_height="16dp"
+                        android:layout_width="18dp"
+                        android:layout_height="18dp"
                         android:src="@drawable/ic_chat"
                         app:tint="@color/primary"
-                        android:contentDescription="Saran"
-                        android:layout_marginEnd="8dp"
+                        android:contentDescription="Saran Perbaikan"
+                        android:layout_marginEnd="10dp"
                         android:layout_marginTop="2dp" />
 
                     <LinearLayout
@@ -432,11 +438,11 @@
                         <TextView
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:text="Saran Perbaikan"
+                            android:text="Saran Perbaikan:"
                             android:textColor="@color/primary"
                             android:textSize="12sp"
                             android:textStyle="bold"
-                            android:layout_marginBottom="2dp" />
+                            android:layout_marginBottom="3dp" />
 
                         <TextView
                             android:id="@+id/txtImmediateSuggestion"
@@ -444,7 +450,7 @@
                             android:layout_height="wrap_content"
                             android:text="-"
                             android:textColor="@color/text_secondary"
-                            android:textSize="13sp"
+                            android:textSize="12sp"
                             android:lineSpacingExtra="2dp" />
                     </LinearLayout>
                 </LinearLayout>

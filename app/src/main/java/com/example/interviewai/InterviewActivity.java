@@ -250,7 +250,6 @@ public class InterviewActivity extends AppCompatActivity {
 
         if (btnFinishEarly != null) {
             btnFinishEarly.setOnClickListener(v -> {
-                saveInputToManager();
                 promptFinishConfirmation();
             });
         }
@@ -634,7 +633,9 @@ public class InterviewActivity extends AppCompatActivity {
     }
 
     private void promptFinishConfirmation() {
-        saveInputToManager();
+        // Jangan panggil saveInputToManager() di sini.
+        // Hanya jawaban yang sudah dikirim via "Kirim Jawaban" yang dianggap terjawab.
+        // Teks draft di EditText harus diabaikan saat menyelesaikan interview.
 
         int unansweredCount = workflowManager.getUnansweredCount();
         String message;
