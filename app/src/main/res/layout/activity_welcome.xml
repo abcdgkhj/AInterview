@@ -1,237 +1,33 @@
 <?xml version="1.0" encoding="utf-8"?>
-<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:id="@+id/main"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@color/white"
-    android:fillViewport="true">
+    android:background="@color/white">
 
+    <!-- Logo AInterview — ukuran 140dp x 140dp dan posisi center sama persis dengan Splash Screen -->
+    <ImageView
+        android:id="@+id/imgWelcomeLogo"
+        android:layout_width="170dp"
+        android:layout_height="170dp"
+        android:layout_gravity="center"
+        android:src="@drawable/ic_ainterview_logo"
+        android:adjustViewBounds="true"
+        android:scaleType="fitCenter"
+        android:contentDescription="@string/app_name" />
+
+    <!-- Area Bawah: Tombol Daftar & Masuk -->
     <LinearLayout
+        android:id="@+id/buttonsContainer"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:layout_gravity="bottom"
         android:orientation="vertical"
         android:paddingHorizontal="24dp"
-        android:paddingTop="56dp"
-        android:paddingBottom="20dp"
-        android:gravity="center_horizontal"
-        android:background="@color/white">
+        android:paddingBottom="32dp">
 
-        <!-- 1. Logo AInterview -->
-        <ImageView
-            android:layout_width="100dp"
-            android:layout_height="100dp"
-            android:src="@drawable/ic_ainterview_logo"
-            android:contentDescription="@string/app_name"
-            android:adjustViewBounds="true"
-            android:layout_marginBottom="14dp" />
-
-        <!-- 2. Label Platform -->
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:background="@drawable/bg_pill_platform"
-            android:paddingHorizontal="16dp"
-            android:paddingVertical="7dp"
-            android:text="Platform Latihan Wawancara Kerja"
-            android:textColor="@color/primary"
-            android:textSize="12sp"
-            android:textStyle="bold"
-            android:layout_marginBottom="34dp" />
-
-        <!-- 3, 4, 5. Tiga Card Fitur -->
-
-        <!-- Flexible Spacer to push buttons nicely to bottom on tall screens -->
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:orientation="vertical">
-
-            <!-- Card 1: Pilihan Bidang Karier -->
-            <com.google.android.material.card.MaterialCardView
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginBottom="22dp"
-                app:cardBackgroundColor="@color/white"
-                app:cardCornerRadius="16dp"
-                app:cardElevation="2dp"
-                app:strokeColor="@color/surface_stroke"
-                app:strokeWidth="1dp">
-
-                <LinearLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:gravity="center_vertical"
-                    android:orientation="horizontal"
-                    android:padding="16dp">
-
-                    <FrameLayout
-                        android:layout_width="44dp"
-                        android:layout_height="44dp"
-                        android:layout_marginEnd="14dp"
-                        android:background="@drawable/bg_circle_icon_blue">
-
-                        <ImageView
-                            android:layout_width="22dp"
-                            android:layout_height="22dp"
-                            android:layout_gravity="center"
-                            android:contentDescription="Pilihan Bidang Karier"
-                            android:src="@drawable/ic_briefcase"
-                            app:tint="@color/primary" />
-                    </FrameLayout>
-
-                    <LinearLayout
-                        android:layout_width="0dp"
-                        android:layout_height="wrap_content"
-                        android:layout_weight="1"
-                        android:orientation="vertical">
-
-                        <TextView
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:text="Pilihan Bidang Karier"
-                            android:textColor="@color/text_primary"
-                            android:textSize="14sp"
-                            android:textStyle="bold" />
-
-                        <TextView
-                            android:layout_width="match_parent"
-                            android:layout_height="wrap_content"
-                            android:layout_marginTop="2dp"
-                            android:lineSpacingExtra="2dp"
-                            android:text="Tersedia berbagai bidang pekerjaan untuk latihan wawancara sesuai minat dan keahlian Anda."
-                            android:textColor="@color/text_secondary"
-                            android:textSize="12sp" />
-                    </LinearLayout>
-                </LinearLayout>
-            </com.google.android.material.card.MaterialCardView>
-
-            <!-- Card 2: Ulasan & Simulasi Evaluasi -->
-            <com.google.android.material.card.MaterialCardView
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginBottom="22dp"
-                app:cardBackgroundColor="@color/white"
-                app:cardCornerRadius="16dp"
-                app:cardElevation="2dp"
-                app:strokeColor="@color/surface_stroke"
-                app:strokeWidth="1dp">
-
-                <LinearLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:gravity="center_vertical"
-                    android:orientation="horizontal"
-                    android:padding="16dp">
-
-                    <FrameLayout
-                        android:layout_width="44dp"
-                        android:layout_height="44dp"
-                        android:layout_marginEnd="14dp"
-                        android:background="@drawable/bg_circle_icon_green">
-
-                        <ImageView
-                            android:layout_width="22dp"
-                            android:layout_height="22dp"
-                            android:layout_gravity="center"
-                            android:contentDescription="Ulasan dan Evaluasi"
-                            android:src="@drawable/ic_check_circle"
-                            app:tint="@color/success" />
-                    </FrameLayout>
-
-                    <LinearLayout
-                        android:layout_width="0dp"
-                        android:layout_height="wrap_content"
-                        android:layout_weight="1"
-                        android:orientation="vertical">
-
-                        <TextView
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:text="Ulasan &amp; Simulasi Evaluasi"
-                            android:textColor="@color/text_primary"
-                            android:textSize="14sp"
-                            android:textStyle="bold" />
-
-                        <TextView
-                            android:layout_width="match_parent"
-                            android:layout_height="wrap_content"
-                            android:layout_marginTop="2dp"
-                            android:lineSpacingExtra="2dp"
-                            android:text="Review jawaban per butir pertanyaan dan catatan saran perbaikan."
-                            android:textColor="@color/text_secondary"
-                            android:textSize="12sp" />
-                    </LinearLayout>
-                </LinearLayout>
-            </com.google.android.material.card.MaterialCardView>
-
-            <!-- Card 3: Riwayat & Progres Mandiri -->
-            <com.google.android.material.card.MaterialCardView
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                app:cardBackgroundColor="@color/white"
-                app:cardCornerRadius="16dp"
-                app:cardElevation="2dp"
-                app:strokeColor="@color/surface_stroke"
-                app:strokeWidth="1dp">
-
-                <LinearLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:gravity="center_vertical"
-                    android:orientation="horizontal"
-                    android:padding="16dp">
-
-                    <FrameLayout
-                        android:layout_width="44dp"
-                        android:layout_height="44dp"
-                        android:layout_marginEnd="14dp"
-                        android:background="@drawable/bg_circle_icon_orange">
-
-                        <ImageView
-                            android:layout_width="22dp"
-                            android:layout_height="22dp"
-                            android:layout_gravity="center"
-                            android:contentDescription="Riwayat dan Progres"
-                            android:src="@drawable/ic_history"
-                            app:tint="@color/warning" />
-                    </FrameLayout>
-
-                    <LinearLayout
-                        android:layout_width="0dp"
-                        android:layout_height="wrap_content"
-                        android:layout_weight="1"
-                        android:orientation="vertical">
-
-                        <TextView
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:text="Riwayat &amp; Progres Mandiri"
-                            android:textColor="@color/text_primary"
-                            android:textSize="14sp"
-                            android:textStyle="bold" />
-
-                        <TextView
-                            android:layout_width="match_parent"
-                            android:layout_height="wrap_content"
-                            android:layout_marginTop="2dp"
-                            android:lineSpacingExtra="2dp"
-                            android:text="Catatan latihan tersimpan lokal untuk dipelajari kapan saja."
-                            android:textColor="@color/text_secondary"
-                            android:textSize="12sp" />
-                    </LinearLayout>
-                </LinearLayout>
-            </com.google.android.material.card.MaterialCardView>
-
-        </LinearLayout>
-
-        <View
-            android:layout_width="match_parent"
-            android:layout_height="24dp"
-            android:layout_weight="1"
-            android:minHeight="20dp" />
-
-        <!-- 6. Tombol Daftar Akun -->
+        <!-- Tombol Daftar Akun -->
         <com.google.android.material.button.MaterialButton
             android:id="@+id/btnGetStarted"
             android:layout_width="match_parent"
@@ -244,7 +40,7 @@
             app:cornerRadius="14dp"
             android:layout_marginBottom="12dp" />
 
-        <!-- 7. Tombol Masuk -->
+        <!-- Tombol Masuk -->
         <com.google.android.material.button.MaterialButton
             android:id="@+id/btnLogin"
             style="@style/Widget.Material3.Button.OutlinedButton"
@@ -257,8 +53,8 @@
             app:backgroundTint="@color/white"
             app:strokeColor="@color/primary"
             app:strokeWidth="1.5dp"
-            app:cornerRadius="14dp"
-            android:layout_marginBottom="8dp" />
+            app:cornerRadius="14dp" />
 
     </LinearLayout>
-</ScrollView>
+
+</FrameLayout>

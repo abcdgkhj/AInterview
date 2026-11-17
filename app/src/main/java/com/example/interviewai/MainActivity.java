@@ -2,14 +2,10 @@ package com.example.interviewai;
 
 import android.content.Intent;
 import android.graphics.Color;
-import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Looper;
-import android.view.View;
 import android.view.Window;
-import android.view.animation.DecelerateInterpolator;
-import android.widget.ImageView;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.view.WindowCompat;
@@ -20,22 +16,16 @@ import com.example.interviewai.data.UserSessionManager;
 /**
  * Splash Screen & Entry Point Router Activity.
  *
- * <p>On Android 12+ (API 31+), the system displays the splash screen automatically
- * using {@code windowSplashScreenBackground} and {@code windowSplashScreenAnimatedIcon}
- * defined in the theme. This Activity then navigates immediately to avoid showing
- * a second splash layout (which would cause the logo to "jump" in size).
- *
- * <p>On pre-Android 12, the splash is shown via the window background
- * ({@code bg_splash_window.xml}) and a brief layout display with a gentle fade-in
- * animation before navigating to the next screen.
+ * Displays the clean white splash screen with the 140dp AInterview brand logo
+ * centered on screen, then transitions smoothly directly to WelcomeActivity (or HomeActivity if logged in).
  */
 public class MainActivity extends AppCompatActivity {
 
     public static final String EXTRA_CANDIDATE_NAME = "extra_candidate_name";
     public static final String EXTRA_ROLE_CATEGORY = "extra_role_category";
 
-    /** Splash duration for pre-Android 12 devices only. */
-    private static final long SPLASH_DURATION_PRE12_MS = 1200L;
+    /** Splash duration before transitioning smoothly to the next screen (1200ms). */
+    private static final long SPLASH_DURATION_MS = 1200L;
 
     private final Handler splashHandler = new Handler(Looper.getMainLooper());
     private boolean hasNavigated = false;
@@ -47,36 +37,11 @@ public class MainActivity extends AppCompatActivity {
         // Configure edge-to-edge full screen with translucent status bar
         setupEdgeToEdgeStatusBar();
 
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
-            // ============================================================
-            // Android 12+ (API 31+): System splash screen is already shown.
-            // Navigate immediately — DO NOT show a second splash layout.
-            // The system splash smoothly transitions into the destination.
-            // ============================================================
-            navigateToNextScreen();
-        } else {
-            // ============================================================
-            // Pre-Android 12: Show splash layout with gentle fade-in.
-            // The window background (bg_splash_window.xml) already displays
-            // the logo at 92dp centered on the lavender gradient, so the
-            // transition from window background to layout is seamless.
-            // ============================================================
-            setContentView(R.layout.activity_splash);
+        // Show the official AInterview Splash layout with matching 140dp centered logo
+        setContentView(R.layout.activity_splash);
 
-            ImageView imgLogo = findViewById(R.id.imgSplashLogo);
-            if (imgLogo != null) {
-                // Gentle fade-in only — no scale animation to avoid logo "jumping"
-                imgLogo.setAlpha(0f);
-                imgLogo.animate()
-                        .alpha(1f)
-                        .setDuration(500)
-                        .setInterpolator(new DecelerateInterpolator())
-                        .start();
-            }
-
-            // Navigate after brief display
-            splashHandler.postDelayed(this::navigateToNextScreen, SPLASH_DURATION_PRE12_MS);
-        }
+        // Navigate directly after brief display
+        splashHandler.postDelayed(this::navigateToNextScreen, SPLASH_DURATION_MS);
     }
 
     private void setupEdgeToEdgeStatusBar() {
@@ -102,21 +67,24 @@ public class MainActivity extends AppCompatActivity {
 
         UserSessionManager sessionManager = new UserSessionManager(this);
 
-        Intent intent;
         if (sessionManager.isLoggedIn()) {
-            intent = new Intent(MainActivity.this, HomeActivity.class);
+            Intent intent = new Intent(MainActivity.this, HomeActivity.class);
+            if (getIntent() != null && getIntent().getExtras() != null) {
+                intent.putExtras(getIntent().getExtras());
+            }
+            startActivity(intent);
+            overridePendingTransition(android.R.anim.fade_in, android.R.anim.fade_out);
+            finish();
         } else {
-            intent = new Intent(MainActivity.this, WelcomeActivity.class);
+            // Direct smooth navigation from Splash Screen to Welcome Activity (no intermediary screens)
+            Intent intent = new Intent(MainActivity.this, WelcomeActivity.class);
+            if (getIntent() != null && getIntent().getExtras() != null) {
+                intent.putExtras(getIntent().getExtras());
+            }
+            startActivity(intent);
+            overridePendingTransition(android.R.anim.fade_in, android.R.anim.fade_out);
+            finish();
         }
-
-        // Forward any incoming intent extras
-        if (getIntent() != null && getIntent().getExtras() != null) {
-            intent.putExtras(getIntent().getExtras());
-        }
-
-        startActivity(intent);
-        overridePendingTransition(android.R.anim.fade_in, android.R.anim.fade_out);
-        finish();
     }
 
     @Override

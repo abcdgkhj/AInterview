@@ -3,13 +3,13 @@
     android:id="@+id/layoutSplashRoot"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@drawable/bg_splash_screen">
+    android:background="@color/white">
 
-    <!-- Centered Official AInterview Brand Logo — 96dp matches system splash icon -->
+    <!-- Centered Official AInterview Brand Logo — 140dp matches Welcome page logo size -->
     <ImageView
         android:id="@+id/imgSplashLogo"
-        android:layout_width="96dp"
-        android:layout_height="96dp"
+        android:layout_width="170dp"
+        android:layout_height="170dp"
         android:layout_gravity="center"
         android:src="@drawable/ic_ainterview_logo"
         android:adjustViewBounds="true"

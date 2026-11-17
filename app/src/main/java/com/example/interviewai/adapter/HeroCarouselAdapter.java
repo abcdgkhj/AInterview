@@ -16,12 +16,12 @@ import com.example.interviewai.model.HeroSlideItem;
 import java.util.List;
 
 /**
- * Adapter for the hero carousel showing onboarding PNG images with scale touch animation & click handling.
+ * Adapter for the hero carousel supporting circular infinite loop with scale touch animation & click handling.
  */
 public class HeroCarouselAdapter extends RecyclerView.Adapter<HeroCarouselAdapter.HeroSlideViewHolder> {
 
     public interface OnSlideClickListener {
-        void onSlideClick(int position);
+        void onSlideClick(int realPosition);
     }
 
     private static final float PRESSED_SCALE = 0.965f;
@@ -38,6 +38,16 @@ public class HeroCarouselAdapter extends RecyclerView.Adapter<HeroCarouselAdapte
     public HeroCarouselAdapter(List<HeroSlideItem> slideItems, OnSlideClickListener clickListener) {
         this.slideItems = slideItems;
         this.clickListener = clickListener;
+    }
+
+    /**
+     * Maps adapter position in circular setup [Fake4, Real1, Real2, Real3, Real4, Fake1]
+     * to the 0-indexed real slide position (0 to 3).
+     */
+    public static int toRealPosition(int adapterPosition) {
+        if (adapterPosition <= 0) return 3; // Fake Slide 4 -> Real Slide 4 (index 3)
+        if (adapterPosition >= 5) return 0; // Fake Slide 1 -> Real Slide 1 (index 0)
+        return adapterPosition - 1;         // 1->0, 2->1, 3->2, 4->3
     }
 
     @NonNull
@@ -83,13 +93,14 @@ public class HeroCarouselAdapter extends RecyclerView.Adapter<HeroCarouselAdapte
             if (clickListener != null) {
                 int pos = holder.getBindingAdapterPosition();
                 if (pos != RecyclerView.NO_POSITION) {
-                    if (pos == 0) {
+                    int realPos = toRealPosition(pos);
+                    if (realPos == 0) {
                         // Slide 1 stays on HomeActivity: trigger immediately
-                        clickListener.onSlideClick(pos);
+                        clickListener.onSlideClick(realPos);
                     } else {
                         // Slides 2, 3, 4 navigate to another Activity:
                         // Small 120ms delay allows the scale-up bounce to complete smoothly before the new page opens
-                        v.postDelayed(() -> clickListener.onSlideClick(pos), 120L);
+                        v.postDelayed(() -> clickListener.onSlideClick(realPos), 120L);
                     }
                 }
             }

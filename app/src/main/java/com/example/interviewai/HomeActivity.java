@@ -52,7 +52,7 @@ public class HomeActivity extends AppCompatActivity {
     private final Handler autoSlideHandler = new Handler(Looper.getMainLooper());
     private Runnable autoSlideRunnable;
     private boolean isAutoSlideRunning = false;
-    private int slideCount = 4;
+    private int currentDotPosition = -1;
 
     private final Handler cardHighlightHandler = new Handler(Looper.getMainLooper());
     private Runnable cardHighlightFadeRunnable;
@@ -157,12 +157,16 @@ public class HomeActivity extends AppCompatActivity {
 
     private void setupCarousel() {
         List<HeroSlideItem> slides = new ArrayList<>();
+        // Circular Infinite Loop items: [Fake4, Real1, Real2, Real3, Real4, Fake1]
+        // Index 0: Fake Slide 4 (allows smooth left swipe from Slide 1 to Slide 4)
+        slides.add(new HeroSlideItem(R.drawable.onboarding_slide_4));
+        // Index 1-4: Real Slides 1 to 4
         slides.add(new HeroSlideItem(R.drawable.onboarding_slide_1));
         slides.add(new HeroSlideItem(R.drawable.onboarding_slide_2));
         slides.add(new HeroSlideItem(R.drawable.onboarding_slide_3));
         slides.add(new HeroSlideItem(R.drawable.onboarding_slide_4));
-
-        slideCount = slides.size();
+        // Index 5: Fake Slide 1 (allows smooth right swipe / auto-slide from Slide 4 to Slide 1)
+        slides.add(new HeroSlideItem(R.drawable.onboarding_slide_1));
 
         HeroCarouselAdapter adapter = new HeroCarouselAdapter(slides, this::onSlideClicked);
         pagerHeroCarousel.setAdapter(adapter);
@@ -184,6 +188,8 @@ public class HomeActivity extends AppCompatActivity {
         dots[2] = findViewById(R.id.dot2);
         dots[3] = findViewById(R.id.dot3);
 
+        // Start at Real Slide 1 (index 1) with Dot 0 active
+        pagerHeroCarousel.setCurrentItem(1, false);
         updateDots(0);
 
         // Responsively ensure aspect ratio matches device screen width (731:414)
@@ -203,7 +209,8 @@ public class HomeActivity extends AppCompatActivity {
             @Override
             public void onPageSelected(int position) {
                 super.onPageSelected(position);
-                updateDots(position);
+                int realPos = HeroCarouselAdapter.toRealPosition(position);
+                updateDots(realPos);
             }
 
             @Override
@@ -212,6 +219,14 @@ public class HomeActivity extends AppCompatActivity {
                 if (state == ViewPager2.SCROLL_STATE_DRAGGING) {
                     stopAutoSlide();
                 } else if (state == ViewPager2.SCROLL_STATE_IDLE) {
+                    int current = pagerHeroCarousel.getCurrentItem();
+                    if (current == 0) {
+                        // Silent jump from Fake Slide 4 to Real Slide 4
+                        pagerHeroCarousel.setCurrentItem(4, false);
+                    } else if (current == 5) {
+                        // Silent jump from Fake Slide 1 to Real Slide 1
+                        pagerHeroCarousel.setCurrentItem(1, false);
+                    }
                     startAutoSlide();
                 }
             }
@@ -220,9 +235,10 @@ public class HomeActivity extends AppCompatActivity {
         autoSlideRunnable = new Runnable() {
             @Override
             public void run() {
-                if (pagerHeroCarousel != null && slideCount > 0) {
-                    int nextItem = (pagerHeroCarousel.getCurrentItem() + 1) % slideCount;
-                    pagerHeroCarousel.setCurrentItem(nextItem, true);
+                if (pagerHeroCarousel != null && isAutoSlideRunning) {
+                    int current = pagerHeroCarousel.getCurrentItem();
+                    // Always forward/right transition: Slide 4 (index 4) slides right to Fake 1 (index 5)
+                    pagerHeroCarousel.setCurrentItem(current + 1, true);
                 }
                 autoSlideHandler.postDelayed(this, AUTO_SLIDE_INTERVAL_MS);
             }
@@ -245,7 +261,8 @@ public class HomeActivity extends AppCompatActivity {
     }
 
     private void updateDots(int activePosition) {
-        if (dots == null) return;
+        if (dots == null || activePosition == currentDotPosition) return;
+        currentDotPosition = activePosition;
         float density = getResources().getDisplayMetrics().density;
         int size = (int) (8 * density + 0.5f);
         for (int i = 0; i < dots.length; i++) {
@@ -253,7 +270,7 @@ public class HomeActivity extends AppCompatActivity {
                 boolean isActive = (i == activePosition);
                 dots[i].setImageResource(isActive ? R.drawable.dot_indicator_active : R.drawable.dot_indicator_inactive);
                 ViewGroup.LayoutParams lp = dots[i].getLayoutParams();
-                if (lp != null) {
+                if (lp != null && (lp.width != size || lp.height != size)) {
                     lp.width = size;
                     lp.height = size;
                     dots[i].setLayoutParams(lp);
