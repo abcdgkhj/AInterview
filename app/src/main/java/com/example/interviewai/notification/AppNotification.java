@@ -104,6 +104,10 @@ public class AppNotification {
         show(context, Type.INFO, title, message, DURATION_SHORT);
     }
 
+    public static void showInfo(@Nullable Context context, @NonNull String title, @NonNull String message, long durationMs) {
+        show(context, Type.INFO, title, message, durationMs);
+    }
+
     public static void showAiProcess(@Nullable Context context, @NonNull String message) {
         show(context, Type.AI_PROCESS, "AInterview AI", message, DURATION_LONG);
     }
@@ -253,7 +257,16 @@ public class AppNotification {
         ActiveNotification active = ACTIVE_NOTIFICATIONS.get(activity);
         if (active != null && !active.isDismissing) {
             MAIN_HANDLER.removeCallbacks(active.dismissRunnable);
-            animateDismiss(activity, active.container);
+            if (activity.isFinishing() || activity.isDestroyed()) {
+                active.isDismissing = true;
+                ViewGroup parent = (ViewGroup) active.container.getParent();
+                if (parent != null) {
+                    parent.removeView(active.container);
+                }
+                ACTIVE_NOTIFICATIONS.remove(activity);
+            } else {
+                animateDismiss(activity, active.container);
+            }
         }
     }
 
@@ -261,6 +274,15 @@ public class AppNotification {
         ActiveNotification active = ACTIVE_NOTIFICATIONS.get(activity);
         if (active != null) {
             active.isDismissing = true;
+        }
+
+        if (activity.isFinishing() || activity.isDestroyed()) {
+            ViewGroup parent = (ViewGroup) view.getParent();
+            if (parent != null) {
+                parent.removeView(view);
+            }
+            ACTIVE_NOTIFICATIONS.remove(activity);
+            return;
         }
 
         view.animate()

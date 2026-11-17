@@ -26,6 +26,8 @@ import java.util.List;
 public class ResultActivity extends AppCompatActivity {
 
     public static final String EXTRA_SESSION = "extra_interview_session";
+    public static final String EXTRA_SHOW_SAVED_NOTIFICATION = "extra_show_saved_notification";
+    public static final String EXTRA_NOTIF_START_TIME = "extra_notif_start_time";
 
     private TextView txtCandidateRole;
     private TextView txtOverallScore;
@@ -38,6 +40,7 @@ public class ResultActivity extends AppCompatActivity {
     private ImageView btnBack;
 
     private InterviewSession session;
+    private boolean hasShownSavedNotification = false;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -90,6 +93,29 @@ public class ResultActivity extends AppCompatActivity {
 
         displaySessionData();
         setupActions();
+
+        // Tampilkan notifikasi "Menyimpan Hasil" melanjutkan sisa durasi timer (total
+        // 3-4 detik)
+        if (getIntent() != null && getIntent().getBooleanExtra(EXTRA_SHOW_SAVED_NOTIFICATION, false)
+                && !hasShownSavedNotification) {
+            hasShownSavedNotification = true;
+            long notifStartTime = getIntent().getLongExtra(EXTRA_NOTIF_START_TIME, System.currentTimeMillis());
+            getIntent().removeExtra(EXTRA_SHOW_SAVED_NOTIFICATION);
+            getIntent().removeExtra(EXTRA_NOTIF_START_TIME);
+
+            long elapsed = System.currentTimeMillis() - notifStartTime;
+            long remainingDuration = 2000L - elapsed;
+
+            if (remainingDuration > 400L) {
+                if (rootView != null) {
+                    rootView.post(() -> AppNotification.showInfo(ResultActivity.this, "Menyimpan Hasil",
+                            "Hasil interview berhasil disimpan.", remainingDuration));
+                } else {
+                    AppNotification.showInfo(ResultActivity.this, "Menyimpan Hasil",
+                            "Hasil interview berhasil disimpan.", remainingDuration);
+                }
+            }
+        }
 
         getOnBackPressedDispatcher().addCallback(this, new OnBackPressedCallback(true) {
             @Override
@@ -184,5 +210,11 @@ public class ResultActivity extends AppCompatActivity {
         intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_SINGLE_TOP);
         startActivity(intent);
         finish();
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        AppNotification.dismiss(this);
     }
 }

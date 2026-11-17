@@ -137,6 +137,7 @@ public class InterviewActivity extends AppCompatActivity {
     @Override
     protected void onDestroy() {
         super.onDestroy();
+        AppNotification.dismiss(this);
         if (networkMonitor != null) {
             networkMonitor.stopMonitoring();
         }
@@ -399,9 +400,9 @@ public class InterviewActivity extends AppCompatActivity {
                         // AI Gemini wajib menjadi satu-satunya sumber pertanyaan: jangan gunakan fallback lokal
                         if (progressPageLoading != null) progressPageLoading.setVisibility(View.GONE);
                         if (btnRetryPageLoading != null) btnRetryPageLoading.setVisibility(View.VISIBLE);
-                        if (txtPageLoadingTitle != null) txtPageLoadingTitle.setText("Gagal Menghubungi AI");
+                        if (txtPageLoadingTitle != null) txtPageLoadingTitle.setText("Gagal Memuat Pertanyaan");
                         if (txtPageLoadingSubtitle != null) {
-                            txtPageLoadingSubtitle.setText("Tidak dapat menghasilkan pertanyaan dari AI. Pastikan koneksi internet Anda aktif, kemudian coba kembali.");
+                            txtPageLoadingSubtitle.setText("AInterview tidak dapat memuat pertanyaan dari AI. Periksa koneksi internet Anda, kemudian coba kembali.");
                         }
 
                         showDisconnectedDialogIfNeeded();
@@ -658,7 +659,11 @@ public class InterviewActivity extends AppCompatActivity {
         }
         workflowManager.setSubmitting(true);
 
-        AppNotification.showInfo(this, "Menyimpan Hasil", "Hasil interview berhasil disimpan.");
+        long notifStartTime = System.currentTimeMillis();
+        long totalDurationMs = 3500L; // 3.5 detik total durasi
+
+        // Tampilkan notifikasi segera saat pengguna menekan Selesaikan Interview
+        AppNotification.showInfo(this, "Menyimpan Hasil", "Hasil interview berhasil disimpan.", totalDurationMs);
 
         // Bentuk sesi yang telah selesai
         InterviewSession session = workflowManager.createCompletedSession();
@@ -666,10 +671,12 @@ public class InterviewActivity extends AppCompatActivity {
         // Simpan sesi ke SharedPreferences lokal
         InterviewStorage.saveSession(this, session);
 
-        // Buka ResultActivity
+        // Buka ResultActivity dengan membawa flag notifikasi hasil disimpan dan waktu awal
         Intent intent = new Intent(InterviewActivity.this, ResultActivity.class);
         intent.putExtra(ResultActivity.EXTRA_SESSION, session);
         intent.putExtra("extra_session_id", session.getSessionId());
+        intent.putExtra(ResultActivity.EXTRA_SHOW_SAVED_NOTIFICATION, true);
+        intent.putExtra(ResultActivity.EXTRA_NOTIF_START_TIME, notifStartTime);
         startActivity(intent);
         finish();
     }

@@ -27,12 +27,16 @@ import java.util.List;
 
 public class HistoryActivity extends AppCompatActivity {
 
+    public static final String EXTRA_SHOW_SAVED_NOTIFICATION = "extra_show_saved_notification";
+    public static final String EXTRA_NOTIF_START_TIME = "extra_notif_start_time";
+
     private RecyclerView rvHistory;
     private LinearLayout layoutEmpty;
     private Button btnClearHistory;
     private ImageView btnBack;
     private TextView txtHintDeleteHint;
     private BottomNavigationView bottomNavHome;
+    private boolean hasShownSavedNotification = false;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -74,6 +78,25 @@ public class HistoryActivity extends AppCompatActivity {
 
         setupBottomNav();
         loadHistoryData();
+
+        // Tampilkan notifikasi "Menyimpan Hasil" jika Activity dibuka setelah proses simpan dengan sisa durasi timer
+        if (getIntent() != null && getIntent().getBooleanExtra(EXTRA_SHOW_SAVED_NOTIFICATION, false) && !hasShownSavedNotification) {
+            hasShownSavedNotification = true;
+            long notifStartTime = getIntent().getLongExtra(EXTRA_NOTIF_START_TIME, System.currentTimeMillis());
+            getIntent().removeExtra(EXTRA_SHOW_SAVED_NOTIFICATION);
+            getIntent().removeExtra(EXTRA_NOTIF_START_TIME);
+
+            long elapsed = System.currentTimeMillis() - notifStartTime;
+            long remainingDuration = 3500L - elapsed;
+
+            if (remainingDuration > 400L) {
+                if (rootView != null) {
+                    rootView.post(() -> AppNotification.showInfo(HistoryActivity.this, "Menyimpan Hasil", "Hasil interview berhasil disimpan.", remainingDuration));
+                } else {
+                    AppNotification.showInfo(HistoryActivity.this, "Menyimpan Hasil", "Hasil interview berhasil disimpan.", remainingDuration);
+                }
+            }
+        }
     }
 
     private void navigateToHome() {
@@ -162,5 +185,11 @@ public class HistoryActivity extends AppCompatActivity {
                 })
                 .setNegativeButton("Batal", null)
                 .show();
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        AppNotification.dismiss(this);
     }
 }

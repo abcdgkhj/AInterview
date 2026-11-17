@@ -30,4 +30,10 @@
         <item name="android:windowSplashScreenBackground" tools:targetApi="s">#FFFFFF</item>
         <item name="android:windowSplashScreenAnimatedIcon" tools:targetApi="s">@drawable/ic_splash_logo</item>
     </style>
+
+    <!-- Style for rounded corners on onboarding carousel slides -->
+    <style name="RoundedCarouselSlide">
+        <item name="cornerFamily">rounded</item>
+        <item name="cornerSize">16dp</item>
+    </style>
 </resources>

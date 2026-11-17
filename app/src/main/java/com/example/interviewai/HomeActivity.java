@@ -14,6 +14,8 @@ import androidx.core.graphics.Insets;
 import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowInsetsCompat;
 import androidx.core.widget.NestedScrollView;
+import androidx.recyclerview.widget.RecyclerView;
+import androidx.viewpager2.widget.MarginPageTransformer;
 import androidx.viewpager2.widget.ViewPager2;
 
 import com.example.interviewai.adapter.HeroCarouselAdapter;
@@ -153,6 +155,17 @@ public class HomeActivity extends AppCompatActivity {
         HeroCarouselAdapter adapter = new HeroCarouselAdapter(slides);
         pagerHeroCarousel.setAdapter(adapter);
 
+        // Spacing between carousel slides (12dp) without distortion or edge sticking
+        int marginPx = (int) (12 * getResources().getDisplayMetrics().density + 0.5f);
+        pagerHeroCarousel.setPageTransformer(new MarginPageTransformer(marginPx));
+        pagerHeroCarousel.setOffscreenPageLimit(1);
+
+        View recyclerView = pagerHeroCarousel.getChildAt(0);
+        if (recyclerView instanceof RecyclerView) {
+            ((RecyclerView) recyclerView).setClipToPadding(false);
+            ((RecyclerView) recyclerView).setClipChildren(false);
+        }
+
         dots = new ImageView[4];
         dots[0] = findViewById(R.id.dot0);
         dots[1] = findViewById(R.id.dot1);
@@ -161,11 +174,34 @@ public class HomeActivity extends AppCompatActivity {
 
         updateDots(0);
 
+        // Responsively ensure aspect ratio matches device screen width (731:414)
+        pagerHeroCarousel.post(() -> {
+            int width = pagerHeroCarousel.getWidth();
+            if (width > 0) {
+                int calculatedHeight = Math.round(width * 414f / 731f);
+                ViewGroup.LayoutParams lp = pagerHeroCarousel.getLayoutParams();
+                if (lp != null && lp.height != calculatedHeight) {
+                    lp.height = calculatedHeight;
+                    pagerHeroCarousel.setLayoutParams(lp);
+                }
+            }
+        });
+
         pagerHeroCarousel.registerOnPageChangeCallback(new ViewPager2.OnPageChangeCallback() {
             @Override
             public void onPageSelected(int position) {
                 super.onPageSelected(position);
                 updateDots(position);
+            }
+
+            @Override
+            public void onPageScrollStateChanged(int state) {
+                super.onPageScrollStateChanged(state);
+                if (state == ViewPager2.SCROLL_STATE_DRAGGING) {
+                    stopAutoSlide();
+                } else if (state == ViewPager2.SCROLL_STATE_IDLE) {
+                    startAutoSlide();
+                }
             }
         });
 
@@ -199,20 +235,17 @@ public class HomeActivity extends AppCompatActivity {
     private void updateDots(int activePosition) {
         if (dots == null) return;
         float density = getResources().getDisplayMetrics().density;
-        int widthActive = (int) (26 * density + 0.5f);
-        int widthInactive = (int) (8 * density + 0.5f);
-        int height = (int) (8 * density + 0.5f);
+        int size = (int) (8 * density + 0.5f);
         for (int i = 0; i < dots.length; i++) {
             if (dots[i] != null) {
                 boolean isActive = (i == activePosition);
                 dots[i].setImageResource(isActive ? R.drawable.dot_indicator_active : R.drawable.dot_indicator_inactive);
                 ViewGroup.LayoutParams lp = dots[i].getLayoutParams();
-                if (lp instanceof ViewGroup.MarginLayoutParams) {
-                    // keep margins if any
+                if (lp != null) {
+                    lp.width = size;
+                    lp.height = size;
+                    dots[i].setLayoutParams(lp);
                 }
-                lp.width = isActive ? widthActive : widthInactive;
-                lp.height = height;
-                dots[i].setLayoutParams(lp);
             }
         }
     }
