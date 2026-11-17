@@ -134,7 +134,7 @@
                 android:id="@+id/cardInterviewUmum"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:background="@drawable/bg_card_white"
+                android:background="@drawable/bg_card_interview_selector"
                 android:orientation="vertical"
                 android:padding="18dp"
                 android:clickable="true"
@@ -171,15 +171,6 @@
                             android:textColor="@color/text_primary"
                             android:textSize="16sp"
                             android:textStyle="bold" />
-
-                    <!--    <TextView
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:text="Latihan pertanyaan kepribadian dan pengalaman kerja."
-                            android:textColor="@color/text_secondary"
-                            android:textSize="12sp"
-                            android:lineSpacingExtra="2dp"
-                            android:layout_marginTop="3dp" /> -->
                     </LinearLayout>
 
                     <ImageView
@@ -190,20 +181,6 @@
                         android:contentDescription="Mulai"
                         android:layout_marginStart="8dp" />
                 </LinearLayout>
-
-               <!-- <TextView
-                android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:background="@drawable/bg_badge_score"
-                    android:paddingHorizontal="10dp"
-                    android:paddingVertical="3dp"
-                    android:text="Langsung Mulai • Pertanyaan Kepribadian &amp; Situasi"
-                    android:textColor="@color/primary"
-                    android:textSize="11sp"
-                    android:textStyle="bold"
-                    android:layout_marginTop="12dp" />
-                -->
-
             </LinearLayout>
 
             <!-- Card 2: Wawancara Teknis -->
@@ -211,7 +188,7 @@
                 android:id="@+id/cardInterviewTeknis"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:background="@drawable/bg_card_white"
+                android:background="@drawable/bg_card_interview_selector"
                 android:orientation="vertical"
                 android:padding="18dp"
                 android:clickable="true"
@@ -248,15 +225,6 @@
                             android:textColor="@color/text_primary"
                             android:textSize="16sp"
                             android:textStyle="bold" />
-
-                    <!--    <TextView
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:text="Latihan pertanyaan sesuai bidang keahlian."
-                            android:textColor="@color/text_secondary"
-                            android:textSize="12sp"
-                            android:lineSpacingExtra="2dp"
-                            android:layout_marginTop="3dp" /> -->
                     </LinearLayout>
 
                     <ImageView
@@ -267,19 +235,6 @@
                         android:contentDescription="Pilih Bidang"
                         android:layout_marginStart="8dp" />
                 </LinearLayout>
-
-             <!--    <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:background="@drawable/bg_badge_role"
-                    android:paddingHorizontal="10dp"
-                    android:paddingVertical="3dp"
-                    android:text="Pilih Bidang • 10 Bidang Keahlian Pilihan"
-                    android:textColor="@color/accent"
-                    android:textSize="11sp"
-                    android:textStyle="bold"
-                    android:layout_marginTop="12dp" /> -->
-
             </LinearLayout>
 
         </LinearLayout>

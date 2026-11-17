@@ -54,6 +54,9 @@ public class HomeActivity extends AppCompatActivity {
     private boolean isAutoSlideRunning = false;
     private int slideCount = 4;
 
+    private final Handler cardHighlightHandler = new Handler(Looper.getMainLooper());
+    private Runnable cardHighlightFadeRunnable;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -132,6 +135,15 @@ public class HomeActivity extends AppCompatActivity {
     protected void onDestroy() {
         super.onDestroy();
         stopAutoSlide();
+        if (cardHighlightFadeRunnable != null) {
+            cardHighlightHandler.removeCallbacks(cardHighlightFadeRunnable);
+        }
+        if (cardInterviewUmum != null) {
+            cardInterviewUmum.setSelected(false);
+        }
+        if (cardInterviewTeknis != null) {
+            cardInterviewTeknis.setSelected(false);
+        }
     }
 
     private void refreshUserData() {
@@ -152,7 +164,7 @@ public class HomeActivity extends AppCompatActivity {
 
         slideCount = slides.size();
 
-        HeroCarouselAdapter adapter = new HeroCarouselAdapter(slides);
+        HeroCarouselAdapter adapter = new HeroCarouselAdapter(slides, this::onSlideClicked);
         pagerHeroCarousel.setAdapter(adapter);
 
         // Spacing between carousel slides (12dp) without distortion or edge sticking
@@ -252,8 +264,63 @@ public class HomeActivity extends AppCompatActivity {
 
     private void scrollToInterviewOptions() {
         if (scrollHome != null && txtSectionCategories != null) {
-            scrollHome.smoothScrollTo(0, txtSectionCategories.getTop() - 20);
+            scrollHome.smoothScrollTo(0, txtSectionCategories.getTop() - 16);
         }
+    }
+
+    private void onSlideClicked(int position) {
+        switch (position) {
+            case 0:
+                // Slide 1 – Pilih Jenis Wawancara: Scroll halus & soft blue highlight pada kedua kartu
+                highlightInterviewCards();
+                break;
+            case 1:
+                // Slide 2 – Atur Tingkat Kesulitan: Navigasi langsung ke Konfigurasi Wawancara
+                Intent intentConfig = new Intent(HomeActivity.this, InterviewSetupActivity.class);
+                startActivity(intentConfig);
+                break;
+            case 2:
+                // Slide 3 – Pilih Bidang Keahlian: Navigasi langsung ke pemilihan bidang Wawancara Teknis
+                if (!NetworkMonitor.isInternetAvailable(HomeActivity.this)) {
+                    NetworkMonitor.showNoInternetDialog(HomeActivity.this, null);
+                    return;
+                }
+                openTechnicalFieldSelection();
+                break;
+            case 3:
+                // Slide 4 – Lihat Hasil: Navigasi langsung ke Riwayat Wawancara
+                Intent intentHistory = new Intent(HomeActivity.this, HistoryActivity.class);
+                intentHistory.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_SINGLE_TOP);
+                startActivity(intentHistory);
+                break;
+        }
+    }
+
+    private void highlightInterviewCards() {
+        // 1. Smooth scroll ke bagian Pilihan Jenis Wawancara
+        scrollToInterviewOptions();
+
+        if (cardInterviewUmum == null || cardInterviewTeknis == null) return;
+
+        // 2. Batalkan timer highlight sebelumnya jika masih berjalan
+        if (cardHighlightFadeRunnable != null) {
+            cardHighlightHandler.removeCallbacks(cardHighlightFadeRunnable);
+        }
+
+        // 3. Terapkan efek highlight (state selected) pada kedua kartu tombol secara bersamaan
+        cardInterviewUmum.setSelected(true);
+        cardInterviewTeknis.setSelected(true);
+
+        // 4. Bertahan selama kurang lebih 0.8–1 detik (900ms), kemudian kembali ke tampilan normal secara individual
+        cardHighlightFadeRunnable = () -> {
+            if (cardInterviewUmum != null) {
+                cardInterviewUmum.setSelected(false);
+            }
+            if (cardInterviewTeknis != null) {
+                cardInterviewTeknis.setSelected(false);
+            }
+        };
+        cardHighlightHandler.postDelayed(cardHighlightFadeRunnable, 900L);
     }
 
     private void setupBottomNav() {
