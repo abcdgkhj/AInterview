@@ -6,11 +6,11 @@
     android:layout_height="match_parent"
     android:background="@color/white">
 
-    <!-- Logo AInterview — ukuran 140dp x 140dp dan posisi center sama persis dengan Splash Screen -->
+    <!-- Logo AInterview — ukuran 88dp x 88dp proporsional, utuh, dan tidak terpotong -->
     <ImageView
         android:id="@+id/imgWelcomeLogo"
-        android:layout_width="170dp"
-        android:layout_height="170dp"
+        android:layout_width="158dp"
+        android:layout_height="158dp"
         android:layout_gravity="center"
         android:src="@drawable/ic_ainterview_logo"
         android:adjustViewBounds="true"

@@ -15,9 +15,9 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.InterviewAI">
 
-        <!-- Entry Point Router Activity & Splash Screen -->
+        <!-- 1. Welcome Screen (Startup Entry Point & Gateway) -->
         <activity
-            android:name=".MainActivity"
+            android:name=".WelcomeActivity"
             android:exported="true"
             android:theme="@style/Theme.InterviewAI.Splash"
             android:windowSoftInputMode="adjustResize">
@@ -27,10 +27,11 @@
             </intent-filter>
         </activity>
 
-        <!-- 1. Welcome Screen -->
+        <!-- Router Activity (Backwards Compatibility) -->
         <activity
-            android:name=".WelcomeActivity"
+            android:name=".MainActivity"
             android:exported="false"
+            android:theme="@style/Theme.InterviewAI.Splash"
             android:windowSoftInputMode="adjustResize" />
 
         <!-- 2. Auth: Login & Register Screens -->

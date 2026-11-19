@@ -1,5 +1,6 @@
 package com.example.interviewai.workflow;
 
+import com.example.interviewai.ai.AnswerValidator;
 import com.example.interviewai.ai.EvaluationStatus;
 import com.example.interviewai.data.QuestionBank;
 import com.example.interviewai.model.InterviewItem;
@@ -252,14 +253,28 @@ public class InterviewWorkflowManager implements Serializable {
         String improvement;
         String sampleAnswer;
 
-        if (trimmed.isEmpty()) {
+        AnswerValidator.ValidationResult validation = AnswerValidator.validateAnswer(trimmed);
+
+        if (validation.isEmpty()) {
             score = 0;
-            strength = "Tidak ada data evaluasi karena pertanyaan tidak dijawab.";
-            weakness = "Tidak ada data evaluasi karena pertanyaan tidak dijawab.";
-            improvement = "Tidak ada data evaluasi karena pertanyaan tidak dijawab.";
-            sampleAnswer = "Tidak ada data evaluasi karena pertanyaan tidak dijawab.";
+            strength = "Belum ada kelebihan yang dapat dinilai.";
+            weakness = isEnglish ? "Question was not answered by candidate." : "Tidak ada data evaluasi karena pertanyaan tidak dijawab.";
+            improvement = isEnglish ? "Provide a structured and relevant answer addressing the question." : "Berikan jawaban yang terstruktur dan relevan sesuai dengan konteks pertanyaan.";
+            sampleAnswer = isEnglish ? "No evaluation available as question was skipped." : "Tidak ada data evaluasi karena pertanyaan tidak dijawab.";
+        } else if (validation.isGibberish()) {
+            score = 0;
+            strength = "Belum ada kelebihan yang dapat dinilai.";
+            weakness = isEnglish ? "Answer contains random characters or meaningless text (" + trimmed + ")." : "Jawaban berupa karakter acak atau tidak bermakna ('" + trimmed + "') sehingga tidak ada substansi yang dapat dinilai.";
+            improvement = isEnglish ? "Answer clearly using proper sentences and relevant terminology." : "Jawablah pertanyaan secara jelas dan terstruktur dengan menyampaikan konsep atau pengalaman nyata yang relevan.";
+            sampleAnswer = isEnglish ? "Structure your response with Situation, Task, Action, and Result." : "Berikan jawaban yang terstruktur dengan metode STAR (Situation, Task, Action, Result) serta jelaskan langkah konkret yang Anda ambil.";
+        } else if (wordCount <= 3 && (trimmed.equalsIgnoreCase("saya tidak tahu") || trimmed.equalsIgnoreCase("tidak tahu") || trimmed.equalsIgnoreCase("belum tahu") || trimmed.equalsIgnoreCase("gak tau") || trimmed.equalsIgnoreCase("i don't know") || trimmed.equalsIgnoreCase("dont know"))) {
+            score = 15;
+            strength = "Belum ada kelebihan yang dapat dinilai.";
+            weakness = isEnglish ? "Candidate stated they do not know the answer." : "Kandidat menyatakan belum mengetahui topik pertanyaan dan belum menjelaskan konsep yang relevan.";
+            improvement = isEnglish ? "Explain your logical approach to learn and resolve unfamiliar problems." : "Jelaskan pendekatan logis atau langkah yang akan Anda ambil untuk mempelajari dan menyelesaikan persoalan tersebut.";
+            sampleAnswer = isEnglish ? "Highlight your foundational knowledge and how you troubleshoot new domains." : "Jelaskan pemahaman dasar yang Anda miliki atau bagaimana Anda mencari solusi jika menghadapi situasi serupa.";
         } else if (wordCount < 10) {
-            score = 55 + (wordCount * 2);
+            score = 65;
             if (isEnglish) {
                 strength = "Direct answer addressing the core question prompt.";
                 weakness = "The explanation is very brief and lacks elaboration.";
@@ -352,9 +367,9 @@ public class InterviewWorkflowManager implements Serializable {
                         qText,
                         "",
                         0,
+                        "Belum ada kelebihan yang dapat dinilai.",
                         "Tidak ada data evaluasi karena pertanyaan tidak dijawab.",
-                        "Tidak ada data evaluasi karena pertanyaan tidak dijawab.",
-                        "Tidak ada data evaluasi karena pertanyaan tidak dijawab.",
+                        "Berikan jawaban yang relevan dan terstruktur sesuai pertanyaan wawancara.",
                         "Tidak ada data evaluasi karena pertanyaan tidak dijawab.",
                         EvaluationStatus.COMPLETED
                 );

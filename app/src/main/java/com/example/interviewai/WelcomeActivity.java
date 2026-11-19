@@ -15,12 +15,13 @@ import androidx.core.view.WindowInsetsCompat;
 import androidx.core.view.WindowInsetsControllerCompat;
 
 import com.example.interviewai.data.UserSessionManager;
+import com.example.interviewai.notification.AppNotification;
 
 /**
- * Welcome & Onboarding Gateway Screen.
+ * Welcome & Onboarding Gateway Screen (Startup Entry Point).
  *
- * Displays the 140dp AInterview brand logo centered on screen (matching Splash Screen exactly),
- * with "Daftar Akun" (navigates to RegisterActivity) and "Sudah Punya Akun? Masuk" (navigates to LoginActivity).
+ * Seamlessly transitions from the Android System Splash Screen into the welcome screen
+ * without flicker, screen blinking, or duplicate splash delay.
  */
 public class WelcomeActivity extends AppCompatActivity {
 
@@ -30,14 +31,27 @@ public class WelcomeActivity extends AppCompatActivity {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+        // Switch from cold-start splash theme to normal application theme seamlessly
+        setTheme(R.style.Theme_InterviewAI);
         super.onCreate(savedInstanceState);
 
-        // Configure edge-to-edge full screen matching Splash Screen exactly
+        sessionManager = new UserSessionManager(this);
+
+        // If user is already logged in, bypass welcome and proceed directly to HomeActivity
+        if (sessionManager.isLoggedIn()) {
+            Intent intent = new Intent(WelcomeActivity.this, HomeActivity.class);
+            if (getIntent() != null && getIntent().getExtras() != null) {
+                intent.putExtras(getIntent().getExtras());
+            }
+            startActivity(intent);
+            finish();
+            return;
+        }
+
+        // Configure edge-to-edge full screen matching system splash background
         setupEdgeToEdgeStatusBar();
 
         setContentView(R.layout.activity_welcome);
-
-        sessionManager = new UserSessionManager(this);
 
         // Apply insets only to buttons container so logo stays at true physical screen center
         View buttonsContainer = findViewById(R.id.buttonsContainer);
@@ -52,16 +66,6 @@ public class WelcomeActivity extends AppCompatActivity {
                 );
                 return insets;
             });
-
-            // Smooth gentle fade-in for buttons container on first entrance
-            if (savedInstanceState == null) {
-                buttonsContainer.setAlpha(0f);
-                buttonsContainer.animate()
-                        .alpha(1f)
-                        .setDuration(400)
-                        .setStartDelay(150)
-                        .start();
-            }
         }
 
         btnGetStarted = findViewById(R.id.btnGetStarted);
@@ -78,6 +82,12 @@ public class WelcomeActivity extends AppCompatActivity {
             Intent intent = new Intent(WelcomeActivity.this, LoginActivity.class);
             startActivity(intent);
         });
+
+        // Handle logout success notification if redirected from ProfileActivity
+        if (getIntent() != null && getIntent().getBooleanExtra("extra_show_logout_success", false)) {
+            AppNotification.showSuccess(this, "Berhasil Keluar", "Anda telah keluar dari akun.");
+            getIntent().removeExtra("extra_show_logout_success");
+        }
     }
 
     private void setupEdgeToEdgeStatusBar() {

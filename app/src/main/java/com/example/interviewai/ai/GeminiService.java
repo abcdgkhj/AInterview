@@ -157,10 +157,13 @@ public class GeminiService {
 
     /**
      * Evaluasi jawaban user menggunakan AInterview AI:
-     * - Skor 1-100 (memperhatikan relevansi, panjang jawaban, substansi)
-     * - Kelebihan (format bullet points)
-     * - Kekurangan (format bullet points, mengabaikan typo)
-     * - Saran perbaikan (format bullet points)
+     * - Evaluasi relevansi terlebih dahulu sebelum memberikan skor
+     * - Bedakan jawaban singkat relevan vs karakter acak / tidak bermakna
+     * - Skor 0 untuk jawaban kosong atau karakter acak
+     * - Skor rendah (10-25) untuk tidak tahu atau tidak relevan
+     * - Skor 70-100 untuk jawaban baik dan relevan
+     * - Tidak mengarang kelebihan jika tidak ditemukan (tampilkan "Belum ada kelebihan yang dapat dinilai")
+     * - Kekurangan spesifik dan saran aplikatif
      * - Rekomendasi jawaban ideal
      */
     public static void evaluateAnswer(EvaluationRequest request, EvaluationCallback callback) {
@@ -175,14 +178,17 @@ public class GeminiService {
         final String difficulty = request.getDifficulty();
         final String language = request.getLanguage();
 
-        // Jika user tidak menjawab atau kosong
-        if (answer == null || answer.trim().isEmpty()) {
+        // 1. Validasi di sisi aplikasi sebelum memanggil AI
+        AnswerValidator.ValidationResult validation = AnswerValidator.validateAnswer(answer);
+
+        // Kasus 1: Jawaban kosong
+        if (validation.isEmpty()) {
             final String noEvalMessage = "Tidak ada data evaluasi karena pertanyaan tidak dijawab.";
             EvaluationResponse emptyResponse = new EvaluationResponse.Builder(EvaluationStatus.COMPLETED)
                     .overallScore(0)
-                    .strengths(noEvalMessage)
-                    .weaknesses(noEvalMessage)
-                    .improvements(noEvalMessage)
+                    .strengths("Belum ada kelebihan yang dapat dinilai.")
+                    .weaknesses("Pertanyaan tidak dijawab oleh kandidat.")
+                    .improvements("Berikan jawaban yang relevan dan terstruktur sesuai dengan pertanyaan wawancara yang diajukan.")
                     .modelAnswer(noEvalMessage)
                     .scoreRationale("Skor 0: Pertanyaan tidak dijawab.")
                     .build();
@@ -190,38 +196,75 @@ public class GeminiService {
             return;
         }
 
+        // Kasus 2: Jawaban karakter acak / tanpa makna (misal "Kk", "Jwnri2nwoq")
+        if (validation.isGibberish()) {
+            executor.execute(() -> {
+                String modelAnswer = generateIdealAnswerFallback(question, category, difficulty, language);
+                EvaluationResponse gibberishResponse = new EvaluationResponse.Builder(EvaluationStatus.COMPLETED)
+                        .overallScore(0)
+                        .strengths("Belum ada kelebihan yang dapat dinilai.")
+                        .weaknesses("Jawaban berupa rangkaian karakter acak atau tidak bermakna ('" + answer.trim() + "') sehingga tidak ada substansi materi yang dapat dinilai.")
+                        .improvements("Jawablah pertanyaan secara jelas dan terstruktur dengan menyampaikan konsep, pengalaman nyata, atau solusi konkret yang relevan.")
+                        .modelAnswer(modelAnswer)
+                        .scoreRationale("Skor 0: Karakter acak atau tanpa makna.")
+                        .build();
+                mainHandler.post(() -> callback.onSuccess(gibberishResponse));
+            });
+            return;
+        }
+
+        // Kasus 3: Jawaban teks valid -> Panggil AI Gemini dengan standar evaluasi ketat
         executor.execute(() -> {
             try {
                 int wordCount = answer.trim().split("\\s+").length;
 
                 StringBuilder prompt = new StringBuilder();
-                prompt.append("Anda adalah seorang penilai wawancara kerja profesional berbasis AI.\n");
-                prompt.append("Evaluasi jawaban kandidat wawancara berikut secara objektif dan mendalam.\n\n");
+                prompt.append("Anda adalah seorang penilai wawancara kerja profesional dan Hiring Manager ahli berbasis AI.\n");
+                prompt.append("Tugas Anda: Evaluasi jawaban kandidat wawancara kerja berikut secara objektif, ketat, dan adil.\n\n");
                 prompt.append("Pertanyaan: ").append(question).append("\n");
-                prompt.append("Jawaban User: ").append(answer).append("\n");
-                prompt.append("Jumlah Kata Jawaban: ").append(wordCount).append(" kata\n");
                 prompt.append("Kategori / Bidang: ").append(category).append("\n");
                 String safeEvalDifficulty = QuestionBank.normalizeDifficulty(difficulty);
-                prompt.append("Tingkat Kesulitan: ").append(safeEvalDifficulty);
-                if (QuestionBank.DIFFICULTY_MUDAH.equalsIgnoreCase(safeEvalDifficulty)) {
-                    prompt.append(" (Tingkat Mudah: Terapkan ekspektasi penilaian yang ramah untuk level pemula/entry-level)\n");
-                } else if (QuestionBank.DIFFICULTY_SULIT.equalsIgnoreCase(safeEvalDifficulty)) {
-                    prompt.append(" (Tingkat Sulit: Terapkan standar penilaian kritis dan mendalam level profesional/senior)\n");
-                } else {
-                    prompt.append(" (Tingkat Sedang: Terapkan standar penilaian seimbang dan realistis level menengah)\n");
-                }
-                prompt.append("Bahasa: ").append(language).append("\n\n");
+                prompt.append("Tingkat Kesulitan: ").append(safeEvalDifficulty).append("\n");
+                prompt.append("Bahasa: ").append(language).append("\n");
+                prompt.append("Jawaban Kandidat: \"").append(answer).append("\"\n");
+                prompt.append("Jumlah Kata Jawaban: ").append(wordCount).append(" kata\n\n");
 
-                prompt.append("KRITERIA EVALUASI DAN PENILAIAN WAJIB:\n");
-                prompt.append("1. Skor (1 - 100): Berikan skor realistis 1-100 berdasarkan faktor relevansi jawaban terhadap pertanyaan, panjang jawaban (apakah terlalu singkat < 15 kata, pas 30-100 kata, atau bertele-tele), kelengkapan, dan kedalaman isi.\n");
-                prompt.append("2. Kelebihan: Analisis apa yang sudah baik, tepat, dan positif dari jawaban user.\n");
-                prompt.append("3. Kekurangan: Analisis apa yang kurang lengkap, kelemahan jawaban, atau hal yang masih meleset dari jawaban user.\n");
-                prompt.append("4. Saran Perbaikan: Berikan perbaikan konkret dan langkah praktis berdasarkan analisis kekurangan di atas (misal gunakan metode STAR, elaborasi metrik, atau perjelas peran).\n");
-                prompt.append("5. Rekomendasi Jawaban Ideal: Berikan contoh kalimat jawaban yang ideal, terstruktur, dan profesional yang bisa langsung dipelajari oleh user untuk pertanyaan tersebut.\n");
-                prompt.append("6. ABAIKAN TYPO: Abaikan segala bentuk kesalahan ketik (typo), salah eja kecil, atau slip jari yang dibuat oleh user. JANGAN mengurangi skor dan JANGAN menyebutkan typo pada kelemahan maupun saran perbaikan. Evaluasi murni berdasarkan substansi dan pemahaman konsep user.\n");
-                prompt.append("7. FORMAT BULLET POINT: Tuliskan bagian 'strengths' (Kelebihan), 'weaknesses' (Kekurangan), dan 'improvement' (Saran Perbaikan) dalam bentuk poin-poin bullet (gunakan format '• ' di setiap poin baris baru, masing-masing 2-3 poin ringkas dan padat) agar rapi dan mudah dibaca.\n\n");
+                prompt.append("STANDAR DAN ATURAN EVALUASI WAJIB (SANGAT KETAT):\n");
+                prompt.append("1. EVALUASI RELEVANSI TERLEBIH DAHULU SEBELUM MEMBERIKAN SKOR:\n");
+                prompt.append("   - Periksa apakah jawaban benar-benar menjawab esensi dari pertanyaan yang diajukan.\n");
+                prompt.append("   - Jangan menganggap jawaban yang panjang selalu bagus. Jika jawaban panjang tetapi keluar dari topik pertanyaan / tidak relevan, WAJIB berikan skor rendah (10–25).\n");
+                prompt.append("   - Jika jawaban berupa pengakuan tidak tahu atau mengelak (misal 'Saya tidak tahu', 'Belum pernah belajar', 'Gak tau'), berikan skor rendah (10–20).\n");
+                prompt.append("   - Jika jawaban singkat TETAPI relevan dan tepat sasaran (misal menjawab konsep inti dengan benar secara to-the-point), BERIKAN NILAI SECARA OBJEKTIF berdasarkan kualitas substansinya (misal 70–85), BUKAN otomatis diberi skor 0.\n");
+                prompt.append("   - Jika jawaban berupa karakter acak, spam, atau tanpa makna, berikan skor 0.\n\n");
 
-                prompt.append("FORMAT OUTPUT WAJIB: Keluarkan hanya JSON Object murni tanpa tanda kutip markdown:\n");
+                prompt.append("2. SKALA STANDAR SKOR (0 - 100):\n");
+                prompt.append("   - 90–100: Sangat baik, sangat relevan, lengkap, terstruktur, dan menunjukkan pemahaman mendalam.\n");
+                prompt.append("   - 70–89: Baik dan relevan, menjawab inti pertanyaan dengan tepat, namun masih memiliki sedikit ruang elaborasi.\n");
+                prompt.append("   - 50–69: Cukup relevan, memahami konsep dasar namun penjelasan kurang mendalam atau masih terlalu umum.\n");
+                prompt.append("   - 30–49: Sedikit relevan, tetapi penjelasan sangat minim, dangkal, dan tidak memadai.\n");
+                prompt.append("   - 10–25: Hampir tidak menjawab inti pertanyaan, tidak relevan, atau menyatakan tidak tahu.\n");
+                prompt.append("   - 0: Jawaban kosong, karakter acak, atau sama sekali tidak memiliki makna.\n\n");
+
+                prompt.append("3. ATURAN KELEBIHAN (STRENGTHS) - DILARANG MENGARANG:\n");
+                prompt.append("   - DILARANG KERAS memuji kandidat hanya karena dia mengisi jawaban, merespons, atau mengikuti wawancara!\n");
+                prompt.append("   - DILARANG mengarang kelebihan yang tidak benar-benar terlihat dari isi jawaban.\n");
+                prompt.append("   - Jika jawaban tidak relevan, menyatakan tidak tahu, atau bernilai rendah (< 40), bagian 'strengths' WAJIB diisi:\n");
+                prompt.append("     \"Belum ada kelebihan yang dapat dinilai.\"\n");
+                prompt.append("   - Hanya tuliskan kelebihan jika jawaban benar-benar memiliki substansi pengetahuan, metodologi, atau sikap kerja yang positif.\n\n");
+
+                prompt.append("4. ATURAN KEKURANGAN (WEAKNESSES):\n");
+                prompt.append("   - Jelaskan secara spesifik mengapa jawaban tidak memenuhi kriteria atau aspek apa yang belum terjawab.\n\n");
+
+                prompt.append("5. ATURAN SARAN PERBAIKAN (IMPROVEMENT):\n");
+                prompt.append("   - Berikan perbaikan konkret yang sesuai dengan pertanyaan dan kekurangan jawaban kandidat (misal metode STAR, penambahan metrik, atau pemahaman konsep teknis terkait).\n\n");
+
+                prompt.append("6. REKOMENDASI JAWABAN IDEAL (IDEAL_ANSWER):\n");
+                prompt.append("   - Berikan contoh kalimat jawaban yang ideal, terstruktur, dan profesional untuk pertanyaan tersebut.\n\n");
+
+                prompt.append("7. ABAIKAN TYPO KECIL:\n");
+                prompt.append("   - Abaikan salah eja kecil atau typo ringan jika maknanya tetap dapat dipahami secara substansi.\n\n");
+
+                prompt.append("FORMAT OUTPUT WAJIB: Hanya keluarkan format JSON Object murni tanpa tanda kutip markdown:\n");
                 prompt.append("{\n");
                 prompt.append("  \"score\": 80,\n");
                 prompt.append("  \"strengths\": \"• Poin kelebihan 1\\n• Poin kelebihan 2\",\n");
@@ -241,10 +284,29 @@ public class GeminiService {
                 throw new Exception("Gagal mengurai respons evaluasi AInterview.");
             } catch (Exception e) {
                 Log.e(TAG, "Gagal mengevaluasi via AInterview: " + e.getMessage(), e);
-                // Gemini AI adalah satu-satunya sumber evaluasi; jangan berikan feedback atau skor lokal palsu
                 mainHandler.post(() -> callback.onFailure("Koneksi AInterview terputus atau gagal: " + e.getMessage()));
             }
         });
+    }
+
+    /**
+     * Menghasilkan rekomendasi jawaban ideal jika jawaban pengguna tidak valid / gibberish.
+     */
+    private static String generateIdealAnswerFallback(String question, String category, String difficulty, String language) {
+        try {
+            String prompt = "Anda adalah pewawancara profesional. Berikan SATU contoh rekomendasi jawaban ideal, terstruktur, dan profesional untuk pertanyaan wawancara berikut:\n"
+                    + "Pertanyaan: " + question + "\n"
+                    + "Bidang: " + category + "\n"
+                    + "Tingkat Kesulitan: " + difficulty + "\n"
+                    + "Bahasa: " + language + "\n"
+                    + "Berikan langsung teks jawaban ideal tanpa pembuka atau penutup.";
+            String res = callGeminiApi(prompt, false);
+            if (res != null && !res.trim().isEmpty()) {
+                return res.trim();
+            }
+        } catch (Exception ignored) {
+        }
+        return "Contoh jawaban ideal: Berikan jawaban yang terstruktur dengan metode STAR (Situation, Task, Action, Result) serta jelaskan langkah konkret yang Anda ambil secara profesional.";
     }
 
     /**
@@ -387,7 +449,7 @@ public class GeminiService {
         return list;
     }
 
-    private static EvaluationResponse parseEvaluationFromJson(String rawJson) {
+    static EvaluationResponse parseEvaluationFromJson(String rawJson) {
         if (rawJson == null || rawJson.trim().isEmpty()) return null;
 
         String cleanJson = rawJson.trim();
@@ -404,7 +466,7 @@ public class GeminiService {
         try {
             JSONObject obj = new JSONObject(cleanJson);
             int score = obj.optInt("score", 70);
-            if (score < 1) score = 1;
+            if (score < 0) score = 0;
             if (score > 100) score = 100;
 
             String strengths = obj.optString("strengths", "");
@@ -412,13 +474,42 @@ public class GeminiService {
             String improvement = obj.optString("improvement", "");
             String idealAnswer = obj.optString("ideal_answer", "");
 
+            // Sanitasi kelebihan jika skor rendah (< 35) atau memuji partisipasi/usaha menjawab
+            String lowerStrengths = strengths.toLowerCase(java.util.Locale.ROOT);
+            if (score < 35 || strengths.trim().isEmpty() || strengths.trim().equals("-")
+                    || lowerStrengths.contains("berpartisipasi")
+                    || lowerStrengths.contains("merespons")
+                    || lowerStrengths.contains("mencoba menjawab")
+                    || lowerStrengths.contains("mengisi jawaban")
+                    || lowerStrengths.contains("meluangkan waktu")
+                    || lowerStrengths.contains("mengikuti wawancara")
+                    || lowerStrengths.contains("berusaha memberikan")) {
+                strengths = "Belum ada kelebihan yang dapat dinilai.";
+            }
+
+            // Sanitasi kekurangan jika kosong
+            if (weaknesses.trim().isEmpty() || weaknesses.trim().equals("-")) {
+                if (score == 0) {
+                    weaknesses = "Jawaban tidak memiliki substansi atau makna yang dapat dinilai.";
+                } else if (score < 50) {
+                    weaknesses = "Jawaban belum menjawab inti pertanyaan secara memadai.";
+                } else {
+                    weaknesses = "Jawaban dapat lebih diperdalam dengan rincian contoh praktis.";
+                }
+            }
+
+            // Sanitasi saran perbaikan jika kosong
+            if (improvement.trim().isEmpty() || improvement.trim().equals("-")) {
+                improvement = "Pelajari konsep terkait dan gunakan struktur STAR untuk memaparkan jawaban secara komprehensif.";
+            }
+
             return new EvaluationResponse.Builder(EvaluationStatus.COMPLETED)
                     .overallScore(score)
                     .strengths(strengths)
                     .weaknesses(weaknesses)
                     .improvements(improvement)
                     .modelAnswer(idealAnswer)
-                    .scoreRationale("Skor dievaluasi berdasarkan relevansi, panjang jawaban, dan kedalaman materi oleh AInterview.")
+                    .scoreRationale("Skor dievaluasi berdasarkan relevansi, kedalaman substansi, dan kelengkapan materi oleh AInterview.")
                     .build();
         } catch (Exception e) {
             Log.e(TAG, "Gagal mengurai JSON evaluasi: " + e.getMessage(), e);

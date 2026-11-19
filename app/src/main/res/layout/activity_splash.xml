@@ -5,11 +5,11 @@
     android:layout_height="match_parent"
     android:background="@color/white">
 
-    <!-- Centered Official AInterview Brand Logo — 140dp matches Welcome page logo size -->
+    <!-- Centered Official AInterview Brand Logo — 88dp matches system splash and welcome icon -->
     <ImageView
         android:id="@+id/imgSplashLogo"
-        android:layout_width="170dp"
-        android:layout_height="170dp"
+        android:layout_width="88dp"
+        android:layout_height="88dp"
         android:layout_gravity="center"
         android:src="@drawable/ic_ainterview_logo"
         android:adjustViewBounds="true"

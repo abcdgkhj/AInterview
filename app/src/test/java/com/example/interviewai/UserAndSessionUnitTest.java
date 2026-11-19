@@ -150,6 +150,12 @@ public class UserAndSessionUnitTest {
                         5
                 );
         assertEquals(5, workflow.getTotalQuestions());
+        workflow.setQuestions(com.example.interviewai.data.QuestionBank.getFilteredQuestions(
+                com.example.interviewai.data.QuestionBank.CATEGORY_UMUM,
+                com.example.interviewai.data.QuestionBank.DIFFICULTY_INTERMEDIATE,
+                com.example.interviewai.data.QuestionBank.LANG_ID,
+                5
+        ));
 
         // Answer each of the 5 questions with different answers
         String[] sampleAnswers = new String[]{
@@ -201,6 +207,12 @@ public class UserAndSessionUnitTest {
                         com.example.interviewai.data.QuestionBank.LANG_ID,
                         5
                 );
+        workflow.setQuestions(com.example.interviewai.data.QuestionBank.getFilteredQuestions(
+                com.example.interviewai.data.QuestionBank.CATEGORY_TEKNIS_IT,
+                com.example.interviewai.data.QuestionBank.DIFFICULTY_INTERMEDIATE,
+                com.example.interviewai.data.QuestionBank.LANG_ID,
+                5
+        ));
         // Only answer question 1
         workflow.saveCurrentAnswer("Pengalaman saya menggunakan database SQL dan query optimasi.");
         workflow.evaluateCurrentAnswer();
