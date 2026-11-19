@@ -19,6 +19,7 @@
         <activity
             android:name=".WelcomeActivity"
             android:exported="true"
+            android:screenOrientation="portrait"
             android:theme="@style/Theme.InterviewAI.Splash"
             android:windowSoftInputMode="adjustResize">
             <intent-filter>
@@ -31,6 +32,7 @@
         <activity
             android:name=".MainActivity"
             android:exported="false"
+            android:screenOrientation="portrait"
             android:theme="@style/Theme.InterviewAI.Splash"
             android:windowSoftInputMode="adjustResize" />
 
@@ -38,64 +40,75 @@
         <activity
             android:name=".LoginActivity"
             android:exported="false"
+            android:screenOrientation="portrait"
             android:windowSoftInputMode="adjustResize" />
 
         <activity
             android:name=".ForgotPasswordActivity"
             android:exported="false"
+            android:screenOrientation="portrait"
             android:windowSoftInputMode="adjustResize" />
 
         <activity
             android:name=".RegisterActivity"
             android:exported="false"
+            android:screenOrientation="portrait"
             android:windowSoftInputMode="adjustResize" />
 
         <!-- 3. Home Screen -->
         <activity
             android:name=".HomeActivity"
             android:exported="false"
+            android:screenOrientation="portrait"
             android:windowSoftInputMode="adjustResize" />
 
         <!-- 3b. Technical Field Selection Screen -->
         <activity
             android:name=".TechnicalFieldSelectionActivity"
             android:exported="false"
+            android:screenOrientation="portrait"
             android:windowSoftInputMode="adjustResize" />
 
         <!-- 4. Interview Setup Screen -->
         <activity
             android:name=".InterviewSetupActivity"
             android:exported="false"
+            android:screenOrientation="portrait"
             android:windowSoftInputMode="adjustResize" />
 
         <!-- 5. Interview Screen -->
         <activity
             android:name=".InterviewActivity"
             android:exported="false"
+            android:screenOrientation="portrait"
             android:windowSoftInputMode="adjustResize" />
 
         <!-- 6. Results Screen -->
         <activity
             android:name=".ResultActivity"
             android:exported="false"
+            android:screenOrientation="portrait"
             android:windowSoftInputMode="adjustResize" />
 
         <!-- 7. History Screen -->
         <activity
             android:name=".HistoryActivity"
             android:exported="false"
+            android:screenOrientation="portrait"
             android:windowSoftInputMode="adjustResize" />
 
         <!-- 8. Profile and Settings Screen -->
         <activity
             android:name=".ProfileActivity"
             android:exported="false"
+            android:screenOrientation="portrait"
             android:windowSoftInputMode="adjustResize" />
 
         <!-- 8b. Data Diri Screen -->
         <activity
             android:name=".DataDiriActivity"
             android:exported="false"
+            android:screenOrientation="portrait"
             android:windowSoftInputMode="adjustResize" />
 
     </application>
