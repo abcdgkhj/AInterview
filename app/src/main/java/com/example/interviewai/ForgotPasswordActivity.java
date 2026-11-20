@@ -44,7 +44,6 @@ public class ForgotPasswordActivity extends AppCompatActivity {
     private TextView txtOtpHint;
 
     private Button btnResetPassword;
-    private TextView btnBackToLogin;
     private ImageView btnBack;
 
     private LinearLayout cardResetForm;
@@ -98,7 +97,6 @@ public class ForgotPasswordActivity extends AppCompatActivity {
         }
 
         btnResetPassword = findViewById(R.id.btnResetPassword);
-        btnBackToLogin = findViewById(R.id.btnBackToLogin);
         btnBack = findViewById(R.id.btnBack);
 
         cardResetForm = findViewById(R.id.cardResetForm);
@@ -125,11 +123,6 @@ public class ForgotPasswordActivity extends AppCompatActivity {
         }
 
         btnResetPassword.setOnClickListener(v -> attemptResetPassword());
-
-        btnBackToLogin.setOnClickListener(v -> {
-            String email = edtEmail != null && edtEmail.getText() != null ? edtEmail.getText().toString().trim() : "";
-            returnToLogin(email);
-        });
 
         if (btnSuccessBackToLogin != null) {
             btnSuccessBackToLogin.setOnClickListener(v -> {

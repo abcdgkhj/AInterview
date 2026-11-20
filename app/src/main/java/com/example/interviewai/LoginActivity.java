@@ -29,7 +29,7 @@ public class LoginActivity extends AppCompatActivity {
     private TextView btnGoToRegister;
     private TextView btnForgotPassword;
     private ImageView btnBack;
-    private View cardDemoAccount;
+
 
     private UserSessionManager sessionManager;
 
@@ -64,7 +64,7 @@ public class LoginActivity extends AppCompatActivity {
         btnGoToRegister = findViewById(R.id.btnGoToRegister);
         btnForgotPassword = findViewById(R.id.btnForgotPassword);
         btnBack = findViewById(R.id.btnBack);
-        cardDemoAccount = findViewById(R.id.cardDemoAccount);
+
 
         setupClearErrorOnType();
 
@@ -72,15 +72,7 @@ public class LoginActivity extends AppCompatActivity {
             btnBack.setOnClickListener(v -> finish());
         }
 
-        if (cardDemoAccount != null) {
-            cardDemoAccount.setOnClickListener(v -> {
-                edtEmail.setText("demo@ainterview.app");
-                edtPassword.setText("password123");
-                tilEmail.setError(null);
-                tilPassword.setError(null);
-                AppNotification.showInfo(this, "Akun Demo", "Akun demo terisi otomatis.");
-            });
-        }
+
 
         if (btnForgotPassword != null) {
             btnForgotPassword.setOnClickListener(v -> {

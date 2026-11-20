@@ -136,7 +136,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_gravity="end"
-                android:text="@string/btn_forgot_password"
+                android:text="Lupa Kata Sandi"
                 android:textColor="@color/primary"
                 android:textSize="13sp"
                 android:textStyle="bold"
@@ -160,34 +160,7 @@
 
         </LinearLayout>
 
-        <!-- Demo Account Banner -->
-        <LinearLayout
-            android:id="@+id/cardDemoAccount"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:background="@drawable/bg_banner_ai_placeholder"
-            android:orientation="horizontal"
-            android:padding="14dp"
-            android:gravity="center_vertical"
-            android:layout_marginBottom="24dp">
 
-            <ImageView
-                android:layout_width="24dp"
-                android:layout_height="24dp"
-                android:src="@drawable/ic_lightbulb"
-                app:tint="@color/primary"
-                android:layout_marginEnd="10dp"
-                android:contentDescription="Akun Demo" />
-
-            <TextView
-                android:id="@+id/txtDemoHint"
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:text="Uji Coba Cepat: demo@ainterview.app / password123 (Klik untuk auto-fill)"
-                android:textColor="@color/text_secondary"
-                android:textSize="12sp" />
-        </LinearLayout>
 
         <!-- Prompt to Register -->
         <TextView
@@ -200,6 +173,7 @@
             android:textSize="14sp"
             android:textStyle="bold"
             android:padding="12dp"
+            android:layout_marginTop="24dp"
             android:background="?attr/selectableItemBackground" />
 
     </LinearLayout>
